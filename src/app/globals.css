@@ -1,0 +1,238 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-thin.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-thinitalic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-light.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-lightitalic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-medium.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-mediumitalic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-bolditalic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-black.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/roboto-blackitalic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: Roboto, Arial, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: #fbfbfc;
+    color: #1f2937;
+    font-family: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: monospace;
+  }
+}
+
+@layer components {
+  .sentra-shell {
+    @apply min-h-screen bg-sentra-bg text-sentra-slate;
+  }
+
+  .sentra-container {
+    @apply mx-auto w-full max-w-[1200px] px-5;
+  }
+
+  .glass-header {
+    @apply fixed inset-x-0 top-0 z-50 h-[85px] border-b border-black/5 bg-white/70 backdrop-blur-[20px];
+  }
+
+  .icon-button {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-sentra-emerald shadow-[0_2px_4px_rgba(0,0,0,0.10)] transition hover:shadow-md hover:scale-105 active:scale-95;
+  }
+
+  .sentra-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold transition;
+  }
+
+  .sentra-button-primary {
+    @apply sentra-button bg-gradient-to-r from-sentra-emerald to-sentra-light text-white;
+  }
+
+  .sentra-button-outline {
+    @apply sentra-button border-[1.5px] border-sentra-emerald bg-white text-sentra-emerald;
+  }
+
+  .section-title {
+    @apply text-lg font-black text-sentra-slate;
+  }
+
+  .product-grid {
+    @apply grid grid-cols-2 gap-5 px-[15px] py-2.5 md:grid-cols-4 md:px-0;
+  }
+
+  .standard-grid {
+    @apply grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  .empty-state {
+    @apply rounded-2xl border border-dashed border-slate-200 bg-white/70 p-10 text-center text-slate-500;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-sentra-emerald focus:ring-4 focus:ring-sentra-emerald/10;
+  }
+
+  .form-panel {
+    @apply mx-auto my-12 grid max-w-[520px] gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-flutter;
+  }
+
+  .detail-hero {
+    @apply sentra-container grid gap-7 py-12 lg:grid-cols-[1.15fr_0.85fr];
+  }
+
+  .detail-image {
+    @apply overflow-hidden rounded-2xl bg-slate-100 shadow-flutter;
+  }
+
+  .detail-copy {
+    @apply rounded-2xl bg-white p-5 shadow-flutter;
+  }
+
+  .content {
+    @apply sentra-container max-w-[860px] pb-16 text-slate-700;
+  }
+
+  /* Smooth horizontal scrollbar for category scroller */
+  .custom-horizontal-scrollbar {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 185, 129, 0.35) transparent;
+  }
+
+  .custom-horizontal-scrollbar::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .custom-horizontal-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 9999px;
+  }
+
+  .custom-horizontal-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.35);
+    border-radius: 9999px;
+    transition: background-color 0.2s ease;
+  }
+
+  .custom-horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 185, 129, 0.65);
+  }
+}
