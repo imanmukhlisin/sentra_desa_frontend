@@ -4,3 +4,9 @@ out/
 .env.local
 .env.*.local
 *.tsbuildinfo
+
+# Local Deployment Scripts & Configs (keamanan server / VPS)
+deploy.sh
+deploy.ps1
+deploy-debug-logging.sh
+compose.yaml
