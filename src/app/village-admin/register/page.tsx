@@ -1,5 +1,5 @@
-import { SimpleFormPage } from "@/presentation/features/simple-form-page";
+import { AuthView } from "@/presentation/features/auth-view";
 
-export default function Page() {
-  return <SimpleFormPage title="Daftar Admin Desa" description="Ajukan akses pengelolaan profil dan konten desa." fields={[{ name: "name", label: "Nama Lengkap" }, { name: "email", label: "Email", type: "email" }, { name: "village", label: "Nama Desa" }, { name: "letter", label: "Nomor Surat Tugas" }]} />;
+export default function VillageAdminRegisterPage() {
+  return <AuthView initialMode="register" />;
 }
