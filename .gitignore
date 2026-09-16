@@ -10,3 +10,4 @@ deploy.sh
 deploy.ps1
 deploy-debug-logging.sh
 compose.yaml
+AGENTS.md
