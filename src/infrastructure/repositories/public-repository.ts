@@ -7,7 +7,7 @@ const endpoints: Record<CatalogKind, string> = {
   villages: "public/villages",
   tourisms: "public/tourisms",
   articles: "public/articles",
-  exports: "public/exports",
+  exports: "public/export-products",
   potentials: "public/potentials",
   bumdes: "public/bumdes",
   kdmp: "public/kdmp",
@@ -376,9 +376,9 @@ function mapDetailItem(kind: CatalogKind, raw: Dictionary): DetailItem {
     if (text(merchantRaw.name)) facts.push({ label: "Merchant / Toko", value: text(merchantRaw.name) });
   } else if (kind === "tourisms") {
     if (item.badge) facts.push({ label: "Jenis Wisata", value: item.badge });
-    const feeNum = number(raw.fee) ?? number(raw.ticket_price) ?? number(raw.price);
-    facts.push({ label: "Harga Tiket (HTM)", value: feeNum ? formatCurrency(feeNum) : text(raw.fee) || "Gratis" });
-    if (text(raw.operating_hours)) facts.push({ label: "Jam Operasional", value: text(raw.operating_hours) });
+    const feeNum = number(raw.entrance_fee) ?? number(raw.fee) ?? number(raw.ticket_price) ?? number(raw.price);
+    facts.push({ label: "Harga Tiket (HTM)", value: feeNum ? formatCurrency(feeNum) : text(raw.entrance_fee || raw.fee) || "Gratis" });
+    if (text(raw.opening_hours || raw.operating_hours)) facts.push({ label: "Jam Operasional", value: text(raw.opening_hours || raw.operating_hours) });
     if (text(raw.facilities)) facts.push({ label: "Fasilitas Utama", value: text(raw.facilities) });
   } else if (kind === "potentials") {
     if (item.badge) facts.push({ label: "Kategori Potensi", value: item.badge });
@@ -392,18 +392,38 @@ function mapDetailItem(kind: CatalogKind, raw: Dictionary): DetailItem {
   } else if (kind === "bumdes") {
     const bumdesBadge = text(raw.performance_category) || item.badge;
     if (bumdesBadge) facts.push({ label: "Kategori Kinerja", value: bumdesBadge });
+    if (text(raw.legal_number)) facts.push({ label: "Legalitas AHU", value: text(raw.legal_number) });
     if (text(raw.director_name)) facts.push({ label: "Direktur Utama", value: text(raw.director_name) });
-    if (text(raw.business_type)) facts.push({ label: "Jenis Usaha", value: text(raw.business_type) });
-    if (text(raw.unit_count)) facts.push({ label: "Jumlah Unit Usaha", value: `${text(raw.unit_count)} Unit` });
+    const unitCount = Array.isArray(raw.business_units) ? raw.business_units.length : number(raw.unit_count);
+    if (unitCount) facts.push({ label: "Unit Usaha Aktif", value: `${unitCount} Unit Usaha` });
+    const rev = number(raw.annual_revenue) ?? number(raw.annual_turnover);
+    if (rev) facts.push({ label: "Omset Tahunan", value: formatCurrency(rev) });
+    const cap = number(raw.initial_capital);
+    if (cap) facts.push({ label: "Modal Awal", value: formatCurrency(cap) });
+    if (text(raw.employee_count) && Number(raw.employee_count) > 0) facts.push({ label: "Tenaga Kerja", value: `${text(raw.employee_count)} Orang` });
   } else if (kind === "exports") {
-    if (text(raw.destination_country)) facts.push({ label: "Negara Tujuan", value: text(raw.destination_country) });
-    if (text(raw.export_volume)) facts.push({ label: "Volume Ekspor", value: text(raw.export_volume) });
-    if (text(raw.production_capacity)) facts.push({ label: "Kapasitas Produksi", value: text(raw.production_capacity) });
-    if (text(raw.certification)) facts.push({ label: "Sertifikasi", value: text(raw.certification) });
+    if (text(raw.hs_code)) facts.push({ label: "HS Code", value: text(raw.hs_code) });
+    if (text(raw.export_status)) facts.push({ label: "Status Ekspor", value: text(raw.export_status).replace(/_/g, " ").toUpperCase() });
+    const dests = Array.isArray(raw.destination_countries) ? raw.destination_countries.join(", ") : text(raw.destination_country);
+    if (dests) facts.push({ label: "Negara Tujuan", value: dests });
+    if (text(raw.export_volume)) facts.push({ label: "Kapasitas / Volume", value: `${text(raw.export_volume)} ${text(raw.unit || "Ton")}` });
+    const certList = Array.isArray(raw.certifications) ? raw.certifications.join(", ") : text(raw.certification);
+    if (certList) facts.push({ label: "Sertifikasi Mutu", value: certList });
+    if (text(raw.contact_person)) facts.push({ label: "Kontak Koperasi / PIC", value: text(raw.contact_person) });
+    if (text(raw.contact_phone || raw.phone)) facts.push({ label: "Telepon / WA", value: text(raw.contact_phone || raw.phone) });
+    if (raw.has_export_license !== undefined) facts.push({ label: "Izin Ekspor", value: raw.has_export_license ? "Memiliki Izin Resmi" : "Proses Pengurusan" });
   } else if (kind === "kdmp") {
-    if (text(raw.sector)) facts.push({ label: "Sektor Utama", value: text(raw.sector) });
-    if (text(raw.member_villages_count)) facts.push({ label: "Desa Anggota", value: `${text(raw.member_villages_count)} Desa` });
-    if (text(raw.area_size)) facts.push({ label: "Luas Kawasan", value: `${text(raw.area_size)} Ha` });
+    if (text(raw.code)) facts.push({ label: "Kode KDMP", value: text(raw.code) });
+    if (text(raw.nomor_badan_hukum)) facts.push({ label: "Legalitas Badan Hukum", value: text(raw.nomor_badan_hukum) });
+    if (text(raw.status)) facts.push({ label: "Status Operasional", value: text(raw.status).toUpperCase() });
+    if (text(raw.ketua_name)) facts.push({ label: "Ketua Koperasi", value: text(raw.ketua_name) });
+    const units = Array.isArray(raw.unit_usaha) ? raw.unit_usaha.join(", ") : text(raw.sector);
+    if (units) facts.push({ label: "Unit Usaha", value: units });
+    if (text(raw.total_members) && Number(raw.total_members) > 0) facts.push({ label: "Jumlah Anggota", value: `${text(raw.total_members)} Orang` });
+    const modal = number(raw.modal_awal);
+    if (modal) facts.push({ label: "Modal Awal", value: formatCurrency(modal) });
+    const aset = number(raw.total_assets);
+    if (aset) facts.push({ label: "Total Aset", value: formatCurrency(aset) });
   } else if (kind === "services") {
     if (item.badge) facts.push({ label: "Kategori Layanan", value: item.badge });
     if (text(raw.processing_time)) facts.push({ label: "Waktu Proses", value: text(raw.processing_time) });
@@ -455,21 +475,36 @@ function titleFor(kind: CatalogKind, raw: Dictionary) {
 
 function subtitleFor(kind: CatalogKind, raw: Dictionary, village: Dictionary) {
   if (kind === "products" && raw.price) return formatCurrency(number(raw.price));
-  if (kind === "exports") return text(raw.destination_country);
+  if (kind === "exports") {
+    const dest = Array.isArray(raw.destination_countries) ? raw.destination_countries.join(", ") : text(raw.destination_country);
+    return dest ? `Tujuan: ${dest}` : locationFrom(raw) || locationFrom(village) || text(village.name);
+  }
+  if (kind === "kdmp") {
+    return text(raw.nomor_badan_hukum) || text(raw.code) || locationFrom(raw) || locationFrom(village) || text(village.name);
+  }
   if (kind === "lkdd") return text(raw.fiscal_year) || text(raw.year);
-  return locationFrom(raw) || text(village.name);
+  return locationFrom(raw) || locationFrom(village) || text(village.name);
 }
 
 function badgeFor(kind: CatalogKind, raw: Dictionary) {
-  return text(raw.category) || text(raw.type) || text(raw.sector) || (kind === "villages" ? "Profil Desa" : "");
+  if (kind === "exports") {
+    return raw.hs_code ? `HS ${text(raw.hs_code)}` : text(raw.export_status) ? text(raw.export_status).replace(/_/g, " ").toUpperCase() : "SIAP EKSPOR";
+  }
+  if (kind === "kdmp") {
+    return text(raw.status) ? `STATUS: ${text(raw.status).toUpperCase()}` : "KDMP";
+  }
+  return text(raw.performance_category) || text(raw.category) || text(raw.type) || text(raw.sector) || (kind === "villages" ? "Profil Desa" : "");
 }
 
 function metaFor(kind: CatalogKind, raw: Dictionary, village: Dictionary) {
+  const loc = locationFrom(raw) || locationFrom(village) || text(village.name);
   return [
-    locationFrom(raw) || text(village.name),
+    loc,
     kind === "products" && raw.stock ? `Stok ${text(raw.stock)}` : "",
-    kind === "exports" ? text(raw.destination_country) : "",
-    text(raw.phone)
+    kind === "exports" && raw.hs_code ? `Kode HS: ${text(raw.hs_code)}` : "",
+    kind === "exports" && raw.contact_person ? `PIC: ${text(raw.contact_person)}` : "",
+    kind === "kdmp" && raw.code ? `Kode: ${text(raw.code)}` : "",
+    text(raw.phone) || text(raw.contact_phone)
   ].filter(Boolean);
 }
 

@@ -63,8 +63,8 @@ export function TourismDetail({ id }: { id: string }) {
 
   const raw = tourism.raw || {};
   const images = tourism.gallery?.length ? tourism.gallery : tourism.image ? [tourism.image] : ["/images/header-sentradesa-1.webp"];
-  const ticketFee = Number(raw.fee ?? raw.ticket_price ?? tourism.price ?? 0);
-  const operatingHours = String(raw.operating_hours || raw.jam_operasional || "08.00 - 17.00 WIB");
+  const ticketFee = Number(raw.entrance_fee ?? raw.fee ?? raw.ticket_price ?? tourism.price ?? 0);
+  const operatingHours = String(raw.opening_hours || raw.operating_hours || raw.jam_operasional || "08.00 - 17.00 WIB");
   const facilities = String(raw.facilities || "Area Parkir, Toilet Umum, Musholla, Gazebo, Spot Foto, Warung Makan").split(",");
   const phone = String(raw.phone || raw.contact_person || "6281234567890");
 
