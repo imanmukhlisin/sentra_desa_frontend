@@ -70,10 +70,17 @@ export function BumdesDetail({ id }: { id: string }) {
   const raw = bumdes.raw || {};
   const images = bumdes.gallery?.length ? bumdes.gallery : bumdes.image ? [bumdes.image] : ["/images/header-sentradesa-1.webp"];
   const directorName = String(raw.director_name || raw.direktur || "Direktur BUMDes");
-  const businessType = String(raw.business_type || raw.jenis_usaha || "Perdagangan & Jasa Desa");
-  const performance = String(raw.performance_category || raw.kategori_kinerja || "Maju");
-  const unitCount = String(raw.unit_count || raw.jumlah_unit || "3");
-  const turnover = Number(raw.annual_turnover ?? raw.omset ?? 150000000);
+  const performance = String(raw.performance_category || raw.kategori_kinerja || "Berkembang");
+  const legalNumber = raw.legal_number ? String(raw.legal_number) : "Terdaftar Resmi Kemenkumham";
+  
+  const businessUnitsList: string[] = Array.isArray(raw.business_units)
+    ? raw.business_units.map(String)
+    : typeof raw.business_units === "string" && raw.business_units
+    ? String(raw.business_units).split(",")
+    : [];
+
+  const revenue = Number(raw.annual_revenue ?? raw.annual_turnover ?? 0);
+  const initialCapital = Number(raw.initial_capital ?? 0);
   const phone = String(raw.phone || raw.kontak || "6281234567890");
 
   return (
@@ -123,24 +130,37 @@ export function BumdesDetail({ id }: { id: string }) {
                   </strong>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Jenis Usaha Utama</span>
-                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate" title={businessType}>
-                    {businessType}
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Legalitas AHU / SK</span>
+                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate" title={legalNumber}>
+                    {legalNumber}
                   </strong>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Jumlah Unit Usaha</span>
-                  <strong className="text-sm font-black text-slate-900 mt-1 block">
-                    {unitCount} Unit Usaha
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Modal Awal</span>
+                  <strong className="text-xs font-black text-slate-900 mt-1 block truncate">
+                    {initialCapital > 0 ? formatCurrency(initialCapital) : "Penyertaan Desa"}
                   </strong>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-emerald-50/50 p-3.5">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Omset Tahunan</span>
                   <strong className="text-xs font-black text-emerald-700 mt-1 block truncate">
-                    {turnover > 0 ? formatCurrency(turnover) : "Terdaftar"}
+                    {revenue > 0 ? formatCurrency(revenue) : "Aktif Beroperasi"}
                   </strong>
                 </div>
               </div>
+
+              {businessUnitsList.length > 0 ? (
+                <div>
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Unit Usaha Aktif</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {businessUnitsList.map((unit, idx) => (
+                      <span key={idx} className="rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-900 border border-amber-200/60">
+                        ✓ {unit.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               <div className="flex gap-3 pt-2">
                 <a
