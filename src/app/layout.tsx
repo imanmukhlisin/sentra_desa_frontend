@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Nunito_Sans } from "next/font/google";
+import { Inter, Nunito_Sans, Literata } from "next/font/google";
 import { Footer } from "@/presentation/components/footer";
 import { Header } from "@/presentation/components/header";
 import { siteConfig } from "@/shared/config/site";
@@ -17,6 +17,12 @@ const nunitoSans = Nunito_Sans({
   display: "swap"
 });
 
+const literata = Literata({
+  subsets: ["latin"],
+  variable: "--font-literata",
+  display: "swap"
+});
+
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -28,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${inter.variable} ${nunitoSans.variable}`}>
+    <html lang="id" className={`${inter.variable} ${nunitoSans.variable} ${literata.variable}`}>
       <body className="min-h-screen bg-[#f4fbf2] font-sans text-[#171d18] antialiased">
         <Header />
         <main>{children}</main>

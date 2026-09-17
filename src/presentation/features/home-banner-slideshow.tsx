@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { HighlightItem } from "@/domain/entities/common";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/presentation/components/icons";
 import { imageUrl } from "@/shared/utils/image";
@@ -166,13 +165,6 @@ export function HomeBannerSlideshow({ highlights = [] }: HomeBannerSlideshowProp
                         <path d="m6 9 6 6 6-6" />
                       </svg>
                     </a>
-
-                    <Link
-                      href="/village-admin/register/"
-                      className="inline-flex items-center rounded-lg border border-white/20 bg-white/20 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white/30"
-                    >
-                      Registrasi Desa
-                    </Link>
                   </div>
                 </div>
               </div>

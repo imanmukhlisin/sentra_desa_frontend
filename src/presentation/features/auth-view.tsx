@@ -142,29 +142,33 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
         className="absolute top-0 hidden h-full w-[110vw] bg-terra-primary transition-transform duration-1000 ease-[cubic-bezier(0.65,0,0.35,1)] lg:block"
         style={{ transform: isLoginMode ? "translateX(-10vw)" : "translateX(0vw)" }}
       >
-        <div className="absolute inset-0 z-10 bg-gradient-to-br from-black/80 via-black/30 to-black/80 mix-blend-multiply" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-br from-black/85 via-black/45 to-black/85 mix-blend-multiply" />
         <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
         <Image
           src="/bg-desa.jpg"
-          alt="Village Landscape"
+          alt="Lanskap Desa Nusantara"
           fill
           className="object-cover"
           priority
         />
 
-        {/* Text Overlays for Image */}
+        {/* Text Overlays for Image (Always Left-Aligned Brand, No Duplicate "Selamat Datang") */}
         <div className="absolute inset-0 z-30 flex w-full">
           {/* Register Mode Text (Image on Left) */}
           <div
-            className={`absolute left-0 top-0 flex h-full w-[40vw] flex-col items-center justify-center p-8 transition-all duration-700 ease-in-out ${
+            className={`absolute left-0 top-0 flex h-full w-[40vw] flex-col items-start justify-center p-8 lg:p-16 transition-all duration-700 ease-in-out ${
               isLoginMode ? "opacity-0 translate-x-[-4vw] pointer-events-none" : "opacity-100 translate-x-0"
             }`}
           >
-            <div className="flex w-full max-w-2xl flex-col items-center text-center px-6 lg:px-12">
-              <h1 className="mb-6 font-inter text-5xl font-bold tracking-tight text-white lg:text-6xl xl:text-7xl">
+            <div className="flex w-full max-w-lg flex-col items-start text-left">
+              <div className="mb-2 h-1 w-10 rounded-full bg-terra-primary-container" />
+              <p className="mb-3 font-sans text-xs font-bold uppercase tracking-widest text-terra-primary-fixed">
+                Pangan & Kemandirian Desa
+              </p>
+              <h1 className="mb-4 font-headline text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
                 Sentra Desa
               </h1>
-              <p className="text-lg leading-relaxed text-white/90 lg:text-xl">
+              <p className="font-sans text-sm lg:text-base leading-relaxed text-white/90 max-w-md">
                 Platform terpadu tata kelola potensi komoditas, transparansi ekonomi,
                 dan kemandirian UMKM desa seluruh Nusantara.
               </p>
@@ -173,16 +177,21 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
 
           {/* Login Mode Text (Image on Right) */}
           <div
-            className={`absolute right-0 top-0 flex h-full w-[40vw] flex-col items-center justify-center p-8 transition-all duration-700 ease-in-out ${
+            className={`absolute right-0 top-0 flex h-full w-[40vw] flex-col items-start justify-center p-8 lg:p-16 transition-all duration-700 ease-in-out ${
               isLoginMode ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[4vw] pointer-events-none"
             }`}
           >
-            <div className="flex w-full max-w-2xl flex-col items-center text-center px-6 lg:px-12">
-              <h1 className="mb-6 font-inter text-5xl font-bold tracking-tight text-white lg:text-6xl xl:text-7xl">
-                Selamat Datang
+            <div className="flex w-full max-w-lg flex-col items-start text-left">
+              <div className="mb-2 h-1 w-10 rounded-full bg-terra-primary-container" />
+              <p className="mb-3 font-sans text-xs font-bold uppercase tracking-widest text-terra-primary-fixed">
+                Tata Kelola & Potensi Desa
+              </p>
+              <h1 className="mb-4 font-headline text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+                Sentra Desa
               </h1>
-              <p className="text-lg leading-relaxed text-white/90 lg:text-xl">
-                Masuk ke portal admin untuk mengelola potensi desa Anda, meningkatkan transparansi, dan memantau kemajuan UMKM lokal.
+              <p className="font-sans text-sm lg:text-base leading-relaxed text-white/90 max-w-md">
+                Dashboard terpadu pengelolaan ekonomi desa, transparansi tata kelola,
+                dan monitoring kemajuan komoditas lokal.
               </p>
             </div>
           </div>
@@ -199,110 +208,114 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
 
           {/* ================= REGISTER FORM ================= */}
           <div
-            className={`absolute top-0 left-0 lg:left-[10vw] w-full lg:w-[50vw] h-full flex flex-col justify-between p-8 lg:p-12 xl:px-24 xl:py-16 overflow-y-auto custom-scrollbar transition-all duration-700 delay-100 ${
+            className={`absolute top-0 left-0 lg:left-[12vw] w-full lg:w-[48vw] h-full flex flex-col justify-center px-6 py-6 lg:px-12 xl:px-16 overflow-y-auto custom-scrollbar transition-all duration-700 delay-100 ${
               isLoginMode ? "opacity-0 translate-x-8 pointer-events-none" : "opacity-100 translate-x-0"
             }`}
           >
-            <div className="mx-auto w-full max-w-md mt-auto mb-auto">
-              {/* Logo Section */}
-              <div className="mb-6 flex justify-center items-center gap-[15px]">
+            <div className="mx-auto w-full max-w-[400px] text-left">
+              {/* Logo Section - Left Aligned */}
+              <div className="mb-5 flex items-center justify-start gap-3">
                 <Image
                   src="/images/logo.png"
                   alt="Sentra Desa Logo"
-                  width={42}
-                  height={42}
-                  className="h-[42px] w-auto object-contain"
+                  width={38}
+                  height={38}
+                  className="h-[38px] w-auto object-contain"
                   priority
                 />
                 <div className="leading-tight text-left">
-                  <div className="text-base font-black text-terra-primary uppercase tracking-wide">
+                  <div className="text-base font-black text-terra-primary uppercase tracking-wider font-sans">
                     SENTRA DESA
                   </div>
-                  <div className="text-[10px] font-bold text-terra-on-surface-variant">
+                  <div className="text-[10px] font-semibold text-terra-on-surface-variant">
                     Berdaya dari Desa
                   </div>
                 </div>
               </div>
 
-              <div className="mb-6 text-center">
-                <h1 className="font-inter text-3xl font-bold tracking-tight text-terra-on-surface mb-2">
+              {/* Title & Subtitle - Left Aligned */}
+              <div className="mb-5 text-left">
+                <h2 className="font-headline text-2xl lg:text-[28px] font-bold tracking-tight text-terra-on-surface mb-1.5 leading-snug">
                   Daftar Akun Admin
-                </h1>
-                <p className="text-terra-on-surface-variant text-sm leading-relaxed max-w-sm mx-auto">
+                </h2>
+                <p className="font-sans text-xs lg:text-[13px] text-terra-on-surface-variant leading-relaxed">
                   Lengkapi data di bawah ini untuk mengajukan hak akses resmi pengelolaan desa.
                 </p>
               </div>
 
               {/* Feedback Notifications */}
               {errorMessage && !isLoginMode && (
-                <div className="mb-4 flex items-center gap-2.5 rounded-lg bg-terra-error-container/40 p-3 text-xs text-terra-on-error-container border border-terra-error-container">
-                  <AlertCircle size={16} className="shrink-0 text-terra-error" />
+                <div className="mb-3 flex items-center gap-2 rounded-md bg-terra-error-container/40 px-3 py-2 text-xs text-terra-on-error-container border border-terra-error-container">
+                  <AlertCircle size={15} className="shrink-0 text-terra-error" />
                   <span>{errorMessage}</span>
                 </div>
               )}
 
               {successMessage && !isLoginMode && (
-                <div className="mb-4 flex items-center gap-2.5 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800 border border-emerald-200">
-                  <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+                <div className="mb-3 flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-800 border border-emerald-200">
+                  <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
                   <span>{successMessage}</span>
                 </div>
               )}
 
-              <form className="space-y-4" onSubmit={handleRegisterSubmit}>
+              <form className="space-y-3" onSubmit={handleRegisterSubmit}>
                 {/* Nama Lengkap */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant">
-                    Nama Lengkap <span className="text-terra-error">*</span>
+                <div className="space-y-1 text-left">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant flex items-center gap-1">
+                    <span>Nama Lengkap</span>
+                    <span className="text-terra-error">*</span>
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-terra-outline">
-                      <User size={18} strokeWidth={2} />
+                      <User size={16} strokeWidth={2} />
                     </div>
                     <input
                       type="text"
                       required
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
-                      placeholder="Masukkan nama lengkap sesuai KTP"
-                      className="w-full rounded-md border border-terra-outline-variant bg-transparent py-2.5 pl-10 pr-4 text-sm text-terra-on-surface placeholder:text-terra-outline focus:border-terra-primary focus:outline-none focus:ring-1 focus:ring-terra-primary transition-colors"
+                      placeholder="Masukkan nama lengkap"
+                      className="w-full rounded-md border border-terra-outline-variant/70 bg-white py-2.5 pl-9 pr-3 text-xs lg:text-sm text-terra-on-surface placeholder:text-terra-outline/70 focus:border-terra-primary focus:outline-none focus:ring-2 focus:ring-terra-primary/15 transition-all"
                     />
                   </div>
                   {fieldErrors.name && (
-                    <p className="text-[11px] text-terra-error">{fieldErrors.name[0]}</p>
+                    <p className="text-[11px] text-terra-error font-medium">{fieldErrors.name[0]}</p>
                   )}
                 </div>
 
                 {/* Email Resmi */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant">
-                    Email Resmi <span className="text-terra-error">*</span>
+                <div className="space-y-1 text-left">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant flex items-center gap-1">
+                    <span>Email Resmi</span>
+                    <span className="text-terra-error">*</span>
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-terra-outline">
-                      <Mail size={18} strokeWidth={2} />
+                      <Mail size={16} strokeWidth={2} />
                     </div>
                     <input
                       type="email"
                       required
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="contoh: admin@desamaju.id"
-                      className="w-full rounded-md border border-terra-outline-variant bg-transparent py-2.5 pl-10 pr-4 text-sm text-terra-on-surface placeholder:text-terra-outline focus:border-terra-primary focus:outline-none focus:ring-1 focus:ring-terra-primary transition-colors"
+                      placeholder="admin@desamaju.id"
+                      className="w-full rounded-md border border-terra-outline-variant/70 bg-white py-2.5 pl-9 pr-3 text-xs lg:text-sm text-terra-on-surface placeholder:text-terra-outline/70 focus:border-terra-primary focus:outline-none focus:ring-2 focus:ring-terra-primary/15 transition-all"
                     />
                   </div>
                   {fieldErrors.email && (
-                    <p className="text-[11px] text-terra-error">{fieldErrors.email[0]}</p>
+                    <p className="text-[11px] text-terra-error font-medium">{fieldErrors.email[0]}</p>
                   )}
                 </div>
 
                 {/* Desa & Kecamatan */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant">
-                    Desa & Kecamatan <span className="text-terra-error">*</span>
+                <div className="space-y-1 text-left">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant flex items-center gap-1">
+                    <span>Desa & Kecamatan</span>
+                    <span className="text-terra-error">*</span>
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-terra-outline">
-                      <MapPin size={18} strokeWidth={2} />
+                      <MapPin size={16} strokeWidth={2} />
                     </div>
                     <input
                       type="text"
@@ -310,19 +323,20 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
                       value={regVillage}
                       onChange={(e) => setRegVillage(e.target.value)}
                       placeholder="Cth: Sukamaju, Ciawi"
-                      className="w-full rounded-md border border-terra-outline-variant bg-transparent py-2.5 pl-10 pr-4 text-sm text-terra-on-surface placeholder:text-terra-outline focus:border-terra-primary focus:outline-none focus:ring-1 focus:ring-terra-primary transition-colors"
+                      className="w-full rounded-md border border-terra-outline-variant/70 bg-white py-2.5 pl-9 pr-3 text-xs lg:text-sm text-terra-on-surface placeholder:text-terra-outline/70 focus:border-terra-primary focus:outline-none focus:ring-2 focus:ring-terra-primary/15 transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Kata Sandi */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant">
-                    Kata Sandi <span className="text-terra-error">*</span>
+                <div className="space-y-1 text-left">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant flex items-center gap-1">
+                    <span>Kata Sandi</span>
+                    <span className="text-terra-error">*</span>
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-terra-outline">
-                      <Lock size={18} strokeWidth={2} />
+                      <Lock size={16} strokeWidth={2} />
                     </div>
                     <input
                       type={showPassword ? "text" : "password"}
@@ -331,163 +345,165 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="Minimal 8 karakter kombinasi aman"
-                      className="w-full rounded-md border border-terra-outline-variant bg-transparent py-2.5 pl-10 pr-10 text-sm text-terra-on-surface placeholder:text-terra-outline focus:border-terra-primary focus:outline-none focus:ring-1 focus:ring-terra-primary transition-colors"
+                      className="w-full rounded-md border border-terra-outline-variant/70 bg-white py-2.5 pl-9 pr-9 text-xs lg:text-sm text-terra-on-surface placeholder:text-terra-outline/70 focus:border-terra-primary focus:outline-none focus:ring-2 focus:ring-terra-primary/15 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-terra-outline hover:text-terra-on-surface transition-colors"
+                      aria-label={showPassword ? "Sembunyikan sandi" : "Tampilkan sandi"}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                   {fieldErrors.password && (
-                    <p className="text-[11px] text-terra-error">{fieldErrors.password[0]}</p>
+                    <p className="text-[11px] text-terra-error font-medium">{fieldErrors.password[0]}</p>
                   )}
                 </div>
 
                 {/* Persetujuan SK / Terms */}
-                <div className="flex items-start gap-3 pt-2">
-                  <div className="flex h-5 items-center">
-                    <input
-                      id="terms"
-                      type="checkbox"
-                      checked={regAgreeTerms}
-                      onChange={(e) => setRegAgreeTerms(e.target.checked)}
-                      className="h-4 w-4 rounded border-terra-outline-variant text-terra-primary focus:ring-terra-primary cursor-pointer"
-                    />
-                  </div>
-                  <label htmlFor="terms" className="text-xs leading-relaxed text-terra-on-surface-variant cursor-pointer">
-                    Saya menyatakan keabsahan data di atas sesuai SK penugasan resmi Kepala Desa dan menyetujui Ketentuan Layanan.
+                <div className="flex items-start gap-2.5 pt-1 text-left">
+                  <input
+                    id="terms"
+                    type="checkbox"
+                    checked={regAgreeTerms}
+                    onChange={(e) => setRegAgreeTerms(e.target.checked)}
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-terra-outline-variant text-terra-primary focus:ring-terra-primary cursor-pointer accent-terra-primary shrink-0"
+                  />
+                  <label htmlFor="terms" className="text-[11px] leading-relaxed text-terra-on-surface-variant cursor-pointer select-none">
+                    Saya menyatakan keabsahan data sesuai SK penugasan resmi Kepala Desa dan menyetujui Ketentuan Layanan.
                   </label>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-terra-primary py-3 text-sm font-semibold text-white transition-all hover:bg-terra-primary/90 hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-terra-primary py-2.5 text-xs lg:text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#005a1c] hover:shadow-cta active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 size={18} className="animate-spin" />
+                      <Loader2 size={16} className="animate-spin" />
                       Memproses Pendaftaran...
                     </>
                   ) : (
                     <>
                       Daftar Sekarang
-                      <ArrowRight size={18} />
+                      <ArrowRight size={16} />
                     </>
                   )}
                 </button>
               </form>
 
-              <div className="mt-6 text-center text-sm text-terra-on-surface-variant">
+              <div className="mt-4 text-left text-xs text-terra-on-surface-variant">
                 Sudah memiliki akun?{" "}
                 <button
                   type="button"
                   onClick={() => switchMode("login")}
-                  className="font-bold text-terra-primary hover:underline inline-flex items-center gap-1"
+                  className="font-bold text-terra-primary hover:text-terra-on-primary-container hover:underline inline-flex items-center gap-0.5"
                 >
-                  Masuk ke Portal <ArrowRight size={14} />
+                  Masuk ke Portal <ArrowRight size={13} />
                 </button>
               </div>
-            </div>
 
-            {/* Footer */}
-            <div className="mt-6 text-center text-xs text-terra-outline">
-              © 2026 Sentra Desa • Berdaya Dari Desa.
+              {/* Footer */}
+              <div className="mt-6 text-center text-[11px] text-terra-outline">
+                © 2026 Sentra Desa • Berdaya Dari Desa.
+              </div>
             </div>
           </div>
 
 
           {/* ================= LOGIN FORM ================= */}
           <div
-            className={`absolute top-0 left-0 lg:left-[20vw] w-full lg:w-[50vw] h-full flex flex-col justify-between p-8 lg:p-12 xl:px-24 xl:py-16 overflow-y-auto custom-scrollbar transition-all duration-700 delay-100 ${
+            className={`absolute top-0 left-0 lg:left-[20vw] w-full lg:w-[48vw] h-full flex flex-col justify-center px-6 py-6 lg:px-12 xl:px-16 overflow-y-auto custom-scrollbar transition-all duration-700 delay-100 ${
               isLoginMode ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8 pointer-events-none"
             }`}
           >
-            <div className="mx-auto w-full max-w-md mt-auto mb-auto">
-              {/* Logo Section */}
-              <div className="mb-6 flex justify-center items-center gap-[15px]">
+            <div className="mx-auto w-full max-w-[400px] text-left">
+              {/* Logo Section - Left Aligned */}
+              <div className="mb-6 flex items-center justify-start gap-3">
                 <Image
                   src="/images/logo.png"
                   alt="Sentra Desa Logo"
-                  width={42}
-                  height={42}
-                  className="h-[42px] w-auto object-contain"
+                  width={38}
+                  height={38}
+                  className="h-[38px] w-auto object-contain"
                   priority
                 />
                 <div className="leading-tight text-left">
-                  <div className="text-base font-black text-terra-primary uppercase tracking-wide">
+                  <div className="text-base font-black text-terra-primary uppercase tracking-wider font-sans">
                     SENTRA DESA
                   </div>
-                  <div className="text-[10px] font-bold text-terra-on-surface-variant">
+                  <div className="text-[10px] font-semibold text-terra-on-surface-variant">
                     Berdaya dari Desa
                   </div>
                 </div>
               </div>
 
-              <div className="mb-6 text-center">
-                <h1 className="font-inter text-3xl font-bold tracking-tight text-terra-on-surface mb-2">
-                  Selamat Datang Kembali
-                </h1>
-                <p className="text-terra-on-surface-variant text-sm leading-relaxed max-w-sm mx-auto">
-                  Masukkan email dan kata sandi Anda untuk mengakses portal pengelolaan desa.
+              {/* Title & Subtitle - Left Aligned ("Selamat datang kembali" ONLY here!) */}
+              <div className="mb-6 text-left">
+                <h2 className="font-headline text-2xl lg:text-[30px] font-bold tracking-tight text-terra-on-surface mb-1.5 leading-snug">
+                  Selamat datang kembali
+                </h2>
+                <p className="font-sans text-xs lg:text-[13px] text-terra-on-surface-variant leading-relaxed">
+                  Masuk ke akun Anda untuk melanjutkan.
                 </p>
               </div>
 
               {/* Feedback Notifications */}
               {errorMessage && isLoginMode && (
-                <div className="mb-4 flex items-center gap-2.5 rounded-lg bg-terra-error-container/40 p-3 text-xs text-terra-on-error-container border border-terra-error-container">
-                  <AlertCircle size={16} className="shrink-0 text-terra-error" />
+                <div className="mb-3 flex items-center gap-2 rounded-md bg-terra-error-container/40 px-3 py-2 text-xs text-terra-on-error-container border border-terra-error-container">
+                  <AlertCircle size={15} className="shrink-0 text-terra-error" />
                   <span>{errorMessage}</span>
                 </div>
               )}
 
               {successMessage && isLoginMode && (
-                <div className="mb-4 flex items-center gap-2.5 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800 border border-emerald-200">
-                  <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+                <div className="mb-3 flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-800 border border-emerald-200">
+                  <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
                   <span>{successMessage}</span>
                 </div>
               )}
 
               <form className="space-y-4" onSubmit={handleLoginSubmit}>
                 {/* Email */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant">
-                    Email Resmi <span className="text-terra-error">*</span>
+                <div className="space-y-1.5 text-left">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant flex items-center gap-1">
+                    <span>Email Resmi</span>
+                    <span className="text-terra-error">*</span>
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-terra-outline">
-                      <Mail size={18} strokeWidth={2} />
+                      <Mail size={16} strokeWidth={2} />
                     </div>
                     <input
                       type="email"
                       required
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="admin@desamaju.id"
-                      className="w-full rounded-md border border-terra-outline-variant bg-transparent py-2.5 pl-10 pr-4 text-sm text-terra-on-surface placeholder:text-terra-outline focus:border-terra-primary focus:outline-none focus:ring-1 focus:ring-terra-primary transition-colors"
+                      placeholder="Masukkan email Anda"
+                      className="w-full rounded-md border border-terra-outline-variant/70 bg-white py-2.5 pl-9 pr-3 text-xs lg:text-sm text-terra-on-surface placeholder:text-terra-outline/70 focus:border-terra-primary focus:outline-none focus:ring-2 focus:ring-terra-primary/15 transition-all"
                     />
                   </div>
                   {fieldErrors.email && (
-                    <p className="text-[11px] text-terra-error">{fieldErrors.email[0]}</p>
+                    <p className="text-[11px] text-terra-error font-medium">{fieldErrors.email[0]}</p>
                   )}
                 </div>
 
                 {/* Password */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 text-left">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant">
-                      Kata Sandi <span className="text-terra-error">*</span>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-terra-on-surface-variant flex items-center gap-1">
+                      <span>Kata Sandi</span>
+                      <span className="text-terra-error">*</span>
                     </label>
-                    <button type="button" className="text-xs font-semibold text-terra-primary hover:underline">
-                      Lupa Sandi?
+                    <button type="button" className="text-xs font-semibold text-terra-primary hover:text-terra-on-primary-container hover:underline">
+                      Lupa sandi?
                     </button>
                   </div>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-terra-outline">
-                      <Lock size={18} strokeWidth={2} />
+                      <Lock size={16} strokeWidth={2} />
                     </div>
                     <input
                       type={showPassword ? "text" : "password"}
@@ -495,33 +511,32 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       placeholder="Masukkan kata sandi Anda"
-                      className="w-full rounded-md border border-terra-outline-variant bg-transparent py-2.5 pl-10 pr-10 text-sm text-terra-on-surface placeholder:text-terra-outline focus:border-terra-primary focus:outline-none focus:ring-1 focus:ring-terra-primary transition-colors"
+                      className="w-full rounded-md border border-terra-outline-variant/70 bg-white py-2.5 pl-9 pr-9 text-xs lg:text-sm text-terra-on-surface placeholder:text-terra-outline/70 focus:border-terra-primary focus:outline-none focus:ring-2 focus:ring-terra-primary/15 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-terra-outline hover:text-terra-on-surface transition-colors"
+                      aria-label={showPassword ? "Sembunyikan sandi" : "Tampilkan sandi"}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                   {fieldErrors.password && (
-                    <p className="text-[11px] text-terra-error">{fieldErrors.password[0]}</p>
+                    <p className="text-[11px] text-terra-error font-medium">{fieldErrors.password[0]}</p>
                   )}
                 </div>
 
                 {/* Remember Me */}
-                <div className="flex items-start gap-3 pt-1">
-                  <div className="flex h-5 items-center">
-                    <input
-                      id="remember"
-                      type="checkbox"
-                      checked={loginRemember}
-                      onChange={(e) => setLoginRemember(e.target.checked)}
-                      className="h-4 w-4 rounded border-terra-outline-variant text-terra-primary focus:ring-terra-primary cursor-pointer"
-                    />
-                  </div>
-                  <label htmlFor="remember" className="text-xs leading-relaxed text-terra-on-surface-variant cursor-pointer">
+                <div className="flex items-start gap-2.5 pt-0.5 text-left">
+                  <input
+                    id="remember"
+                    type="checkbox"
+                    checked={loginRemember}
+                    onChange={(e) => setLoginRemember(e.target.checked)}
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-terra-outline-variant text-terra-primary focus:ring-terra-primary cursor-pointer accent-terra-primary shrink-0"
+                  />
+                  <label htmlFor="remember" className="text-xs text-terra-on-surface-variant cursor-pointer select-none">
                     Ingat saya di perangkat ini
                   </label>
                 </div>
@@ -529,37 +544,37 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-terra-primary py-3 text-sm font-semibold text-white transition-all hover:bg-terra-primary/90 hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-terra-primary py-2.5 text-xs lg:text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#005a1c] hover:shadow-cta active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 size={18} className="animate-spin" />
+                      <Loader2 size={16} className="animate-spin" />
                       Memverifikasi Akun...
                     </>
                   ) : (
                     <>
-                      <LogIn size={18} />
-                      Masuk Sekarang
+                      <span>Masuk</span>
+                      <ArrowRight size={16} />
                     </>
                   )}
                 </button>
               </form>
 
-              <div className="mt-6 text-center text-sm text-terra-on-surface-variant">
+              <div className="mt-5 text-left text-xs text-terra-on-surface-variant">
                 Belum memiliki akun?{" "}
                 <button
                   type="button"
                   onClick={() => switchMode("register")}
-                  className="font-bold text-terra-primary hover:underline inline-flex items-center gap-1"
+                  className="font-bold text-terra-primary hover:text-terra-on-primary-container hover:underline inline-flex items-center gap-0.5"
                 >
-                  Daftar Sekarang <ArrowRight size={14} />
+                  Daftar Sekarang <ArrowRight size={13} />
                 </button>
               </div>
-            </div>
 
-            {/* Footer */}
-            <div className="mt-6 text-center text-xs text-terra-outline">
-              © 2026 Sentra Desa • Berdaya Dari Desa.
+              {/* Footer */}
+              <div className="mt-8 text-center text-[11px] text-terra-outline">
+                © 2026 Sentra Desa • Berdaya Dari Desa.
+              </div>
             </div>
           </div>
 

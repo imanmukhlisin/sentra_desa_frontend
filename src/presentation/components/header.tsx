@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AddBusinessIcon, ArrowRightIcon, SearchIcon, ShoppingBagIcon } from "@/presentation/components/icons";
+import { ArrowRightIcon, SearchIcon, ShoppingBagIcon } from "@/presentation/components/icons";
 
 export function Header() {
   return (
@@ -25,14 +25,6 @@ export function Header() {
         </form>
 
         <div className="flex shrink-0 items-center gap-2 md:gap-3">
-          <Link
-            className="inline-flex items-center gap-2 rounded-lg border border-[#b9ccb5] bg-white px-3.5 py-2 text-xs font-semibold text-[#171d18] shadow-sm transition hover:bg-[#eff6ec]"
-            href="/village-admin/register/"
-            title="Registrasi Desa"
-          >
-            <AddBusinessIcon className="h-4 w-4 text-[#3b4b39]" />
-            <span className="hidden sm:inline">Registrasi Desa</span>
-          </Link>
           <Link
             className="inline-flex items-center gap-1.5 rounded-lg bg-[#006e23] px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-[#005319]"
             href="/login/"
