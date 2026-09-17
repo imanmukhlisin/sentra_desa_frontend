@@ -62,11 +62,27 @@ export function ExportDetail({ id }: { id: string }) {
 
   const raw = item.raw || {};
   const images = item.gallery?.length ? item.gallery : item.image ? [item.image] : ["/images/header-sentradesa-1.webp"];
-  const country = String(raw.destination_country || raw.negara_tujuan || "Jepang, Malaysia, Singapura & UEA");
-  const volume = String(raw.export_volume || raw.volume_ekspor || "50 Ton / Bulan");
-  const certs = String(raw.certification || raw.sertifikasi || "Sertifikat Halal MUI, Organik Indonesia, HACCP, ISO 22000").split(",");
-  const moq = String(raw.min_order || raw.moq || "1 Ton");
-  const phone = String(raw.phone || "6281234567890");
+  
+  const destArray = Array.isArray(raw.destination_countries)
+    ? raw.destination_countries.map(String)
+    : raw.destination_country
+    ? [String(raw.destination_country)]
+    : ["Jepang", "Malaysia", "Singapura"];
+  const country = destArray.join(", ");
+  
+  const hsCode = raw.hs_code ? String(raw.hs_code) : null;
+  const exportStatus = raw.export_status ? String(raw.export_status).replace(/_/g, " ").toUpperCase() : "SIAP EKSPOR";
+  const volume = raw.export_volume ? `${raw.export_volume} ${raw.unit || "Ton / Periode"}` : "50 Ton / Bulan";
+  
+  const certs: string[] = Array.isArray(raw.certifications)
+    ? raw.certifications.map(String)
+    : typeof raw.certification === "string" && raw.certification
+    ? String(raw.certification).split(",")
+    : ["Sertifikat Organik", "Halal MUI", "HACCP"];
+
+  const contactPerson = String(raw.contact_person || "Pengurus Koperasi / PIC Ekspor");
+  const phone = String(raw.contact_phone || raw.phone || "6281234567890");
+  const email = raw.contact_email ? String(raw.contact_email) : null;
 
   return (
     <div className="min-h-screen bg-slate-50 pt-[90px] pb-16">
@@ -79,7 +95,7 @@ export function ExportDetail({ id }: { id: string }) {
             Kembali ke Desa Ekspor
           </Link>
           <span className="rounded-full bg-indigo-50 border border-indigo-200 px-3 py-1 text-[11px] font-extrabold text-indigo-900 uppercase">
-            Standar Mutu Ekspor
+            {exportStatus}
           </span>
         </div>
       </div>
@@ -109,27 +125,33 @@ export function ExportDetail({ id }: { id: string }) {
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="rounded-xl border border-slate-200 bg-indigo-50/40 p-3.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Negara Tujuan Ekspor</span>
-                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block leading-tight">
-                    🌐 {country}
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Klasifikasi HS Code</span>
+                  <strong className="text-xs font-black text-indigo-950 mt-1 block">
+                    📋 {hsCode ? `HS ${hsCode}` : "Tersertifikasi"}
                   </strong>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kapasitas Produksi</span>
-                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block">
+                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate">
                     {volume}
                   </strong>
                 </div>
-                <div className="col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Minimum Pemesanan (MOQ)</span>
-                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block">
-                    {moq}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Negara Tujuan Ekspor</span>
+                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block leading-tight truncate" title={country}>
+                    🌐 {country}
+                  </strong>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-emerald-50/40 p-3.5">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kontak Koperasi / PIC</span>
+                  <strong className="text-xs font-black text-slate-900 mt-1 block truncate" title={contactPerson}>
+                    👤 {contactPerson}
                   </strong>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Sertifikasi & Mutu Interasional</h3>
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Sertifikasi & Standar Mutu</h3>
                 <div className="flex flex-wrap gap-2">
                   {certs.map((c, idx) => (
                     <span key={idx} className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 border border-emerald-200">
@@ -139,15 +161,23 @@ export function ExportDetail({ id }: { id: string }) {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-wrap gap-3 pt-2">
                 <a
-                  href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo,%20saya%20tertarik%20mengajukan%20penawaran/inquiry%20ekspor%20untuk%20${encodeURIComponent(item.title)}.`}
+                  href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20${encodeURIComponent(contactPerson)},%20saya%20tertarik%20mengajukan%20inquiry%20ekspor%20untuk%20komoditas%20${encodeURIComponent(item.title)}.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-900 px-5 py-3 text-xs font-extrabold text-white shadow-md hover:bg-indigo-950 transition"
+                  className="flex-1 min-w-[200px] inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-900 px-5 py-3 text-xs font-extrabold text-white shadow-md hover:bg-indigo-950 transition"
                 >
-                  🌐 Permohonan Penawaran / Export Inquiry
+                  <PhoneIcon className="h-4 w-4" /> Hubungi Kontak Koperasi ({contactPerson})
                 </a>
+                {email ? (
+                  <a
+                    href={`mailto:${email}?subject=Inquiry%20Ekspor%20${encodeURIComponent(item.title)}`}
+                    className="sentra-button-outline px-4 py-3 text-xs font-bold text-slate-700"
+                  >
+                    ✉ Email Koperasi
+                  </a>
+                ) : null}
               </div>
             </div>
           </div>
