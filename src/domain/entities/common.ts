@@ -9,6 +9,7 @@ export type ListQuery = {
   province_id?: string;
   regency_id?: string;
   district_id?: string;
+  is_featured?: string | boolean;
   page?: string;
   per_page?: string;
   limit?: string;

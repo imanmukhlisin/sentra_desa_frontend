@@ -9,16 +9,19 @@ type ApiResponse<T> = {
 export class HttpClient {
   constructor(private readonly baseUrl = siteConfig.apiBaseUrl) {}
 
-  async get<T>(endpoint: string, query?: Record<string, string | undefined>): Promise<T | null> {
+  async get<T>(endpoint: string, query?: Record<string, string | number | boolean | undefined>): Promise<T | null> {
     const urlsToTry: string[] = [];
 
-    if (typeof window !== "undefined") {
-      if (process.env.NEXT_PUBLIC_API_BASE_URL) {
-        urlsToTry.push(process.env.NEXT_PUBLIC_API_BASE_URL);
-      }
-      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-        urlsToTry.push("http://localhost:8000/api/v1");
-      }
+    if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+      urlsToTry.push(process.env.NEXT_PUBLIC_API_BASE_URL);
+    }
+
+    if (
+      process.env.NODE_ENV === "development" ||
+      (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"))
+    ) {
+      urlsToTry.push("http://127.0.0.1:8000/api/v1");
+      urlsToTry.push("http://localhost:8000/api/v1");
     }
 
     urlsToTry.push(this.baseUrl);
@@ -34,7 +37,9 @@ export class HttpClient {
         const url = new URL(`${cleanBase}/${cleanEndpoint}`);
 
         Object.entries(query ?? {}).forEach(([key, value]) => {
-          if (value) url.searchParams.set(key, value);
+          if (value !== undefined && value !== null && value !== "") {
+            url.searchParams.set(key, String(value));
+          }
         });
 
         const response = await fetch(url.toString(), {

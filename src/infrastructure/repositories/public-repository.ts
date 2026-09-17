@@ -248,7 +248,7 @@ export class LaravelPublicRepository {
   }
 }
 
-function unwrapList(data: unknown): Dictionary[] {
+export function unwrapList(data: unknown): Dictionary[] {
   if (Array.isArray(data)) return data as Dictionary[];
   if (isRecord(data) && Array.isArray(data.data)) return data.data as Dictionary[];
   return [];
@@ -257,18 +257,66 @@ function unwrapList(data: unknown): Dictionary[] {
 function unwrapDetail(data: unknown): Dictionary | null {
   if (!isRecord(data)) return null;
   if (isRecord(data.data)) return unwrapDetail(data.data);
-  if (isRecord(data.village)) return unwrapDetail(data.village);
-  if (isRecord(data.product)) return unwrapDetail(data.product);
-  if (isRecord(data.tourism)) return unwrapDetail(data.tourism);
-  if (isRecord(data.article)) return unwrapDetail(data.article);
-  if (isRecord(data.potential)) return unwrapDetail(data.potential);
-  if (isRecord(data.bumdes)) return unwrapDetail(data.bumdes);
-  if (isRecord(data.export)) return unwrapDetail(data.export);
-  if (isRecord(data.service)) return unwrapDetail(data.service);
+  if (isRecord(data.village)) {
+    return {
+      ...data,
+      ...data.village,
+      village: data.village
+    };
+  }
+  if (isRecord(data.product)) {
+    return {
+      ...data,
+      ...data.product,
+      product: data.product
+    };
+  }
+  if (isRecord(data.tourism)) {
+    return {
+      ...data,
+      ...data.tourism,
+      tourism: data.tourism
+    };
+  }
+  if (isRecord(data.article)) {
+    return {
+      ...data,
+      ...data.article,
+      article: data.article
+    };
+  }
+  if (isRecord(data.potential)) {
+    return {
+      ...data,
+      ...data.potential,
+      potential: data.potential
+    };
+  }
+  if (isRecord(data.bumdes)) {
+    return {
+      ...data,
+      ...data.bumdes,
+      bumdes: data.bumdes
+    };
+  }
+  if (isRecord(data.export)) {
+    return {
+      ...data,
+      ...data.export,
+      export: data.export
+    };
+  }
+  if (isRecord(data.service)) {
+    return {
+      ...data,
+      ...data.service,
+      service: data.service
+    };
+  }
   return data;
 }
 
-function mapCatalogItem(kind: CatalogKind, raw: Dictionary): CatalogItem {
+export function mapCatalogItem(kind: CatalogKind, raw: Dictionary): CatalogItem {
   const nestedVillage = record(raw.village);
   const rawId = text(raw.id);
   const rawCode = text(raw.code);
@@ -279,7 +327,9 @@ function mapCatalogItem(kind: CatalogKind, raw: Dictionary): CatalogItem {
   const title = titleFor(kind, raw);
   const subtitle = subtitleFor(kind, raw, nestedVillage);
   const description = truncate(text(raw.description) || text(raw.content) || text(raw.summary), 140);
-  const image = imageUrl(text(raw.image) || text(raw.cover_image) || text(raw.thumbnail) || text(raw.logo));
+  const image =
+    imageUrl(text(raw.image) || text(raw.cover_image) || text(raw.thumbnail) || text(raw.logo)) ||
+    (kind === "villages" ? "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80" : undefined);
   const price = number(raw.price);
   const badge = badgeFor(kind, raw);
 
@@ -375,12 +425,24 @@ function mapDetailItem(kind: CatalogKind, raw: Dictionary): DetailItem {
     if (reqBudget) facts.push({ label: "Anggaran Dibutuhkan", value: formatCurrency(reqBudget) });
     if (text(raw.status)) facts.push({ label: "Status Realisasi", value: text(raw.status) });
   } else if (kind === "villages") {
-    if (text(raw.head_name)) facts.push({ label: "Kepala Desa", value: text(raw.head_name) });
-    if (text(raw.population)) facts.push({ label: "Populasi", value: `${text(raw.population)} Jiwa` });
-    if (text(raw.area_size)) facts.push({ label: "Luas Wilayah", value: `${text(raw.area_size)} Ha` });
-    if (text(raw.code)) facts.push({ label: "Kode Desa", value: text(raw.code) });
+    const head = text(raw.head_name) || text(raw.mayor_name) || text(villageRaw.head_name) || text(villageRaw.mayor_name);
+    if (head) facts.push({ label: "Kepala Desa", value: head });
+    const pop = text(raw.population) || text(villageRaw.population);
+    if (pop) facts.push({ label: "Populasi", value: `${pop} Jiwa` });
+    const area = text(raw.area_size) || text(villageRaw.area_size);
+    if (area) facts.push({ label: "Luas Wilayah", value: `${area} Ha` });
+    const code = text(raw.code) || text(villageRaw.code);
+    if (code) facts.push({ label: "Kode Desa", value: code });
+    const phone = text(raw.contact_phone) || text(raw.phone) || text(villageRaw.phone);
+    if (phone) facts.push({ label: "Kontak Kantor", value: phone });
+    const email = text(raw.contact_email) || text(raw.email) || text(villageRaw.email);
+    if (email) facts.push({ label: "Email Resmi", value: email });
+    const address = text(raw.address) || text(villageRaw.address);
+    if (address) facts.push({ label: "Alamat Kantor", value: address });
     if (stats.total_products !== undefined) facts.push({ label: "Total Produk", value: `${text(stats.total_products)} Produk` });
     if (stats.total_tourisms !== undefined) facts.push({ label: "Total Wisata", value: `${text(stats.total_tourisms)} Destinasi` });
+    if (stats.total_potentials !== undefined) facts.push({ label: "Total Potensi", value: `${text(stats.total_potentials)} Potensi` });
+    if (stats.total_bumdes !== undefined) facts.push({ label: "Total BUMDes", value: `${text(stats.total_bumdes)} Unit` });
   }
 
   return { ...item, body, gallery, facts };
@@ -437,7 +499,12 @@ function imageUrl(path?: string) {
   if (!path) return undefined;
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
   if (path.startsWith("/")) return path;
-  return `https://sentradesa.id/storage/${path}`;
+  const storageHost =
+    process.env.NODE_ENV === "development" ||
+    (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"))
+      ? "http://127.0.0.1:8000/storage"
+      : "https://sentradesa.id/storage";
+  return `${storageHost}/${path}`;
 }
 
 function truncate(str: string, length: number) {

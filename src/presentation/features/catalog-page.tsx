@@ -43,6 +43,10 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
   const villageId = searchParams.get("village_id");
   const category = searchParams.get("category");
   const search = searchParams.get("search");
+  const provinceId = searchParams.get("province_id");
+  const regencyId = searchParams.get("regency_id");
+  const districtId = searchParams.get("district_id");
+  const isFeatured = searchParams.get("is_featured");
 
   const [items, setItems] = useState<CatalogItem[]>(initialItems || []);
   const [loading, setLoading] = useState(!initialItems || initialItems.length === 0);
@@ -56,7 +60,11 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
     const query = {
       village_id: villageId || undefined,
       category: category || undefined,
-      search: search || undefined
+      search: search || undefined,
+      province_id: provinceId || undefined,
+      regency_id: regencyId || undefined,
+      district_id: districtId || undefined,
+      is_featured: isFeatured || undefined
     };
 
     getCatalog(kind, query)
@@ -76,7 +84,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
     return () => {
       isMounted = false;
     };
-  }, [kind, detailId, villageId, category, search]);
+  }, [kind, detailId, villageId, category, search, provinceId, regencyId, districtId, isFeatured]);
 
   if (detailId) {
     switch (kind) {

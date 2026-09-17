@@ -236,10 +236,10 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
               {/* Title & Subtitle - Left Aligned */}
               <div className="mb-5 text-left">
                 <h2 className="font-headline text-2xl lg:text-[28px] font-bold tracking-tight text-terra-on-surface mb-1.5 leading-snug">
-                  Daftar Akun Admin
+                  Daftar Akun
                 </h2>
                 <p className="font-sans text-xs lg:text-[13px] text-terra-on-surface-variant leading-relaxed">
-                  Lengkapi data di bawah ini untuk mengajukan hak akses resmi pengelolaan desa.
+                  Lengkapi data di bawah ini untuk membuat akun baru di Sentra Desa.
                 </p>
               </div>
 
@@ -371,7 +371,7 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
                     className="mt-0.5 h-3.5 w-3.5 rounded border-terra-outline-variant text-terra-primary focus:ring-terra-primary cursor-pointer accent-terra-primary shrink-0"
                   />
                   <label htmlFor="terms" className="text-[11px] leading-relaxed text-terra-on-surface-variant cursor-pointer select-none">
-                    Saya menyatakan keabsahan data sesuai SK penugasan resmi Kepala Desa dan menyetujui Ketentuan Layanan.
+                    Saya menyetujui Ketentuan Layanan dan Kebijakan Privasi Sentra Desa.
                   </label>
                 </div>
 

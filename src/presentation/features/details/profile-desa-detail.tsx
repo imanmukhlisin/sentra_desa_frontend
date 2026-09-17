@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CatalogItem, DetailItem } from "@/domain/entities/common";
-import { getCatalog, getDetail } from "@/application/use-cases/get-public-content";
+import { getDetail } from "@/application/use-cases/get-public-content";
+import { unwrapList, mapCatalogItem } from "@/infrastructure/repositories/public-repository";
 import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-carousel";
 import { CatalogCard } from "@/presentation/components/catalog-card";
 import {
@@ -78,6 +79,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
   const [bumdes, setBumdes] = useState<CatalogItem[]>([]);
   const [tourisms, setTourisms] = useState<CatalogItem[]>([]);
   const [products, setProducts] = useState<CatalogItem[]>([]);
+  const [exports, setExports] = useState<CatalogItem[]>([]);
   const [lkdd, setLkdd] = useState<CatalogItem[]>([]);
   const [services, setServices] = useState<CatalogItem[]>([]);
   const [articles, setArticles] = useState<CatalogItem[]>([]);
@@ -92,25 +94,24 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         if (!isMounted) return;
         setVillage(detail);
 
-        // Fetch preview items for sub-modules filtered by village_id
-        const [potData, bumData, tourData, prodData, lkddData, srvData, artData] = await Promise.all([
-          getCatalog("potentials", { village_id: id }),
-          getCatalog("bumdes", { village_id: id }),
-          getCatalog("tourisms", { village_id: id }),
-          getCatalog("products", { village_id: id }),
-          getCatalog("lkdd", { village_id: id }),
-          getCatalog("services", { village_id: id }),
-          getCatalog("articles", { village_id: id })
-        ]);
+        const raw = detail?.raw || {};
+        const rawPot = unwrapList(raw.potentials || raw.potentials_preview);
+        const rawBum = unwrapList(raw.bumdes || raw.bumdes_preview);
+        const rawTour = unwrapList(raw.tourisms || raw.tourisms_preview);
+        const rawProd = unwrapList(raw.products || raw.products_preview);
+        const rawExp = unwrapList(raw.export_products || raw.export_products_preview);
+        const rawLkdd = unwrapList(raw.lkdd || raw.lkdd_preview);
+        const rawSrv = unwrapList(raw.services || raw.services_preview || raw.village_services);
+        const rawArt = unwrapList(raw.contents || raw.contents_preview || raw.articles);
 
-        if (!isMounted) return;
-        setPotentials(potData);
-        setBumdes(bumData);
-        setTourisms(tourData);
-        setProducts(prodData);
-        setLkdd(lkddData);
-        setServices(srvData);
-        setArticles(artData);
+        setPotentials(rawPot.map((p) => mapCatalogItem("potentials", p)));
+        setBumdes(rawBum.map((b) => mapCatalogItem("bumdes", b)));
+        setTourisms(rawTour.map((t) => mapCatalogItem("tourisms", t)));
+        setProducts(rawProd.map((p) => mapCatalogItem("products", p)));
+        setExports(rawExp.map((e) => mapCatalogItem("exports", e)));
+        setLkdd(rawLkdd.map((l) => mapCatalogItem("lkdd", l)));
+        setServices(rawSrv.map((s) => mapCatalogItem("services", s)));
+        setArticles(rawArt.map((a) => mapCatalogItem("articles", a)));
       } catch (err) {
         console.error("Error fetching village details:", err);
       } finally {
@@ -155,10 +156,14 @@ export function ProfileDesaDetail({ id }: { id: string }) {
 
   const raw = village.raw || {};
   const images = village.gallery && village.gallery.length ? village.gallery : village.image ? [village.image] : ["/images/header-sentradesa-1.webp"];
-  const headName = String(raw.head_name || raw.kepala_desa || "Pemerintah Desa");
+  const headName = String(raw.head_name || raw.mayor_name || raw.kepala_desa || "Pemerintah Desa");
   const population = String(raw.population || raw.jumlah_penduduk || "-");
   const areaSize = String(raw.area_size || raw.luas_wilayah || "-");
-  const phone = String(raw.phone || raw.telepon || "6281234567890");
+  const phone = String(raw.contact_phone || raw.phone || raw.telepon || "");
+  const email = String(raw.contact_email || raw.email || "");
+  const address = String(raw.address || "");
+  const vision = String(raw.vision || "");
+  const mission = String(raw.mission || "");
   const villageCode = String(raw.code || raw.kode_desa || village.id);
 
   return (
@@ -200,14 +205,16 @@ export function ProfileDesaDetail({ id }: { id: string }) {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <a
-                  href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition"
-                >
-                  <PhoneIcon className="h-4 w-4" /> Hubungi Kantor Desa
-                </a>
+                {phone ? (
+                  <a
+                    href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition"
+                  >
+                    <PhoneIcon className="h-4 w-4" /> Hubungi Kantor Desa
+                  </a>
+                ) : null}
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent(village.title)}`}
                   target="_blank"
@@ -243,11 +250,37 @@ export function ProfileDesaDetail({ id }: { id: string }) {
             <div className="rounded-xl border border-slate-200/60 bg-white p-3.5 text-center shadow-2xs">
               <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status Desa</span>
               <strong className="block mt-1 text-sm font-extrabold text-emerald-600">
-                Desa Mandiri
+                {raw.is_featured ? "Desa Unggulan" : "Desa Terverifikasi"}
               </strong>
             </div>
           </div>
         </div>
+
+        {/* Visi & Misi Desa */}
+        {(vision || mission) ? (
+          <div className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 md:p-8 shadow-sm space-y-4">
+            <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+              <VillageIcon className="h-5 w-5 text-sentra-emerald" />
+              Visi & Misi Desa
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {vision ? (
+                <div className="rounded-xl bg-emerald-50/70 border border-emerald-200/70 p-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-emerald-800">Visi Desa</h3>
+                  <p className="mt-2 text-sm font-semibold text-slate-800 italic leading-relaxed">"{vision}"</p>
+                </div>
+              ) : null}
+              {mission ? (
+                <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-4">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-700">Misi Desa</h3>
+                  <div className="mt-2 text-xs md:text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                    {mission}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
 
         {/* Sejarah & Deskripsi Desa */}
         <div className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 md:p-8 shadow-sm space-y-3">
@@ -263,7 +296,41 @@ export function ProfileDesaDetail({ id }: { id: string }) {
           />
         </div>
 
-        {/* 7 Sub-Module Preview Sections with "Selengkapnya" CTA buttons */}
+        {/* Kontak & Kantor Desa */}
+        {(address || email || phone) ? (
+          <div className="mt-8 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+              <MapPinIcon className="h-5 w-5 text-red-600" />
+              Kontak & Alamat Kantor Desa
+            </h2>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              {address ? (
+                <div className="rounded-xl bg-slate-50 p-3.5 border border-slate-200/60">
+                  <span className="block font-bold text-slate-400 uppercase tracking-wider text-[10px]">Alamat Kantor</span>
+                  <p className="mt-1 font-semibold text-slate-800">{address}</p>
+                </div>
+              ) : null}
+              {phone ? (
+                <div className="rounded-xl bg-slate-50 p-3.5 border border-slate-200/60">
+                  <span className="block font-bold text-slate-400 uppercase tracking-wider text-[10px]">Telepon / WhatsApp</span>
+                  <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="mt-1 block font-semibold text-emerald-700 hover:underline">
+                    {phone}
+                  </a>
+                </div>
+              ) : null}
+              {email ? (
+                <div className="rounded-xl bg-slate-50 p-3.5 border border-slate-200/60">
+                  <span className="block font-bold text-slate-400 uppercase tracking-wider text-[10px]">Email Resmi</span>
+                  <a href={`mailto:${email}`} className="mt-1 block font-semibold text-blue-700 hover:underline">
+                    {email}
+                  </a>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Sub-Module Preview Sections with "Selengkapnya" CTA buttons */}
         <ModuleSection
           title="Potensi Desa"
           subtitle="Peluang investasi, komoditas unggulan & sumber daya alam desa"
@@ -298,6 +365,15 @@ export function ProfileDesaDetail({ id }: { id: string }) {
           color="#2E7D32"
           items={products}
           moreHref={`/sentra-produk?village_id=${village.id}`}
+        />
+
+        <ModuleSection
+          title="Komoditas Desa Ekspor"
+          subtitle="Produk komoditas unggulan desa berdaya saing pasar global"
+          icon={GlobeIcon}
+          color="#00695C"
+          items={exports}
+          moreHref={`/desa-ekspor?village_id=${village.id}`}
         />
 
         <ModuleSection
