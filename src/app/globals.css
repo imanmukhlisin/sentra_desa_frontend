@@ -107,14 +107,19 @@
 
   html {
     scroll-behavior: smooth;
-    font-family: var(--font-nunito), "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-jakarta), var(--font-roboto), Roboto, Arial, sans-serif;
   }
 
   body {
     margin: 0;
-    background: #f4fbf2;
+    min-height: 100vh;
+    background: 
+      radial-gradient(ellipse 75% 65% at 8% 28%, rgba(220, 236, 222, 0.95) 0%, rgba(220, 236, 222, 0.45) 45%, transparent 72%),
+      radial-gradient(ellipse 75% 65% at 92% 38%, rgba(254, 223, 201, 0.95) 0%, rgba(254, 223, 201, 0.45) 45%, transparent 72%),
+      linear-gradient(115deg, #e1ece2 0%, #edf4ed 28%, #faf8f5 50%, #fef3e9 74%, #fce1cb 100%);
+    background-attachment: fixed;
     color: #171d18;
-    font-family: inherit;
+    font-family: var(--font-jakarta), var(--font-roboto), Roboto, Arial, sans-serif;
   }
 
   a {
@@ -144,15 +149,72 @@
 
 @layer components {
   .sentra-shell {
-    @apply min-h-screen bg-[#f4fbf2] text-[#171d18];
+    @apply min-h-screen text-[#171d18];
+    background: transparent;
   }
 
   .sentra-container {
     @apply mx-auto w-full max-w-[1240px] px-4 md:px-6;
   }
 
+  /* Soft ambient elevated card matching the warm earthy gradient */
+  .ambient-card {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 14px;
+    box-shadow: 
+      0 14px 34px -6px rgba(180, 145, 120, 0.18),
+      0 4px 12px -2px rgba(180, 145, 120, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ambient-card-interactive {
+    @apply ambient-card cursor-pointer select-none;
+    border-radius: 14px;
+  }
+
+  .ambient-card-interactive:hover {
+    background: rgba(255, 255, 255, 0.94);
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 
+      0 20px 42px -6px rgba(180, 145, 120, 0.26),
+      0 6px 16px -2px rgba(180, 145, 120, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+  }
+
+  /* Soft glowing green button like in reference */
+  .ambient-btn-primary {
+    background: #006e23;
+    color: #ffffff;
+    box-shadow: 
+      0 8px 22px -3px rgba(195, 140, 95, 0.4),
+      0 3px 8px rgba(0, 110, 35, 0.25);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .ambient-btn-primary:hover {
+    background: #005319;
+    box-shadow: 
+      0 12px 28px -3px rgba(195, 140, 95, 0.5),
+      0 4px 12px rgba(0, 110, 35, 0.35);
+    transform: translateY(-1px);
+  }
+
   .glass-header {
-    @apply fixed inset-x-0 top-0 z-50 h-[85px] border-b border-[#b9ccb5]/40 bg-[#f4fbf2]/85 backdrop-blur-[20px];
+    @apply fixed inset-x-0 top-0 z-50 h-[92px] md:h-[98px] border-b border-white/70 backdrop-blur-[18px];
+    background: linear-gradient(
+      90deg, 
+      rgba(225, 236, 226, 0.92) 0%, 
+      rgba(240, 246, 239, 0.88) 25%, 
+      rgba(250, 248, 245, 0.88) 50%, 
+      rgba(254, 243, 233, 0.88) 75%, 
+      rgba(254, 226, 206, 0.92) 100%
+    );
+    box-shadow: 0 4px 20px -4px rgba(180, 145, 120, 0.12), inset 0 -1px 0 rgba(255, 255, 255, 0.8);
   }
 
   .icon-button {
@@ -176,7 +238,7 @@
   }
 
   .product-grid {
-    @apply grid grid-cols-2 gap-5 px-[15px] py-2.5 md:grid-cols-4 md:px-0;
+    @apply grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-6 px-0 py-3;
   }
 
   .standard-grid {
@@ -184,7 +246,7 @@
   }
 
   .empty-state {
-    @apply rounded-2xl border border-dashed border-slate-200 bg-white/70 p-10 text-center text-slate-500;
+    @apply rounded-[10px] border border-dashed border-slate-200 bg-white/70 p-10 text-center text-slate-500;
   }
 
   .field {
@@ -209,6 +271,17 @@
 
   .content {
     @apply sentra-container max-w-[860px] pb-16 text-slate-700;
+  }
+
+  /* Hide scrollbar completely while maintaining scrollability */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    height: 0px;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   /* Smooth horizontal scrollbar for category scroller */

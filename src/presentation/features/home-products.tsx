@@ -7,10 +7,12 @@ import { CatalogCard } from "@/presentation/components/catalog-card";
 
 export function HomeProducts({
   initialProducts,
-  category = "all"
+  category = "all",
+  search
 }: {
   initialProducts: CatalogItem[];
   category?: string;
+  search?: string;
 }) {
   const [products, setProducts] = useState<CatalogItem[]>(initialProducts);
   const [loading, setLoading] = useState(false);
@@ -21,12 +23,13 @@ export function HomeProducts({
     setLoading(true);
 
     const queryCategory = category === "all" ? undefined : category;
+    const querySearch = search?.trim() ? search.trim() : undefined;
 
-    getFreshCatalog("products", { limit: "6", category: queryCategory }).then((latestProducts) => {
+    getFreshCatalog("products", { limit: "8", category: queryCategory, search: querySearch }).then((latestProducts) => {
       if (active) {
         if (latestProducts !== null) {
           setProducts(latestProducts);
-        } else if (category === "all") {
+        } else if (category === "all" && !querySearch) {
           setProducts(initialProducts);
         } else {
           setProducts([]);
@@ -39,7 +42,7 @@ export function HomeProducts({
     return () => {
       active = false;
     };
-  }, [category, initialProducts]);
+  }, [category, search, initialProducts]);
 
   if (loading && !products.length) {
     return (

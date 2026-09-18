@@ -35,9 +35,9 @@ export function PotentialDetail({ id }: { id: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 pt-[112px] pb-16 flex items-center justify-center">
+      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16 flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-orange-600 border-t-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent"></div>
           <p className="text-sm font-bold text-slate-600">Memuat potensi desa & peluang investasi...</p>
         </div>
       </div>
@@ -46,13 +46,13 @@ export function PotentialDetail({ id }: { id: string }) {
 
   if (!potential) {
     return (
-      <div className="min-h-screen bg-slate-50 pt-[112px] pb-16">
+      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16">
         <div className="sentra-container px-4 text-center">
-          <div className="rounded-2xl bg-white p-8 border border-slate-200 shadow-sm max-w-md mx-auto my-12">
+          <div className="rounded-[10px] ambient-card p-8 max-w-md mx-auto my-12">
             <PotentialIcon className="h-12 w-12 text-slate-400 mx-auto" />
             <h1 className="mt-4 text-xl font-black text-slate-800">Potensi Desa Tidak Ditemukan</h1>
             <p className="mt-2 text-xs text-slate-500">Data potensi desa tidak tersedia.</p>
-            <Link className="sentra-button-primary mt-6 inline-flex text-xs px-5 py-2.5" href="/potensi-desa">
+            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-2xl font-bold" href="/potensi-desa">
               Kembali ke Potensi Desa
             </Link>
           </div>
@@ -62,15 +62,20 @@ export function PotentialDetail({ id }: { id: string }) {
   }
 
   const raw = potential.raw || {};
+  const villageRaw = typeof raw.village === "object" && raw.village !== null ? (raw.village as Record<string, unknown>) : {};
+  const villageId = String(villageRaw.id || raw.village_id || "");
+  const villageName = String(villageRaw.name || raw.village_name || "");
   const images = potential.gallery?.length ? potential.gallery : potential.image ? [potential.image] : ["/images/header-sentradesa-1.webp"];
-  const isInvestmentReady = raw.is_investment_ready === true || raw.is_investment_ready === 1 || String(raw.development_status).toLowerCase().includes("ready");
-  const areaSize = String(raw.area_size || raw.total_area || "45");
-  const productionVol = String(raw.production_volume || raw.volume_produksi || "250");
-  const econValue = Number(raw.economic_value ?? 450000000);
-  const phone = String(raw.phone || raw.contact_person || "6281234567890");
+  const investmentNeeds = String(raw.investment_needs || "");
+  const developmentStatus = String(raw.development_status || "");
+  const isInvestmentReady = raw.is_investment_ready === true || raw.is_investment_ready === 1 || developmentStatus.toLowerCase().includes("ready") || developmentStatus.toLowerCase().includes("produktif");
+  const areaSize = String(raw.total_area || raw.area_size || "45");
+  const productionVol = String(raw.production_volume || raw.volume_produksi || "-");
+  const econValue = Number(raw.economic_value ?? 0);
+  const phone = String(raw.phone || villageRaw.phone || "6281234567890");
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-[90px] pb-16">
+    <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20">
       <div className="sticky top-[70px] z-30 border-b border-slate-200 bg-white/95 backdrop-blur-xs shadow-xs">
         <div className="sentra-container px-4 py-3 flex items-center justify-between">
           <Link href="/potensi-desa" className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-orange-600 transition">
@@ -79,9 +84,16 @@ export function PotentialDetail({ id }: { id: string }) {
             </svg>
             Kembali ke Potensi Desa
           </Link>
-          <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase border ${isInvestmentReady ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-orange-50 text-orange-800 border-orange-200'}`}>
-            {isInvestmentReady ? "Siap Kemitraan Investasi" : "Dalam Pembinaan"}
-          </span>
+          <div className="flex items-center gap-2">
+            {developmentStatus ? (
+              <span className="rounded-full bg-slate-100 border border-slate-300 px-3 py-1 text-[11px] font-extrabold uppercase text-slate-700">
+                {developmentStatus}
+              </span>
+            ) : null}
+            <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase border ${isInvestmentReady ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-orange-50 text-orange-800 border-orange-200'}`}>
+              {isInvestmentReady ? "Siap Kemitraan Investasi" : "Dalam Pembinaan"}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -105,6 +117,17 @@ export function PotentialDetail({ id }: { id: string }) {
                 </p>
               </div>
             </div>
+
+            {investmentNeeds ? (
+              <div className="rounded-2xl border border-orange-200 bg-orange-50/70 p-4 shadow-2xs">
+                <span className="block text-[11px] font-black uppercase tracking-wider text-orange-900">
+                  Kebutuhan Investasi Teridentifikasi
+                </span>
+                <p className="mt-1.5 text-xs md:text-sm font-semibold text-slate-800 leading-relaxed">
+                  {investmentNeeds}
+                </p>
+              </div>
+            ) : null}
           </div>
 
           <div className="lg:col-span-6 space-y-5">
@@ -132,7 +155,7 @@ export function PotentialDetail({ id }: { id: string }) {
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Volume Produksi</span>
                   <strong className="text-sm font-black text-slate-800 mt-1 block">
-                    {productionVol} ton / tahun
+                    {productionVol !== "-" ? `${productionVol} ton/th` : "-"}
                   </strong>
                 </div>
                 <div className="col-span-2 rounded-xl border border-slate-200 bg-emerald-50/50 p-3.5">
@@ -143,7 +166,7 @@ export function PotentialDetail({ id }: { id: string }) {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <a
                   href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20Pemerintah%20Desa,%20saya%20tertarik%20mengajukan%20kemitraan/investasi%20untuk%20${encodeURIComponent(potential.title)}.`}
                   target="_blank"
@@ -152,6 +175,14 @@ export function PotentialDetail({ id }: { id: string }) {
                 >
                   🤝 Ajukan Kemitraan Investasi
                 </a>
+                {villageId ? (
+                  <Link
+                    href={`/profil-desa/?id=${encodeURIComponent(villageId)}`}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
+                  >
+                    Profil Desa
+                  </Link>
+                ) : null}
               </div>
             </div>
           </div>

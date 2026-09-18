@@ -19,10 +19,12 @@ import {
   PawPrint,
   Wrench,
   MoreHorizontal,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Search,
   ShoppingBag,
+  ShoppingCart,
   LogIn,
   Building2,
   Rocket,
@@ -54,10 +56,12 @@ export const FishIcon = Fish;
 export const LivestockIcon = PawPrint;
 export const ServiceIcon = Wrench;
 export const MoreIcon = MoreHorizontal;
+export const ChevronDownIcon = ChevronDown;
 export const ChevronLeftIcon = ChevronLeft;
 export const ChevronRightIcon = ChevronRight;
 export const SearchIcon = Search;
 export const ShoppingBagIcon = ShoppingBag;
+export const ShoppingCartIcon = ShoppingCart;
 export const LoginIcon = LogIn;
 export const AddBusinessIcon = Building2;
 export const RocketIcon = Rocket;

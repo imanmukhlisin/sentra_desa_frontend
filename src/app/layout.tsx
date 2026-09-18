@@ -1,25 +1,21 @@
 import type { Metadata } from "next";
-import { Inter, Nunito_Sans, Literata } from "next/font/google";
+import { Plus_Jakarta_Sans, Roboto } from "next/font/google";
 import { Footer } from "@/presentation/components/footer";
 import { Header } from "@/presentation/components/header";
 import { siteConfig } from "@/shared/config/site";
 import "./globals.css";
 
-const inter = Inter({
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-roboto",
   display: "swap"
 });
 
-const nunitoSans = Nunito_Sans({
+const jakarta = Plus_Jakarta_Sans({
+  weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
-  variable: "--font-nunito",
-  display: "swap"
-});
-
-const literata = Literata({
-  subsets: ["latin"],
-  variable: "--font-literata",
+  variable: "--font-jakarta",
   display: "swap"
 });
 
@@ -34,8 +30,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${inter.variable} ${nunitoSans.variable} ${literata.variable}`}>
-      <body className="min-h-screen bg-[#f4fbf2] font-sans text-[#171d18] antialiased">
+    <html lang="id" className={`${roboto.variable} ${jakarta.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen font-sans text-[#171d18] antialiased" suppressHydrationWarning>
         <Header />
         <main>{children}</main>
         <Footer />

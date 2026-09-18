@@ -17,7 +17,7 @@ const endpoints: Record<CatalogKind, string> = {
 };
 
 const pathPrefixes: Record<CatalogKind, string> = {
-  products: "/product",
+  products: "/sentra-produk",
   villages: "/profil-desa",
   tourisms: "/desa-wisata",
   articles: "/artikel",
@@ -147,18 +147,14 @@ export class LaravelPublicRepository {
   async listFresh(kind: CatalogKind, query?: ListQuery): Promise<CatalogItem[] | null> {
     const data = await this.http.get<unknown>(endpoints[kind], query);
     
-    if (data === null || (Array.isArray(data) && data.length === 0)) {
-      if (kind === "products" && (!query?.category || query.category === "all")) {
+    if (data === null) {
+      if (kind === "products" && (!query?.category || query.category === "all") && !query?.search && !query?.province_id) {
         return sampleProducts;
       }
-      return data === null ? null : [];
+      return null;
     }
 
-    const items = unwrapList(data).map((item) => mapCatalogItem(kind, item));
-    if (items.length === 0 && kind === "products" && (!query?.category || query.category === "all")) {
-      return sampleProducts;
-    }
-    return items;
+    return unwrapList(data).map((item) => mapCatalogItem(kind, item));
   }
 
   async detail(kind: CatalogKind, id: string): Promise<DetailItem | null> {
@@ -187,7 +183,7 @@ export class LaravelPublicRepository {
       data = await this.http.get<unknown>(`${endpoints[kind]}/${id}`);
     }
 
-    const raw = unwrapDetail(data);
+    const raw = unwrapDetail(data, kind);
     
     if (!raw && kind === "products") {
       const match = sampleProducts.find((p) => p.id === id || p.slug === id);
@@ -246,6 +242,15 @@ export class LaravelPublicRepository {
       is_active: raw.is_active !== undefined ? Boolean(raw.is_active) : true
     }));
   }
+
+  async getProvinces(): Promise<{ id: number; name: string }[]> {
+    const data = await this.http.get<unknown>("public/provinces");
+    if (!data) return [];
+    return unwrapList(data).map((raw) => ({
+      id: Number(raw.id),
+      name: String(raw.name)
+    }));
+  }
 }
 
 export function unwrapList(data: unknown): Dictionary[] {
@@ -254,65 +259,23 @@ export function unwrapList(data: unknown): Dictionary[] {
   return [];
 }
 
-function unwrapDetail(data: unknown): Dictionary | null {
+function unwrapDetail(data: unknown, kind?: CatalogKind): Dictionary | null {
   if (!isRecord(data)) return null;
-  if (isRecord(data.data)) return unwrapDetail(data.data);
-  if (isRecord(data.village)) {
+  if (isRecord(data.data)) return unwrapDetail(data.data, kind);
+  if (kind === "villages" && isRecord(data.village)) {
     return {
       ...data,
       ...data.village,
       village: data.village
     };
   }
-  if (isRecord(data.product)) {
-    return {
-      ...data,
-      ...data.product,
-      product: data.product
-    };
-  }
-  if (isRecord(data.tourism)) {
-    return {
-      ...data,
-      ...data.tourism,
-      tourism: data.tourism
-    };
-  }
-  if (isRecord(data.article)) {
-    return {
-      ...data,
-      ...data.article,
-      article: data.article
-    };
-  }
-  if (isRecord(data.potential)) {
-    return {
-      ...data,
-      ...data.potential,
-      potential: data.potential
-    };
-  }
-  if (isRecord(data.bumdes)) {
-    return {
-      ...data,
-      ...data.bumdes,
-      bumdes: data.bumdes
-    };
-  }
-  if (isRecord(data.export)) {
-    return {
-      ...data,
-      ...data.export,
-      export: data.export
-    };
-  }
-  if (isRecord(data.service)) {
-    return {
-      ...data,
-      ...data.service,
-      service: data.service
-    };
-  }
+  if (isRecord(data.product)) return unwrapDetail(data.product, kind);
+  if (isRecord(data.tourism)) return unwrapDetail(data.tourism, kind);
+  if (isRecord(data.article)) return unwrapDetail(data.article, kind);
+  if (isRecord(data.potential)) return unwrapDetail(data.potential, kind);
+  if (isRecord(data.bumdes)) return unwrapDetail(data.bumdes, kind);
+  if (isRecord(data.export)) return unwrapDetail(data.export, kind);
+  if (isRecord(data.service)) return unwrapDetail(data.service, kind);
   return data;
 }
 
@@ -329,12 +292,18 @@ export function mapCatalogItem(kind: CatalogKind, raw: Dictionary): CatalogItem 
   const description = truncate(text(raw.description) || text(raw.content) || text(raw.summary), 140);
   const image =
     imageUrl(text(raw.image) || text(raw.cover_image) || text(raw.thumbnail) || text(raw.logo)) ||
-    (kind === "villages" ? "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80" : undefined);
+    (kind === "villages"
+      ? "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80"
+      : kind === "potentials"
+      ? "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=600&auto=format&fit=crop&q=80"
+      : kind === "products"
+      ? fallbackProductImage(raw)
+      : undefined);
   const price = number(raw.price);
   const badge = badgeFor(kind, raw);
 
   const prefix = pathPrefixes[kind] || "/detail";
-  const param = kind === "villages" ? (rawId || id) : (rawSlug || rawId || rawCode);
+  const param = (kind === "villages" || kind === "potentials") ? (rawId || id) : (rawSlug || rawId || rawCode);
   const href = `${prefix}/?id=${encodeURIComponent(param)}`;
 
   return {
@@ -371,9 +340,14 @@ function mapDetailItem(kind: CatalogKind, raw: Dictionary): DetailItem {
   if (kind === "products") {
     if (item.badge) facts.push({ label: "Kategori", value: item.badge });
     if (item.price) facts.push({ label: "Harga", value: formatCurrency(item.price) });
+    const discountPrice = number(raw.discount_price);
+    if (discountPrice && item.price && discountPrice < item.price) {
+      facts.push({ label: "Harga Promo", value: formatCurrency(discountPrice) });
+    }
     if (text(raw.stock)) facts.push({ label: "Stok", value: `${text(raw.stock)} Pcs` });
     if (text(raw.weight)) facts.push({ label: "Berat", value: `${text(raw.weight)} gram` });
-    if (text(merchantRaw.name)) facts.push({ label: "Merchant / Toko", value: text(merchantRaw.name) });
+    const storeName = text(merchantRaw.store_name) || text(merchantRaw.name) || text(raw.merchant_name) || text(raw.store_name);
+    if (storeName) facts.push({ label: "Merchant / Toko", value: storeName });
   } else if (kind === "tourisms") {
     if (item.badge) facts.push({ label: "Jenis Wisata", value: item.badge });
     const feeNum = number(raw.entrance_fee) ?? number(raw.fee) ?? number(raw.ticket_price) ?? number(raw.price);
@@ -387,8 +361,10 @@ function mapDetailItem(kind: CatalogKind, raw: Dictionary): DetailItem {
     if (econVal) facts.push({ label: "Nilai Ekonomi", value: `${formatCurrency(econVal)} / th` });
     else if (text(raw.economic_value)) facts.push({ label: "Nilai Ekonomi", value: text(raw.economic_value) });
     if (text(raw.production_volume)) facts.push({ label: "Volume Produksi", value: `${text(raw.production_volume)} ton/th` });
-    const isReady = raw.is_investment_ready === true || raw.is_investment_ready === 1 || String(raw.development_status).toLowerCase().includes("ready");
+    const isReady = raw.is_investment_ready === true || raw.is_investment_ready === 1 || String(raw.development_status).toLowerCase().includes("ready") || String(raw.development_status).toLowerCase().includes("produktif");
     facts.push({ label: "Status Investasi", value: isReady ? "Siap Investasi" : text(raw.status_label) || text(raw.development_status) || "Dalam Pengembangan" });
+    if (text(raw.investment_needs)) facts.push({ label: "Kebutuhan Investasi", value: text(raw.investment_needs) });
+    if (text(raw.development_status)) facts.push({ label: "Status Pengembangan", value: text(raw.development_status) });
   } else if (kind === "bumdes") {
     const bumdesBadge = text(raw.performance_category) || item.badge;
     if (bumdesBadge) facts.push({ label: "Kategori Kinerja", value: bumdesBadge });
@@ -563,4 +539,16 @@ function number(value: unknown) {
   if (typeof value === "number") return value;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function fallbackProductImage(raw: Dictionary): string {
+  const cat = text(raw.category).toLowerCase();
+  const name = text(raw.name || raw.title).toLowerCase();
+  if (name.includes("kopi")) return "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&auto=format&fit=crop&q=80";
+  if (name.includes("batik") || cat === "fashion") return "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&auto=format&fit=crop&q=80";
+  if (name.includes("madu")) return "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=600&auto=format&fit=crop&q=80";
+  if (name.includes("bambu") || name.includes("anyaman") || cat === "kerajinan") return "https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&auto=format&fit=crop&q=80";
+  if (name.includes("aren") || name.includes("gula") || name.includes("minyak") || name.includes("vco")) return "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&auto=format&fit=crop&q=80";
+  if (cat === "makanan_minuman" || name.includes("keripik") || name.includes("kacang")) return "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&auto=format&fit=crop&q=80";
+  return "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80";
 }

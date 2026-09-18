@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 export default function Page() {
   return (
-    <Suspense fallback={<section className="bg-sentra-bg pt-[112px]"><div className="sentra-container"><div className="empty-state">Memuat informasi...</div></div></section>}>
+    <Suspense fallback={<section className="bg-transparent pt-28"><div className="sentra-container"><div className="empty-state">Memuat informasi...</div></div></section>}>
       <ClientDetailPage />
     </Suspense>
   );

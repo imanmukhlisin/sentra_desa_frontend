@@ -8,7 +8,7 @@ export async function DetailPage({ kind, id }: { kind: CatalogKind; id: string }
 
   if (!item) {
     return (
-      <section className="bg-sentra-bg pt-[112px]">
+      <section className="bg-transparent pt-28">
         <div className="sentra-container">
           <div className="empty-state">
           <h1 className="text-xl font-black text-slate-700">Konten tidak ditemukan</h1>

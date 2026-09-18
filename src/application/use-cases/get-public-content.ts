@@ -15,6 +15,10 @@ export function getDetail(kind: CatalogKind, id: string) {
   return repository.detail(kind, id);
 }
 
+export function getProvinces() {
+  return repository.getProvinces();
+}
+
 export async function getStaticCatalogParams(kind: CatalogKind, paramName: string) {
   const items = await repository.list(kind, { limit: "50", per_page: "50" });
   return items
@@ -25,7 +29,7 @@ export async function getStaticCatalogParams(kind: CatalogKind, paramName: strin
 
 export async function getHomeContent() {
   const [products, villages, tourisms, articles, exports, highlights] = await Promise.all([
-    repository.list("products", { limit: "6" }),
+    repository.list("products", { limit: "8" }),
     repository.list("villages", { per_page: "6" }),
     repository.list("tourisms", { limit: "6" }),
     repository.list("articles", { per_page: "3", limit: "3" }),

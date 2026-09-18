@@ -83,10 +83,10 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ["var(--font-nunito)", "Nunito Sans", "Roboto", "Arial", "sans-serif"],
-        headline: ["var(--font-literata)", "Literata", "Georgia", "serif"],
-        serif: ["var(--font-literata)", "Literata", "Georgia", "serif"],
-        inter: ["var(--font-inter)", "Inter", "sans-serif"],
+        sans: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        headline: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        serif: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        inter: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
         mono: ["monospace"]
       },
       spacing: {
@@ -109,6 +109,8 @@ const config: Config = {
         md: "0.375rem",
         lg: "0.5rem",
         xl: "0.75rem",
+        "2xl": "1rem",
+        card: "10px",
         flutter: "16px",
         promo: "24px"
       }

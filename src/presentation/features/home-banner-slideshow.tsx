@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { HighlightItem } from "@/domain/entities/common";
+import { LaravelPublicRepository } from "@/infrastructure/repositories/public-repository";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/presentation/components/icons";
 import { imageUrl } from "@/shared/utils/image";
 
@@ -38,28 +39,19 @@ export function HomeBannerSlideshow({ highlights = [] }: HomeBannerSlideshowProp
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // Client-side fetch for dynamic highlights (essential for static export deployment)
+  // Client-side fetch fallback for dynamic highlights
   useEffect(() => {
-    fetch("/api/v1/public/highlights/", { headers: { Accept: "application/json" } })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        const rawList = json?.data ?? (Array.isArray(json) ? json : []);
-        if (Array.isArray(rawList) && rawList.length > 0) {
-          const mapped: HighlightItem[] = rawList.map((raw: Record<string, unknown>) => ({
-            id: String(raw.id ?? ""),
-            title: String(raw.title ?? ""),
-            subtitle: raw.subtitle ? String(raw.subtitle) : null,
-            image: imageUrl(raw.image ? String(raw.image) : null),
-            link_url: raw.link_url ? String(raw.link_url) : null,
-            link_label: raw.link_label ? String(raw.link_label) : null,
-            sort_order: Number(raw.sort_order ?? 0),
-            is_active: Boolean(raw.is_active ?? true)
-          }));
-          setItems(formatHighlights(mapped));
+    if (items.length > 0) return;
+    const repository = new LaravelPublicRepository();
+    repository
+      .getHighlights()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setItems(formatHighlights(data));
         }
       })
       .catch(() => {});
-  }, []);
+  }, [items.length]);
 
   // Default banner if no highlights loaded
   const displayItems = items.length > 0 ? items : [
@@ -120,7 +112,7 @@ export function HomeBannerSlideshow({ highlights = [] }: HomeBannerSlideshowProp
   return (
     <section className="sentra-container pt-4 md:pt-6">
       <div
-        className="group relative mx-0 overflow-hidden rounded-[20px] md:rounded-[28px] shadow-sm"
+        className="group relative mx-0 overflow-hidden rounded-[10px] md:rounded-[12px] shadow-sm"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onTouchStart={handleTouchStart}
@@ -147,11 +139,11 @@ export function HomeBannerSlideshow({ highlights = [] }: HomeBannerSlideshowProp
                   className="object-cover"
                 />
                 <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-r from-black/80 via-black/30 to-transparent p-6 sm:p-10 md:p-14">
-                  <h1 className="max-w-xl font-serif text-2xl font-bold leading-snug text-white sm:text-3xl md:text-4xl lg:text-[40px] tracking-tight">
+                  <h1 className="max-w-xl font-sans text-2xl font-extrabold leading-tight text-white sm:text-3xl md:text-4xl lg:text-[40px] tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
                     {h.title || "Mari Belanja Produk Desa Unggulan Nusantara"}
                   </h1>
 
-                  <p className="mt-3 max-w-lg text-xs leading-relaxed text-white/85 sm:text-sm md:text-[15px]">
+                  <p className="mt-3 max-w-lg font-sans text-xs font-medium leading-relaxed text-white sm:text-sm md:text-[15px] drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                     {h.subtitle || "Dukung kemandirian pelaku UMKM dan BUMDes dengan produk berkualitas langsung dari sentra produksi desa."}
                   </p>
 
