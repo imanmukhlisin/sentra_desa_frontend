@@ -40,11 +40,11 @@ function ModuleSection({ title, subtitle, icon: Icon, color, items, moreHref }: 
   if (!items || items.length === 0) return null;
 
   return (
-    <section className="mt-8 rounded-[10px] ambient-card p-6 sm:p-8 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 pb-4">
+    <section className="mt-8 rounded-[14px] ambient-card p-6 sm:p-8 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 pb-4">
         <div className="flex items-center gap-3.5">
           <div
-            className="flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-md"
+            className="flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-md"
             style={{ backgroundColor: color }}
           >
             <Icon className="h-6 w-6" />
@@ -56,7 +56,7 @@ function ModuleSection({ title, subtitle, icon: Icon, color, items, moreHref }: 
         </div>
         <Link
           href={moreHref}
-          className="inline-flex items-center gap-2 rounded-2xl ambient-btn-primary px-5 py-2.5 text-xs sm:text-sm font-bold shadow-md transition active:scale-95"
+          className="inline-flex items-center gap-2 rounded-[14px] ambient-btn-primary px-5 py-2.5 text-xs sm:text-sm font-bold shadow-md transition active:scale-95"
         >
           <span>Selengkapnya {title}</span>
           <ArrowRightIcon className="h-4 w-4" />
@@ -269,7 +269,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
                   href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl ambient-btn-primary px-5 py-3 text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2 rounded-[14px] ambient-btn-primary px-5 py-3 text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
                 >
                   <PhoneIcon className="h-4 w-4" />
                   <span>Hubungi Kantor Desa</span>
@@ -279,7 +279,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
                 href={`https://maps.google.com/?q=${encodeURIComponent(village.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/85 bg-white/95 backdrop-blur-md px-5 py-3 text-xs sm:text-sm font-bold text-slate-900 shadow-md hover:bg-white transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-[14px] border border-white/85 bg-white/95 backdrop-blur-md px-5 py-3 text-xs sm:text-sm font-bold text-slate-900 shadow-md hover:bg-white transition active:scale-95 cursor-pointer"
               >
                 <MapPinIcon className="h-4 w-4 text-[#ba1a1a]" />
                 <span>Lokasi Map</span>
@@ -308,26 +308,26 @@ export function ProfileDesaDetail({ id }: { id: string }) {
 
       {/* Key Statistics Grid */}
       <section className="sentra-container -mt-7 sm:-mt-9 relative z-20 mb-8">
-        <div className="ambient-card rounded-[10px] grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4 p-5 sm:p-6 shadow-md border border-white/85">
-          <div className="rounded-[8px] border border-slate-200/80 bg-white/90 p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
+        <div className="ambient-card rounded-[14px] grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4 p-5 sm:p-6 shadow-md border border-white/85">
+          <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Kepala Desa</span>
             <strong className="block mt-1.5 text-sm sm:text-base font-extrabold text-[#171d18] truncate" title={headName}>
               {headName}
             </strong>
           </div>
-          <div className="rounded-[8px] border border-slate-200/80 bg-white/90 p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
+          <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Jumlah Penduduk</span>
             <strong className="block mt-1.5 text-sm sm:text-base font-extrabold text-[#171d18]">
               {population !== "-" ? `${population} Jiwa` : "Terdata"}
             </strong>
           </div>
-          <div className="rounded-[8px] border border-slate-200/80 bg-white/90 p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
+          <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Luas Wilayah</span>
             <strong className="block mt-1.5 text-sm sm:text-base font-extrabold text-[#171d18]">
               {areaSize !== "-" ? `${areaSize} Ha` : "Terdaftar"}
             </strong>
           </div>
-          <div className="rounded-[8px] border border-slate-200/80 bg-white/90 p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
+          <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 text-center shadow-xs transition hover:scale-[1.02] hover:bg-white">
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Status Desa</span>
             <strong className="block mt-1.5 text-sm sm:text-base font-extrabold text-[#006e23]">
               {raw.is_featured ? "Desa Unggulan" : "Desa Terverifikasi"}
@@ -340,20 +340,20 @@ export function ProfileDesaDetail({ id }: { id: string }) {
 
         {/* Visi & Misi Desa */}
         {(vision || mission) ? (
-          <div className="mt-8 rounded-[10px] ambient-card p-6 md:p-8 space-y-5">
-            <h2 className="text-xl font-extrabold text-[#171d18] border-b border-slate-200/70 pb-3 flex items-center gap-2.5">
+          <div className="mt-8 rounded-[14px] ambient-card p-6 md:p-8 space-y-5">
+            <h2 className="text-xl font-extrabold text-[#171d18] border-b border-black/5 pb-3 flex items-center gap-2.5">
               <VillageIcon className="h-5 w-5 text-[#006e23]" />
               Visi & Misi Desa
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {vision ? (
-                <div className="rounded-2xl bg-[#006e23]/5 border border-[#006e23]/20 p-5">
+                <div className="rounded-[14px] bg-[#006e23]/5 border border-[#006e23]/20 p-5">
                   <h3 className="text-xs font-black uppercase tracking-wider text-[#006e23]">Visi Desa</h3>
                   <p className="mt-2 text-sm sm:text-base font-semibold text-slate-800 italic leading-relaxed">"{vision}"</p>
                 </div>
               ) : null}
               {mission ? (
-                <div className="rounded-2xl bg-white/80 border border-slate-200/80 p-5">
+                <div className="rounded-[14px] bg-white/80 border border-slate-200/80 p-5">
                   <h3 className="text-xs font-black uppercase tracking-wider text-slate-700">Misi Desa</h3>
                   <div className="mt-2 text-xs md:text-sm text-slate-700 whitespace-pre-line leading-relaxed">
                     {mission}
@@ -365,8 +365,8 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         ) : null}
 
         {/* Sejarah & Deskripsi Desa */}
-        <div className="mt-8 rounded-[10px] ambient-card p-6 md:p-8 space-y-4">
-          <h2 className="text-xl font-extrabold text-[#171d18] border-b border-slate-200/70 pb-3 flex items-center gap-2.5">
+        <div className="mt-8 rounded-[14px] ambient-card p-6 md:p-8 space-y-4">
+          <h2 className="text-xl font-extrabold text-[#171d18] border-b border-black/5 pb-3 flex items-center gap-2.5">
             <VillageIcon className="h-5 w-5 text-[#006e23]" />
             Gambaran Umum & Sejarah Desa
           </h2>
@@ -380,20 +380,20 @@ export function ProfileDesaDetail({ id }: { id: string }) {
 
         {/* Kontak & Kantor Desa */}
         {(address || email || phone) ? (
-          <div className="mt-8 rounded-[10px] ambient-card p-6 md:p-8">
-            <h2 className="text-xl font-extrabold text-[#171d18] border-b border-slate-200/70 pb-3 flex items-center gap-2.5">
+          <div className="mt-8 rounded-[14px] ambient-card p-6 md:p-8">
+            <h2 className="text-xl font-extrabold text-[#171d18] border-b border-black/5 pb-3 flex items-center gap-2.5">
               <MapPinIcon className="h-5 w-5 text-[#ba1a1a]" />
               Kontak & Alamat Kantor Desa
             </h2>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
               {address ? (
-                <div className="rounded-2xl bg-white/85 p-4 border border-slate-200/80 shadow-2xs">
+                <div className="rounded-[14px] bg-white/85 p-4 border border-slate-200/80 shadow-2xs">
                   <span className="block font-bold text-slate-400 uppercase tracking-wider text-[11px]">Alamat Kantor</span>
                   <p className="mt-1 text-sm font-semibold text-slate-800">{address}</p>
                 </div>
               ) : null}
               {phone ? (
-                <div className="rounded-2xl bg-white/85 p-4 border border-slate-200/80 shadow-2xs">
+                <div className="rounded-[14px] bg-white/85 p-4 border border-slate-200/80 shadow-2xs">
                   <span className="block font-bold text-slate-400 uppercase tracking-wider text-[11px]">Telepon / WhatsApp</span>
                   <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="mt-1 block text-sm font-bold text-[#006e23] hover:underline">
                     {phone}
@@ -401,7 +401,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
                 </div>
               ) : null}
               {email ? (
-                <div className="rounded-2xl bg-white/85 p-4 border border-slate-200/80 shadow-2xs">
+                <div className="rounded-[14px] bg-white/85 p-4 border border-slate-200/80 shadow-2xs">
                   <span className="block font-bold text-slate-400 uppercase tracking-wider text-[11px]">Email Resmi</span>
                   <a href={`mailto:${email}`} className="mt-1 block text-sm font-bold text-[#0284c7] hover:underline">
                     {email}

@@ -137,7 +137,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
     }
   }
 
-  const clearHref = `/${kind === "products" ? "sentra-produk" : kind === "tourisms" ? "desa-wisata" : kind === "potentials" ? "potensi-desa" : kind === "villages" ? "profil-desa" : kind}`;
+  const clearHref = `/${kind === "products" ? "sentra-produk" : kind === "tourisms" ? "desa-wisata" : kind === "potentials" ? "potensi-desa" : kind === "villages" ? "profil-desa" : kind === "services" ? "layanan-desa" : kind}`;
 
   const meta = KIND_META[kind];
 
@@ -146,7 +146,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
       <section className="pt-28 md:pt-32 pb-4 sm:pb-6">
         <div className="sentra-container">
           {/* Hero header card with gradient + icon + stats */}
-          <div className="relative overflow-hidden rounded-[10px] shadow-lg">
+          <div className="relative overflow-hidden rounded-[14px] shadow-lg">
             {/* Gradient background layer */}
             <div className={`absolute inset-0 bg-gradient-to-br ${meta?.gradient ?? "from-[#006e23] to-[#e88d43]/60"} opacity-90`} />
             {/* Decorative circles */}
@@ -166,7 +166,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
                 <div className="flex items-start gap-4">
                   {/* Icon badge — same rounded square as dashboard */}
                   {meta?.iconPath && (
-                    <div className="hidden sm:flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 shadow-md">
+                    <div className="hidden sm:flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] bg-white/20 backdrop-blur-sm border border-white/25 shadow-md">
                       <Image src={meta.iconPath} alt="" width={36} height={36} className="h-9 w-9 object-contain" unoptimized />
                     </div>
                   )}
@@ -184,7 +184,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
                 </div>
 
                 {villageId ? (
-                  <div className="flex items-center gap-2 rounded-2xl border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs">
+                  <div className="flex items-center gap-2 rounded-[14px] border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs">
                     <span>Filter Desa: {villageId}</span>
                     <Link href={clearHref} className="ml-1 underline hover:text-white/70">
                       Tampilkan Semua
@@ -237,7 +237,7 @@ function CatalogSkeleton({ title, description }: { title: string; description: s
     <>
       <section className="pt-28 md:pt-32 pb-4 sm:pb-6">
         <div className="sentra-container">
-          <div className="relative overflow-hidden rounded-[10px] bg-gradient-to-br from-[#006e23] via-[#1a8a3a] to-[#e88d43]/60 p-6 sm:p-8 shadow-lg">
+          <div className="relative overflow-hidden rounded-[14px] bg-gradient-to-br from-[#006e23] via-[#1a8a3a] to-[#e88d43]/60 p-6 sm:p-8 shadow-lg">
             <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-white/90 px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-emerald-700">
               Sentra Desa

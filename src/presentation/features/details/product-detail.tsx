@@ -90,7 +90,7 @@ export function ProductDetail({ id }: { id: string }) {
     <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20">
       {/* Navigation Top Bar */}
       <div className="sentra-container mb-6">
-        <div className="ambient-card flex flex-wrap items-center justify-between gap-3 rounded-[10px] px-5 py-3.5 shadow-xs">
+        <div className="ambient-card flex flex-wrap items-center justify-between gap-3 rounded-[14px] px-5 py-3.5 shadow-xs">
           <Link href="/sentra-produk" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#006e23] transition-colors">
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Sentra Produk</span>
@@ -106,14 +106,14 @@ export function ProductDetail({ id }: { id: string }) {
           
           {/* Left Column: Gallery */}
           <div className="lg:col-span-6">
-            <div className="ambient-card overflow-hidden rounded-[10px] shadow-md border border-white/85">
+            <div className="ambient-card overflow-hidden rounded-[14px] shadow-md border border-white/85">
               <ImageGalleryCarousel images={images} title={product.title} />
             </div>
           </div>
 
           {/* Right Column: Info, Merchant Card, Quantity, Purchase Actions */}
           <div className="lg:col-span-6 space-y-5">
-            <div className="ambient-card rounded-[10px] p-6 sm:p-8 shadow-md border border-white/85 space-y-6">
+            <div className="ambient-card rounded-[14px] p-6 sm:p-8 shadow-md border border-white/85 space-y-6">
               <div>
                 <span className="inline-flex rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-xs font-extrabold text-[#006e23] uppercase tracking-wider">
                   {product.badge || "Olahan Lokal"}
@@ -135,9 +135,9 @@ export function ProductDetail({ id }: { id: string }) {
               </div>
 
               {/* Merchant Store Card */}
-              <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/90 bg-white/85 p-4 shadow-2xs">
+              <div className="flex items-center justify-between gap-3 rounded-[14px] border border-white/90 bg-white/85 p-4 shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#006e23]/10 text-[#006e23]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#006e23]/10 text-[#006e23]">
                     <StoreIcon className="h-6 w-6" />
                   </div>
                   <div>
@@ -211,7 +211,7 @@ export function ProductDetail({ id }: { id: string }) {
               <div className="flex gap-3 pt-2">
                 <Link
                   href={`/checkout?product_id=${product.id}&quantity=${quantity}`}
-                  className="flex-1 ambient-btn-primary justify-center text-center py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-bold shadow-md transition active:scale-95"
+                  className="flex-1 ambient-btn-primary justify-center text-center py-3.5 px-6 rounded-[14px] text-xs sm:text-sm font-bold shadow-md transition active:scale-95"
                 >
                   Beli Sekarang
                 </Link>
@@ -219,7 +219,7 @@ export function ProductDetail({ id }: { id: string }) {
                   href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20saya%20ingin%20pesan%20${encodeURIComponent(product.title)}%20sebanyak%20${quantity}%20pcs.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-2xl border border-slate-200 bg-white/90 px-6 py-3.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-white hover:text-slate-900 transition shadow-2xs active:scale-95"
+                  className="rounded-[14px] border border-slate-200 bg-white/90 px-6 py-3.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-white hover:text-slate-900 transition shadow-2xs active:scale-95"
                 >
                   Pesan via WhatsApp
                 </a>
@@ -229,7 +229,7 @@ export function ProductDetail({ id }: { id: string }) {
         </div>
 
         {/* Tabbed Info: Deskripsi, Spesifikasi, Ratings */}
-        <div className="mt-8 rounded-[10px] ambient-card p-6 md:p-8 shadow-md border border-white/85">
+        <div className="mt-8 rounded-[14px] ambient-card p-6 md:p-8 shadow-md border border-white/85">
           <div className="flex border-b border-slate-200/70 gap-6">
             <button
               onClick={() => setActiveTab("desc")}
@@ -260,19 +260,19 @@ export function ProductDetail({ id }: { id: string }) {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="flex justify-between p-3.5 rounded-2xl bg-white/80 border border-slate-200/70">
+                <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Nama Merchant</span>
                   <span className="font-bold text-slate-800">{merchantName}</span>
                 </div>
-                <div className="flex justify-between p-3.5 rounded-2xl bg-white/80 border border-slate-200/70">
+                <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Stok Produk</span>
                   <span className="font-bold text-slate-800">{stock} Pcs</span>
                 </div>
-                <div className="flex justify-between p-3.5 rounded-2xl bg-white/80 border border-slate-200/70">
+                <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Berat Bersih</span>
                   <span className="font-bold text-slate-800">{weight} gram</span>
                 </div>
-                <div className="flex justify-between p-3.5 rounded-2xl bg-white/80 border border-slate-200/70">
+                <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Kategori</span>
                   <span className="font-bold text-slate-800">{product.badge || "Produk Desa"}</span>
                 </div>

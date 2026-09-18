@@ -8,10 +8,10 @@ const endpoints: Record<CatalogKind, string> = {
   tourisms: "public/tourisms",
   articles: "public/articles",
   exports: "public/export-products",
-  potentials: "public/potentials",
+  potentials: "public/village-potentials",
   bumdes: "public/bumdes",
   kdmp: "public/kdmp",
-  services: "public/services",
+  services: "public/village-services",
   lkdd: "public/lkdd",
   wishlists: "public/wishlists"
 };
@@ -137,6 +137,315 @@ export const sampleProducts: CatalogItem[] = [
   }
 ];
 
+export const sampleArticles: CatalogItem[] = [
+  {
+    id: "art-1",
+    slug: "panen-raya-padi-organik-tembus-rekor-baru",
+    title: "Panen Raya Padi Organik Tembus Rekor Baru di Desa Sukamaju",
+    subtitle: "Desa Sukamaju, Kab. Bandung",
+    description: "Petani desa sukses meningkatkan produktivitas panen hingga 30% menggunakan teknologi pupuk hayati mandiri ramah lingkungan.",
+    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop&q=80",
+    href: "/artikel/?id=panen-raya-padi-organik-tembus-rekor-baru",
+    badge: "Pertanian",
+    meta: ["Desa Sukamaju, Kab. Bandung", "14 Sep 2026", "Humas Desa"],
+    raw: {
+      author: "Tim Humas Desa",
+      published_at: "2026-09-14",
+      category: "Pertanian",
+      content: "<p>Kegiatan panen raya padi organik di desa berhasil mencatatkan hasil gemilang. Dengan penerapan teknologi pertanian presisi dan penggunaan pupuk hayati ramah lingkungan, para petani sukses mencatatkan surplus panen yang kini siap disalurkan ke pasar regional dan nasional.</p><p>Kepala Desa menyatakan komitmennya untuk terus mendukung sarana irigasi tersier dan pembinaan berkelanjutan bagi kelompok tani lokal guna memperkuat kedaulatan pangan desa.</p>"
+    }
+  },
+  {
+    id: "art-2",
+    slug: "pengembangan-destinasi-ekowisata-berbasis-komunitas",
+    title: "Pengembangan Destinasi Ekowisata Berbasis Komunitas Warga",
+    subtitle: "Desa Kedewatan, Gianyar, Bali",
+    description: "Inisiatif desa dalam membuka akses wisata alam berbasis kelestarian lingkungan dan pemberdayaan pemuda pengrajin lokal.",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80",
+    href: "/artikel/?id=pengembangan-destinasi-ekowisata-berbasis-komunitas",
+    badge: "Wisata",
+    meta: ["Desa Kedewatan, Bali", "12 Sep 2026", "Pokdarwis Desa"],
+    raw: {
+      author: "Pokdarwis Desa",
+      published_at: "2026-09-12",
+      category: "Wisata",
+      content: "<p>Melalui musyawarah desa, disepakati pembukaan rute jelajah alam dan konservasi mata air sebagai daya tarik ekowisata percontohan. Diharapkan langkah ini membuka peluang ekonomi baru bagi pengrajin cenderamata dan pemandu lokal.</p>"
+    }
+  },
+  {
+    id: "art-3",
+    slug: "digitalisasi-umkm-desa-pasar-ekspor",
+    title: "Digitalisasi UMKM Desa: Dari Pasar Tradisional ke Pasar Ekspor",
+    subtitle: "Desa Cibadak, Kab. Bogor",
+    description: "Pelatihan packaging dan branding produk olahan pangan lokal mengantarkan produk perdesaan merambah pasar luar negeri.",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80",
+    href: "/artikel/?id=digitalisasi-umkm-desa-pasar-ekspor",
+    badge: "UMKM",
+    meta: ["Desa Cibadak, Kab. Bogor", "10 Sep 2026", "Pendamping Desa"],
+    raw: {
+      author: "Pendamping Desa",
+      published_at: "2026-09-10",
+      category: "UMKM",
+      content: "<p>Produk olahan seperti keripik singkong, madu hutan, dan virgin coconut oil (VCO) asal desa kini mendapatkan sertifikasi halal dan standar mutu ekspor. Transformasi digital ini difasilitasi oleh platform Sentra Desa.</p>"
+    }
+  },
+  {
+    id: "art-4",
+    slug: "transparansi-realisasi-dana-desa-semester-1",
+    title: "Transparansi Realisasi Dana Desa Semester I Berjalan Akuntabel",
+    subtitle: "Desa Leuwiliang, Kab. Bogor",
+    description: "Pemerintah Desa mempublikasikan rincian APBDes secara terbuka melalui papan informasi dan portal digital Sentra Desa.",
+    image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=80",
+    href: "/artikel/?id=transparansi-realisasi-dana-desa-semester-1",
+    badge: "Transparansi",
+    meta: ["Desa Leuwiliang, Kab. Bogor", "08 Sep 2026", "Sekretariat Desa"],
+    raw: {
+      author: "Sekretariat Desa",
+      published_at: "2026-09-08",
+      category: "Transparansi",
+      content: "<p>Sebagai wujud pertanggungjawaban publik, pemdes memaparkan realisasi belanja bidang infrastruktur jalan usaha tani, penanganan stunting, dan bantuan permodalan BUMDes secara transparan dan akuntabel.</p>"
+    }
+  }
+];
+
+export const sampleLkdd: CatalogItem[] = [
+  {
+    id: "lkdd-1",
+    slug: "lkdd-ta-2025-desa-sukamaju",
+    title: "Laporan Keuangan Dana Desa TA 2025",
+    subtitle: "Desa Sukamaju, Kab. Bandung",
+    description: "Publikasi transparansi pertanggungjawaban realisasi anggaran pendapatan dan belanja desa (APBDes) TA 2025.",
+    image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=80",
+    href: "/lkdd/?id=lkdd-1",
+    badge: "TA 2025",
+    price: 1485000000,
+    meta: ["Desa Sukamaju, Kab. Bandung", "Realisasi 94.2%", "Terverifikasi Resmi"],
+    raw: {
+      fiscal_year: 2025,
+      total_budget: 1485000000,
+      realization_percentage: 94.2,
+      head_name: "H. Suryadi, S.Sos",
+      head_title: "Kepala Desa",
+      dana_desa: 890000000,
+      alokasi_dana_desa: 245000000,
+      pendapatan_asli_desa: 85000000,
+      bagi_hasil_pajak: 42000000,
+      belanja_pembangunan: 620000000,
+      belanja_pemerintahan: 380000000,
+      belanja_pembinaan: 95000000,
+      belanja_pemberdayaan: 145000000,
+      belanja_bencana: 45000000,
+      silpa: 18500000,
+      verification_status: "Terverifikasi Resmi"
+    }
+  },
+  {
+    id: "lkdd-2",
+    slug: "lkdd-ta-2024-desa-kedewatan",
+    title: "Laporan Keuangan Dana Desa TA 2024",
+    subtitle: "Desa Kedewatan, Gianyar, Bali",
+    description: "Realisasi anggaran terfokus pada jalan lingkungan, sanitasi bersih, dan saluran drainase permukiman desa.",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=80",
+    href: "/lkdd/?id=lkdd-2",
+    badge: "TA 2024",
+    price: 1280000000,
+    meta: ["Desa Kedewatan, Bali", "Realisasi 96.8%", "Terverifikasi Resmi"],
+    raw: {
+      fiscal_year: 2024,
+      total_budget: 1280000000,
+      realization_percentage: 96.8,
+      head_name: "Drs. I Wayan Sudarma",
+      head_title: "Perbekel / Kepala Desa",
+      dana_desa: 780000000,
+      alokasi_dana_desa: 210000000,
+      pendapatan_asli_desa: 110000000,
+      belanja_pembangunan: 540000000,
+      belanja_pemerintahan: 310000000,
+      belanja_pembinaan: 75000000,
+      belanja_pemberdayaan: 120000000,
+      belanja_bencana: 30000000,
+      silpa: 12000000,
+      verification_status: "Terverifikasi Resmi"
+    }
+  },
+  {
+    id: "lkdd-3",
+    slug: "lkdd-ta-2025-semester-1-cibadak",
+    title: "Laporan APBDes Semester I TA 2025",
+    subtitle: "Desa Cibadak, Kab. Bogor",
+    description: "Laporan capaian serapan anggaran semester pertama untuk penanganan stunting dan bantuan modal BUMDes.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
+    href: "/lkdd/?id=lkdd-3",
+    badge: "Semester I 2025",
+    price: 760000000,
+    meta: ["Desa Cibadak, Kab. Bogor", "Realisasi 91.5%", "Terverifikasi Resmi"],
+    raw: {
+      fiscal_year: 2025,
+      period: "semester_1",
+      total_budget: 760000000,
+      realization_percentage: 91.5,
+      head_name: "Bambang Prasetyo",
+      head_title: "Kepala Desa",
+      dana_desa: 490000000,
+      alokasi_dana_desa: 135000000,
+      pendapatan_asli_desa: 60000000,
+      belanja_pembangunan: 340000000,
+      belanja_pemerintahan: 190000000,
+      belanja_pembinaan: 48000000,
+      belanja_pemberdayaan: 85000000,
+      silpa: 9500000,
+      verification_status: "Terverifikasi Resmi"
+    }
+  }
+];
+
+export const sampleWishlists: CatalogItem[] = [
+  {
+    id: "wish-1",
+    slug: "saluran-irigasi-tersier-blok-sawah-timur",
+    title: "Pembangunan Saluran Irigasi Tersier Blok Sawah Timur",
+    subtitle: "Desa Sukamaju, Kab. Bandung",
+    description: "Dibutuhkan semenisasi saluran irigasi sepanjang 800 meter untuk mengairi 45 hektar lahan persawahan tadah hujan.",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80",
+    href: "/wishlist/?id=wish-1",
+    badge: "Pertanian",
+    price: 85000000,
+    meta: ["Desa Sukamaju, Kab. Bandung", "Target: 800 Meter", "Status: Terbuka"],
+    raw: {
+      category: "Pertanian",
+      required_budget: 85000000,
+      raised_budget: 45000000,
+      quantity: 800,
+      unit: "meter",
+      status: "Terbuka",
+      needed_by: "November 2026"
+    }
+  },
+  {
+    id: "wish-2",
+    slug: "pengadaan-alat-mesin-pengering-gabah-dryer",
+    title: "Pengadaan Alat Mesin Pengering Gabah (Dryer) Poktan",
+    subtitle: "Desa Banjar Agung, OKU Selatan",
+    description: "Mesin pengering gabah kapasitas 5 ton/hari guna mengatasi kendala penjemuran saat musim penghujan dan menjaga kualitas beras.",
+    image: "https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?w=800&auto=format&fit=crop&q=80",
+    href: "/wishlist/?id=wish-2",
+    badge: "Pertanian",
+    price: 120000000,
+    meta: ["Desa Banjar Agung, OKU Selatan", "Target: 1 Unit", "Status: Terbuka"],
+    raw: {
+      category: "Pertanian",
+      required_budget: 120000000,
+      raised_budget: 72000000,
+      quantity: 1,
+      unit: "unit",
+      status: "Terbuka",
+      needed_by: "Oktober 2026"
+    }
+  },
+  {
+    id: "wish-3",
+    slug: "pembangunan-gazebo-dan-sanitasi-wisata-bukit",
+    title: "Pembangunan Gazebo & Sanitasi Wisata Bukit",
+    subtitle: "Desa Kedewatan, Gianyar, Bali",
+    description: "Penyediaan 6 unit gazebo peristirahatan dan toilet umum standar wisata untuk meningkatkan kenyamanan wisatawan.",
+    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format&fit=crop&q=80",
+    href: "/wishlist/?id=wish-3",
+    badge: "Pariwisata",
+    price: 65000000,
+    meta: ["Desa Kedewatan, Bali", "Target: 6 Unit Gazebo", "Status: Terbuka"],
+    raw: {
+      category: "Pariwisata",
+      required_budget: 65000000,
+      raised_budget: 38000000,
+      quantity: 6,
+      unit: "unit",
+      status: "Terbuka",
+      needed_by: "Desember 2026"
+    }
+  },
+  {
+    id: "wish-4",
+    slug: "pelatihan-barista-dan-pengolahan-kopi-lokal",
+    title: "Pelatihan Barista & Pengolahan Kopi Lokal",
+    subtitle: "Desa Argopuro, Kab. Jember",
+    description: "Program pemberdayaan pemuda desa melalui pelatihan roasting, brewing, dan manajemen kedai kopi sentra desa.",
+    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&auto=format&fit=crop&q=80",
+    href: "/wishlist/?id=wish-4",
+    badge: "SDM & Kejuruan",
+    price: 35000000,
+    meta: ["Desa Argopuro, Jember", "Target: 25 Pemuda", "Status: Terbuka"],
+    raw: {
+      category: "SDM",
+      required_budget: 35000000,
+      raised_budget: 28000000,
+      quantity: 25,
+      unit: "peserta",
+      status: "Terbuka",
+      needed_by: "Oktober 2026"
+    }
+  }
+];
+
+export const sampleKdmp: CatalogItem[] = [
+  {
+    id: "2",
+    slug: "kdmp-labbajau-001",
+    title: "Koperasi Desa Merah Putih Labuan Bajo",
+    subtitle: "Labuan Bajo, Manggarai Barat, NTT",
+    description: "Koperasi Desa Merah Putih Labuhan Bajau berfokus pada pengembangan sektor perikanan dan perdagangan hasil laut serta simpan pinjam.",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=80",
+    href: "/kdmp/?id=2",
+    badge: "KDMP AKTIF",
+    meta: ["Labuan Bajo, NTT", "189 Anggota", "Aset Rp 580 Juta"],
+    raw: {
+      code: "KDMP-LABBAJAU-001",
+      nomor_badan_hukum: "0002/BH/KDMP/2025",
+      status: "aktif",
+      ketua_name: "Bapak Ridwan Nainggolan",
+      sekretaris_name: "Bapak Dodi Hartono",
+      bendahara_name: "Ibu Nurhasanah",
+      total_members: 189,
+      modal_awal: 200000000,
+      total_assets: 580000000,
+      unit_usaha: ["simpan_pinjam", "perikanan", "perdagangan"],
+      phone: "6281234567890"
+    }
+  }
+];
+
+export const sampleExports: CatalogItem[] = [
+  {
+    id: "udang-vaname-beku",
+    slug: "udang-vaname-beku",
+    title: "Udang Vaname Beku",
+    subtitle: "Tujuan: Jepang, USA, Uni Eropa",
+    description: "Komoditas udang vaname beku kualitas premium hasil budidaya tambak pesisir ramah lingkungan berstandar sertifikasi ekspor internasional.",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=80",
+    href: "/desa-ekspor/?id=udang-vaname-beku",
+    badge: "HS 030617",
+    meta: ["Pesisir Desa", "50 Ton / Bulan", "Siap Ekspor"],
+    raw: {
+      hs_code: "030617",
+      destination_countries: ["Jepang", "USA", "Uni Eropa"],
+      export_status: "siap_ekspor",
+      export_volume: 50,
+      unit: "Ton / Bulan",
+      certifications: ["HACCP", "BAP", "ASC"],
+      contact_person: "Bapak Hadi 3",
+      contact_phone: "6281234567890"
+    }
+  }
+];
+
+const fallbackCatalogMap: Partial<Record<CatalogKind, CatalogItem[]>> = {
+  products: sampleProducts,
+  articles: sampleArticles,
+  lkdd: sampleLkdd,
+  wishlists: sampleWishlists,
+  kdmp: sampleKdmp,
+  exports: sampleExports
+};
+
 export class LaravelPublicRepository {
   constructor(private readonly http = new HttpClient()) {}
 
@@ -145,21 +454,82 @@ export class LaravelPublicRepository {
   }
 
   async listFresh(kind: CatalogKind, query?: ListQuery): Promise<CatalogItem[] | null> {
-    const data = await this.http.get<unknown>(endpoints[kind], query);
-    
-    if (data === null) {
-      if (kind === "products" && (!query?.category || query.category === "all") && !query?.search && !query?.province_id) {
-        return sampleProducts;
+    if (kind === "services") {
+      const [vsRes, cRes] = await Promise.all([
+        this.http.get<unknown>("public/village-services", query).catch(() => null),
+        this.http.get<unknown>("public/contents", query).catch(() => null)
+      ]);
+
+      const vsItems = vsRes !== null ? unwrapList(vsRes) : [];
+      const cItems = cRes !== null ? unwrapList(cRes) : [];
+
+      const mappedVs = vsItems.map((item) =>
+        mapCatalogItem("services", {
+          ...item,
+          __source: "village-services",
+          badge: item.category ? String(item.category).replace(/_/g, " ").toUpperCase() : "LAYANAN PUBLIK"
+        })
+      );
+
+      const mappedContents = cItems.map((item) =>
+        mapCatalogItem("services", {
+          ...item,
+          __source: "contents",
+          name: item.name || item.title,
+          badge: item.category ? String(item.category).replace(/_/g, " ").toUpperCase() : "INFORMASI DESA"
+        })
+      );
+
+      const combined = [...mappedVs, ...mappedContents];
+      if (combined.length > 0) {
+        if (query?.category && query.category !== "all") {
+          const cat = String(query.category).toLowerCase();
+          const filtered = combined.filter((c) =>
+            String(c.badge || "").toLowerCase().includes(cat) ||
+            String(c.raw?.category || "").toLowerCase().includes(cat)
+          );
+          return filtered.length > 0 ? filtered : combined;
+        }
+        return combined;
       }
-      return null;
+    } else {
+      const data = await this.http.get<unknown>(endpoints[kind], query);
+      const items = data !== null ? unwrapList(data) : [];
+      if (items.length > 0) {
+        return items.map((item) => mapCatalogItem(kind, item));
+      }
     }
 
-    return unwrapList(data).map((item) => mapCatalogItem(kind, item));
+    // Fallback sample data if API returned empty array or null
+    const samples = fallbackCatalogMap[kind];
+    if (samples && samples.length > 0) {
+      if (query?.category && query.category !== "all") {
+        const filtered = samples.filter((s) => s.badge?.toLowerCase().includes(String(query.category).toLowerCase()));
+        return filtered.length > 0 ? filtered : samples;
+      }
+      return samples;
+    }
+
+    return [];
   }
 
   async detail(kind: CatalogKind, id: string): Promise<DetailItem | null> {
     let data: unknown = null;
-    if (kind === "villages") {
+    if (kind === "services") {
+      data = await this.http.get<unknown>(`public/village-services/${id}`).catch(() => null);
+      if (!data) {
+        data = await this.http.get<unknown>(`public/contents/${id}`).catch(() => null);
+      }
+      if (!data) {
+        const [vsRes, cRes] = await Promise.all([
+          this.http.get<unknown>("public/village-services", { search: id }).catch(() => null),
+          this.http.get<unknown>("public/contents", { search: id }).catch(() => null)
+        ]);
+        const all = [...unwrapList(vsRes), ...unwrapList(cRes)];
+        const match = all.find((item) => text(item.slug) === id || text(item.id) === id);
+        if (match) data = match;
+      }
+    } else if (kind === "villages") {
       data = await this.http.get<unknown>(`public/villages/${id}/profile`);
       if (!data) {
         data = await this.http.get<unknown>(`public/villages/${id}`);
@@ -185,44 +555,48 @@ export class LaravelPublicRepository {
 
     const raw = unwrapDetail(data, kind);
     
-    if (!raw && kind === "products") {
-      const match = sampleProducts.find((p) => p.id === id || p.slug === id);
-      if (match) {
+    if (!raw) {
+      const samples = fallbackCatalogMap[kind];
+      if (samples && samples.length > 0) {
+        const match = samples.find((p) => p.id === id || p.slug === id) || samples[0];
+        if (match) {
+          const rawItem = {
+            ...match.raw,
+            id: match.id,
+            slug: match.slug,
+            title: match.title,
+            name: match.title,
+            description: match.description,
+            image: match.image,
+            price: match.price,
+            badge: match.badge
+          };
+          return mapDetailItem(kind, rawItem);
+        }
+      }
+
+      if (kind === "villages") {
         return {
-          ...match,
-          body: match.description,
-          gallery: [match.image!],
+          id,
+          slug: id,
+          title: `Profil Desa (${id})`,
+          subtitle: "Sentra Desa Indonesia",
+          description: "Informasi profil kawasan perdesaan, statistik wilayah, dan potensi publik.",
+          image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80",
+          href: `/detail/?kind=villages&id=${encodeURIComponent(id)}`,
+          badge: "Profil Desa",
+          body: "Selamat datang di halaman resmi Profil Desa Sentra Desa. Informasi wilayah, statistik, dan potensi perdesaan disajikan secara rinci untuk publik.",
+          gallery: [
+            "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80"
+          ],
           facts: [
-            { label: "Kategori", value: match.badge || "Produk Desa" },
-            { label: "Harga", value: formatCurrency(match.price || 0) },
-            { label: "Lokasi", value: match.meta?.[0] || "Desa Sentra" }
-          ]
+            { label: "Kode Desa", value: id },
+            { label: "Status", value: "Terverifikasi Publik" }
+          ],
+          raw: {}
         };
       }
-    }
-
-    if (!raw && kind === "villages") {
-      // Emergency fallback for village detail
-      return {
-        id,
-        slug: id,
-        title: `Profil Desa (${id})`,
-        subtitle: "Sentra Desa Indonesia",
-        description: "Informasi profil kawasan perdesaan, statistik wilayah, dan potensi publik.",
-        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80",
-        href: `/detail/?kind=villages&id=${encodeURIComponent(id)}`,
-        badge: "Profil Desa",
-        body: "Selamat datang di halaman resmi Profil Desa Sentra Desa. Informasi wilayah, statistik, dan potensi perdesaan disajikan secara rinci untuk publik.",
-        gallery: [
-          "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80",
-          "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80"
-        ],
-        facts: [
-          { label: "Kode Desa", value: id },
-          { label: "Status", value: "Terverifikasi Publik" }
-        ],
-        raw: {}
-      };
     }
     
     return raw ? mapDetailItem(kind, raw) : null;
@@ -255,7 +629,10 @@ export class LaravelPublicRepository {
 
 export function unwrapList(data: unknown): Dictionary[] {
   if (Array.isArray(data)) return data as Dictionary[];
-  if (isRecord(data) && Array.isArray(data.data)) return data.data as Dictionary[];
+  if (isRecord(data)) {
+    if (Array.isArray(data.data)) return data.data as Dictionary[];
+    if (isRecord(data.data) && Array.isArray(data.data.data)) return data.data.data as Dictionary[];
+  }
   return [];
 }
 

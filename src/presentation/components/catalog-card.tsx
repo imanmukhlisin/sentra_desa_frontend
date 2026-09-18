@@ -120,14 +120,9 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
         <div className="mt-4 sm:mt-5 flex items-center justify-between gap-2 border-t border-dashed border-[#e6dcce] pt-3.5">
           {hasPrice ? (
             <div className="min-w-0 flex-1">
-              <strong className={`block truncate text-base sm:text-lg font-extrabold ${style.badgeText}`}>
+              <strong className="block truncate text-base sm:text-lg font-extrabold text-[#006e23]">
                 {formatCurrency(item.price!)}
               </strong>
-              {item.subtitle ? (
-                <span className="block truncate text-xs font-medium text-slate-500">
-                  {item.subtitle}
-                </span>
-              ) : null}
             </div>
           ) : (
             <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#3b4b39] truncate min-w-0 flex-1">

@@ -52,11 +52,11 @@ export function TourismDetail({ id }: { id: string }) {
     return (
       <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16">
         <div className="sentra-container px-4 text-center">
-          <div className="rounded-[10px] ambient-card p-8 border border-white/80 shadow-sm max-w-md mx-auto my-12">
+          <div className="rounded-[14px] ambient-card p-8 border border-white/85 shadow-sm max-w-md mx-auto my-12">
             <TourismIcon className="h-12 w-12 text-slate-400 mx-auto" />
             <h1 className="mt-4 text-xl font-black text-slate-800">Destinasi Wisata Tidak Ditemukan</h1>
             <p className="mt-2 text-xs text-slate-500">Data wisata desa ini belum tersedia.</p>
-            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-2xl font-bold" href="/desa-wisata">
+            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-[14px] font-bold" href="/desa-wisata">
               Kembali ke Desa Wisata
             </Link>
           </div>
@@ -66,7 +66,6 @@ export function TourismDetail({ id }: { id: string }) {
   }
 
   const raw = tourism.raw || {};
-  const images = tourism.gallery?.length ? tourism.gallery : tourism.image ? [tourism.image] : ["/images/header-sentradesa-1.webp"];
   const ticketFee = Number(raw.entrance_fee ?? raw.fee ?? raw.ticket_price ?? tourism.price ?? 0);
   const operatingHours = String(raw.opening_hours || raw.operating_hours || raw.jam_operasional || "08.00 - 17.00 WIB");
   const facilities = String(raw.facilities || "Area Parkir, Toilet Umum, Musholla, Gazebo, Spot Foto, Warung Makan").split(",");
@@ -123,11 +122,11 @@ export function TourismDetail({ id }: { id: string }) {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <a href={`https://maps.google.com/?q=${encodeURIComponent(tourism.title)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl ambient-btn-primary px-5 py-3 text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer">
+              <a href={`https://maps.google.com/?q=${encodeURIComponent(tourism.title)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-[14px] ambient-btn-primary px-5 py-3 text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer">
                 <MapPinIcon className="h-4 w-4" /> Petunjuk Arah Map
               </a>
-              <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20Pengelola%20${encodeURIComponent(tourism.title)},%20saya%20ingin%20bertanya%20mengenai%20kunjungan%20wisata.`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-white/85 bg-white/95 backdrop-blur-md px-5 py-3 text-xs sm:text-sm font-bold text-slate-900 shadow-md hover:bg-white transition active:scale-95 cursor-pointer">
-                <PhoneIcon className="h-4 w-4 text-emerald-600" /> Hubungi Pengelola
+              <a href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20Pengelola%20${encodeURIComponent(tourism.title)},%20saya%20ingin%20bertanya%20mengenai%20kunjungan%20wisata.`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-[14px] border border-white/85 bg-white/95 backdrop-blur-md px-5 py-3 text-xs sm:text-sm font-bold text-slate-900 shadow-md hover:bg-white transition active:scale-95 cursor-pointer">
+                <PhoneIcon className="h-4 w-4 text-[#006e23]" /> Hubungi Pengelola
               </a>
             </div>
           </div>
@@ -144,14 +143,14 @@ export function TourismDetail({ id }: { id: string }) {
 
       {/* Stats Card */}
       <section className="sentra-container -mt-7 sm:-mt-9 relative z-20 mb-8">
-        <div className="ambient-card rounded-[10px] grid grid-cols-2 gap-3.5 sm:gap-4 p-5 sm:p-6 shadow-md border border-white/85">
-          <div className="rounded-[8px] border border-slate-200/80 bg-white/90 p-4 text-center shadow-xs">
+        <div className="ambient-card rounded-[14px] grid grid-cols-2 gap-3.5 sm:gap-4 p-5 sm:p-6 shadow-md border border-white/85">
+          <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 text-center shadow-xs">
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Harga Tiket (HTM)</span>
-            <strong className="block mt-1.5 text-sm sm:text-base font-extrabold text-red-700">
+            <strong className="block mt-1.5 text-sm sm:text-base font-extrabold text-[#006e23]">
               {ticketFee > 0 ? formatCurrency(ticketFee) : "Gratis / Terbuka"}
             </strong>
           </div>
-          <div className="rounded-[8px] border border-slate-200/80 bg-white/90 p-4 text-center shadow-xs">
+          <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 text-center shadow-xs">
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Jam Operasional</span>
             <strong className="block mt-1.5 text-xs sm:text-sm font-extrabold text-[#171d18] leading-tight">{operatingHours}</strong>
           </div>
@@ -160,21 +159,21 @@ export function TourismDetail({ id }: { id: string }) {
 
       <div className="sentra-container">
         {/* Fasilitas */}
-        <div className="mt-2 rounded-[10px] ambient-card p-6 md:p-8 shadow-md border border-white/85 space-y-4">
-          <h2 className="text-lg font-extrabold text-[#171d18] border-b border-slate-200/70 pb-3 flex items-center gap-2.5">
-            <TourismIcon className="h-5 w-5 text-red-600" /> Fasilitas Utama Destinasi
+        <div className="mt-2 rounded-[14px] ambient-card p-6 md:p-8 shadow-md border border-white/85 space-y-4">
+          <h2 className="text-lg font-extrabold text-[#171d18] border-b border-black/5 pb-3 flex items-center gap-2.5">
+            <TourismIcon className="h-5 w-5 text-[#006e23]" /> Fasilitas Utama Destinasi
           </h2>
           <div className="flex flex-wrap gap-2">
             {facilities.map((fac, idx) => (
-              <span key={idx} className="rounded-[10px] bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700 border border-slate-200/60">✓ {fac.trim()}</span>
+              <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20">✓ {fac.trim()}</span>
             ))}
           </div>
         </div>
 
         {/* Informasi */}
-        <div className="mt-6 rounded-[10px] ambient-card p-6 md:p-8 shadow-md border border-white/85 space-y-4">
-          <h2 className="text-lg font-extrabold text-[#171d18] border-b border-slate-200/70 pb-3 flex items-center gap-2.5">
-            <TourismIcon className="h-5 w-5 text-red-600" /> Informasi & Daya Tarik Wisata
+        <div className="mt-6 rounded-[14px] ambient-card p-6 md:p-8 shadow-md border border-white/85 space-y-4">
+          <h2 className="text-lg font-extrabold text-[#171d18] border-b border-black/5 pb-3 flex items-center gap-2.5">
+            <TourismIcon className="h-5 w-5 text-[#006e23]" /> Informasi & Daya Tarik Wisata
           </h2>
           <div className="prose prose-slate max-w-none text-xs md:text-sm leading-relaxed text-slate-700 space-y-3"
             dangerouslySetInnerHTML={{ __html: tourism.body || tourism.description || "<p>Destinasi wisata desa ini menyuguhkan pemandangan indah, kearifan lokal, serta sarana rekreasi keluarga yang dikelola langsung oleh masyarakat desa.</p>" }}

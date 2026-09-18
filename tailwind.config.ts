@@ -83,10 +83,10 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
-        headline: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
-        serif: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
-        inter: ["var(--font-jakarta)", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        sans: ["var(--font-jakarta)", "'Plus Jakarta Sans'", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        headline: ["var(--font-jakarta)", "'Plus Jakarta Sans'", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        serif: ["var(--font-jakarta)", "'Plus Jakarta Sans'", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        inter: ["var(--font-jakarta)", "'Plus Jakarta Sans'", "var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
         mono: ["monospace"]
       },
       spacing: {

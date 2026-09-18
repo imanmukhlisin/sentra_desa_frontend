@@ -113,6 +113,7 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
     <div
       className="fixed inset-0 z-50 flex min-h-screen overflow-hidden font-sans"
       style={{
+        fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
         background: `
           radial-gradient(ellipse 75% 65% at 8% 28%, rgba(220, 236, 222, 0.95) 0%, rgba(220, 236, 222, 0.45) 45%, transparent 72%),
           radial-gradient(ellipse 75% 65% at 92% 38%, rgba(254, 223, 201, 0.95) 0%, rgba(254, 223, 201, 0.45) 45%, transparent 72%),
@@ -264,7 +265,7 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -473,7 +474,7 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>

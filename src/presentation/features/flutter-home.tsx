@@ -388,7 +388,7 @@ export function FlutterHome({
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Cari kopi, beras, kerajinan, produk desa..."
-                className="h-[52px] w-full rounded-2xl border border-slate-200/85 bg-white/85 pl-12 pr-4 text-sm sm:text-base font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition shadow-2xs"
+                className="h-[52px] w-full rounded-[14px] border border-slate-200/85 bg-white/85 pl-12 pr-4 text-sm sm:text-base font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition shadow-xs"
               />
             </div>
 
@@ -401,7 +401,7 @@ export function FlutterHome({
                   const target = document.getElementById("produk-desa");
                   if (target) target.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="h-[52px] w-full appearance-none rounded-2xl border border-slate-200/85 bg-white/85 px-4 pr-10 text-sm sm:text-base font-semibold text-slate-700 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition cursor-pointer shadow-2xs"
+                className="h-[52px] w-full appearance-none rounded-[14px] border border-slate-200/85 bg-white/85 px-4 pr-10 text-sm sm:text-base font-semibold text-slate-700 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition cursor-pointer shadow-xs"
               >
                 <option value="all">Semua kategori</option>
                 <option value="makanan_minuman">Makanan & Minuman</option>
@@ -421,7 +421,7 @@ export function FlutterHome({
             {/* Tombol Cari yang Tertata Rapi dengan Icon dan Teks */}
             <button
               type="submit"
-              className="h-[52px] shrink-0 inline-flex items-center justify-center gap-2.5 rounded-2xl ambient-btn-primary px-7 sm:px-8 text-sm sm:text-base font-bold shadow-md transition active:scale-95 cursor-pointer"
+              className="h-[52px] shrink-0 inline-flex items-center justify-center gap-2.5 rounded-[14px] ambient-btn-primary px-7 sm:px-8 text-sm sm:text-base font-bold shadow-md transition active:scale-95 cursor-pointer"
             >
               <SearchIcon className="h-5 w-5 text-white shrink-0" />
               <span>Cari</span>
