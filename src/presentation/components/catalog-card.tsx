@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CatalogItem } from "@/domain/entities/common";
 import { formatCurrency } from "@/shared/utils/format";
-import { ArrowRightIcon, ShoppingBagIcon, MapPinIcon } from "@/presentation/components/icons";
+import { ArrowRightIcon, ShoppingBagIcon, ShoppingCartIcon, MapPinIcon } from "@/presentation/components/icons";
+import { useCart } from "@/presentation/context/cart-context";
 
 // Mirrors dashboard villageFeatures exactly — SVG path + gradient background colour
 type KindStyle = {
@@ -50,6 +51,7 @@ function detectStyle(href: string): KindStyle {
 
 export function CatalogCard({ item }: { item: CatalogItem }) {
   const [imageFailed, setImageFailed] = useState(false);
+  const { addItem } = useCart();
 
   useEffect(() => {
     setImageFailed(false);
@@ -96,10 +98,10 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
           </div>
         )}
 
-        {/* Badge */}
-        {item.badge && (
-          <div className="absolute left-3 top-3 z-10 rounded-full border border-white/90 bg-white/95 px-3 py-1 text-[10.5px] font-extrabold uppercase tracking-wider shadow-xs backdrop-blur-md text-[#171d18]">
-            {item.badge}
+        {/* Real Promo / Discount tag if present */}
+        {Boolean(item.raw?.discount) && (
+          <div className="absolute left-0 top-0 z-10 rounded-br-lg bg-[#e5243b] px-2.5 py-1 text-[11px] font-extrabold text-white shadow-xs">
+            {String(item.raw.discount)}
           </div>
         )}
       </div>
@@ -107,11 +109,16 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
       {/* Card body */}
       <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
         <div>
+          {item.badge && (
+            <div className={`mb-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider ${style.badgeText}`}>
+              {item.badge}
+            </div>
+          )}
           <h3 className={`text-base sm:text-lg font-bold text-[#171d18] line-clamp-1 transition-colors ${style.hoverTitle} leading-snug`}>
             {item.title}
           </h3>
           {item.description ? (
-            <p className="mt-2 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[#3b4b39]/80">
+            <p className="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[#3b4b39]/80">
               {item.description}
             </p>
           ) : null}
@@ -119,8 +126,12 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
 
         <div className="mt-4 sm:mt-5 flex items-center justify-between gap-2 border-t border-dashed border-[#e6dcce] pt-3.5">
           {hasPrice ? (
-            <div className="min-w-0 flex-1">
-              <strong className="block truncate text-base sm:text-lg font-extrabold text-[#006e23]">
+            <div className="min-w-0 flex-1 pr-1.5">
+              <strong className={`block font-black text-[#006e23] whitespace-nowrap tracking-tight leading-none tabular-nums ${
+                (item.price ?? 0) >= 10000000
+                  ? "text-sm sm:text-base"
+                  : "text-base sm:text-lg"
+              }`}>
                 {formatCurrency(item.price!)}
               </strong>
             </div>
@@ -131,19 +142,36 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
             </div>
           )}
 
-          <span className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl border ${style.ring} bg-white px-3.5 py-1.5 text-xs sm:text-sm font-bold ${style.badgeText} transition-all duration-200 ${style.btnHover}`}>
-            {hasPrice ? (
-              <>
-                <ShoppingBagIcon className="h-4 w-4" />
-                <span>Beli</span>
-              </>
-            ) : (
-              <>
-                <span>Detail</span>
-                <ArrowRightIcon className="h-3.5 w-3.5" />
-              </>
-            )}
-          </span>
+          {hasPrice ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addItem(
+                  {
+                    id: item.id,
+                    title: item.title,
+                    price: item.price ?? 0,
+                    image: item.image,
+                    href: item.href
+                  },
+                  1,
+                  true
+                );
+              }}
+              className="shrink-0 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#006e23]/25 bg-[#006e23]/5 text-[#006e23] transition-all duration-200 hover:bg-[#006e23] hover:text-white hover:border-[#006e23] hover:shadow-xs active:scale-90 cursor-pointer"
+              title="Tambah ke Keranjang"
+              aria-label={`Tambah ${item.title} ke keranjang`}
+            >
+              <ShoppingCartIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+            </button>
+          ) : (
+            <span className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl border ${style.ring} bg-white px-3.5 py-1.5 text-xs sm:text-sm font-bold ${style.badgeText} transition-all duration-200 ${style.btnHover}`}>
+              <span>Detail</span>
+              <ArrowRightIcon className="h-3.5 w-3.5" />
+            </span>
+          )}
         </div>
       </div>
     </Link>

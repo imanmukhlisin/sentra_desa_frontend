@@ -7,6 +7,7 @@ import { getDetail } from "@/application/use-cases/get-public-content";
 import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-carousel";
 import { formatCurrency } from "@/shared/utils/format";
 import { PotentialIcon, MapPinIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function PotentialDetail({ id }: { id: string }) {
   const [potential, setPotential] = useState<DetailItem | null>(null);
@@ -34,14 +35,7 @@ export function PotentialDetail({ id }: { id: string }) {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent" />
-          <p className="text-xs font-bold text-slate-600">Memuat potensi desa & peluang investasi...</p>
-        </div>
-      </div>
-    );
+    return <DetailSkeleton backLabel="Kembali ke Potensi Desa" />;
   }
 
   if (!potential) {

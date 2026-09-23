@@ -23,8 +23,9 @@ import {
   VillageIcon,
   WishlistIcon,
   PhoneIcon,
-  UserIcon
+  SearchIcon
 } from "@/presentation/components/icons";
+import { DetailSkeleton } from "@/presentation/components/skeleton";
 import { formatCurrency } from "@/shared/utils/format";
 
 type ModuleSectionProps = {
@@ -145,14 +146,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent"></div>
-          <p className="text-sm font-bold text-slate-600">Memuat profil desa lengkap...</p>
-        </div>
-      </div>
-    );
+    return <DetailSkeleton backLabel="Kembali ke Profil Desa" />;
   }
 
   if (!village) {

@@ -33,7 +33,11 @@ import {
   MapPin,
   PlusSquare,
   Phone,
-  User
+  User,
+  Trash2,
+  X,
+  Plus,
+  Minus
 } from "lucide-react";
 
 export const VillageIcon = Landmark;
@@ -71,4 +75,8 @@ export const MapPinIcon = MapPin;
 export const PlusSquareIcon = PlusSquare;
 export const PhoneIcon = Phone;
 export const UserIcon = User;
+export const TrashIcon = Trash2;
+export const XIcon = X;
+export const PlusIcon = Plus;
+export const MinusIcon = Minus;
 

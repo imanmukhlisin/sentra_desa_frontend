@@ -7,7 +7,10 @@ import { getCatalog, getDetail } from "@/application/use-cases/get-public-conten
 import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-carousel";
 import { CatalogCard } from "@/presentation/components/catalog-card";
 import { formatCurrency } from "@/shared/utils/format";
-import { ChevronLeftIcon, PhoneIcon, StoreIcon, MapPinIcon } from "@/presentation/components/icons";
+import { ChevronLeftIcon, PhoneIcon, StoreIcon, MapPinIcon, ShoppingCartIcon } from "@/presentation/components/icons";
+import { DetailSkeleton } from "@/presentation/components/skeleton";
+import { useCart } from "@/presentation/context/cart-context";
+import { authClient } from "@/infrastructure/api/auth-client";
 
 export function ProductDetail({ id }: { id: string }) {
   const [product, setProduct] = useState<DetailItem | null>(null);
@@ -15,6 +18,12 @@ export function ProductDetail({ id }: { id: string }) {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"desc" | "spec" | "reviews">("desc");
   const [otherProducts, setOtherProducts] = useState<CatalogItem[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { addItem } = useCart();
+
+  useEffect(() => {
+    setIsLoggedIn(Boolean(authClient.getToken()));
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -46,14 +55,7 @@ export function ProductDetail({ id }: { id: string }) {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent"></div>
-          <p className="text-sm font-bold text-slate-600">Memuat detail produk...</p>
-        </div>
-      </div>
-    );
+    return <DetailSkeleton backLabel="Kembali ke Sentra Produk" />;
   }
 
   if (!product) {
@@ -63,7 +65,7 @@ export function ProductDetail({ id }: { id: string }) {
           <div className="rounded-[10px] ambient-card p-8 max-w-md mx-auto my-12">
             <h1 className="text-xl font-black text-slate-800">Produk Tidak Ditemukan</h1>
             <p className="mt-2 text-xs text-slate-500">Produk yang Anda cari tidak tersedia atau stok telah habis.</p>
-            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-2xl font-bold" href="/sentra-produk">
+            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-2xl font-bold" href="/sentra-produk/">
               Kembali ke Sentra Produk
             </Link>
           </div>
@@ -91,7 +93,7 @@ export function ProductDetail({ id }: { id: string }) {
       {/* Navigation Top Bar */}
       <div className="sentra-container mb-6">
         <div className="ambient-card flex flex-wrap items-center justify-between gap-3 rounded-[14px] px-5 py-3.5 shadow-xs">
-          <Link href="/sentra-produk" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#006e23] transition-colors">
+          <Link href="/sentra-produk/" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-[#006e23] transition-colors">
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Sentra Produk</span>
           </Link>
@@ -122,7 +124,7 @@ export function ProductDetail({ id }: { id: string }) {
                   {product.title}
                 </h1>
                 <div className="mt-4 flex items-baseline gap-2.5">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#006e23]">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-[#006e23] tabular-nums">
                     {formatCurrency(effectivePrice)}
                   </span>
                   {discountPrice > 0 && discountPrice < price ? (
@@ -208,20 +210,44 @@ export function ProductDetail({ id }: { id: string }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-2">
-                <Link
-                  href={`/checkout?product_id=${product.id}&quantity=${quantity}`}
-                  className="flex-1 ambient-btn-primary justify-center text-center py-3.5 px-6 rounded-[14px] text-xs sm:text-sm font-bold shadow-md transition active:scale-95"
+              <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    addItem(
+                      {
+                        id: product.id,
+                        title: product.title,
+                        price: effectivePrice,
+                        image: images[0],
+                        href: `/sentra-produk?id=${product.id}`
+                      },
+                      quantity,
+                      true
+                    );
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-[14px] border-2 border-[#006e23] bg-white py-3 px-4 text-xs sm:text-sm font-extrabold text-[#006e23] hover:bg-[#006e23]/5 transition active:scale-95 shadow-2xs cursor-pointer"
                 >
-                  Beli Sekarang
+                  <ShoppingCartIcon className="h-4 w-4" />
+                  <span>+ Keranjang</span>
+                </button>
+
+                <Link
+                  href={isLoggedIn ? `/checkout?product_id=${product.id}&quantity=${quantity}` : `/login?redirect=${encodeURIComponent(`/checkout?product_id=${product.id}&quantity=${quantity}`)}`}
+                  className="flex-1 ambient-btn-primary flex items-center justify-center text-center py-3 px-4 rounded-[14px] text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
+                >
+                  {isLoggedIn ? "Beli Sekarang" : "Masuk untuk Beli"}
                 </Link>
+
                 <a
                   href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20saya%20ingin%20pesan%20${encodeURIComponent(product.title)}%20sebanyak%20${quantity}%20pcs.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-[14px] border border-slate-200 bg-white/90 px-6 py-3.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-white hover:text-slate-900 transition shadow-2xs active:scale-95"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-[14px] border border-slate-200 bg-white/90 px-4 py-3 text-xs sm:text-sm font-bold text-slate-700 hover:bg-white hover:text-slate-900 transition shadow-2xs active:scale-95"
+                  title="Pesan via WhatsApp"
                 >
-                  Pesan via WhatsApp
+                  <PhoneIcon className="h-3.5 w-3.5 text-[#006e23]" />
+                  <span>WhatsApp</span>
                 </a>
               </div>
             </div>

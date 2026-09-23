@@ -6,6 +6,7 @@ import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { formatCurrency } from "@/shared/utils/format";
 import { KdmpIcon, MapPinIcon, ChevronLeftIcon, PhoneIcon } from "@/presentation/components/icons";
+import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function KdmpDetail({ id }: { id: string }) {
   const [kdmp, setKdmp] = useState<DetailItem | null>(null);
@@ -33,14 +34,7 @@ export function KdmpDetail({ id }: { id: string }) {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent" />
-          <p className="text-xs font-bold text-slate-600">Memuat detail KDMP...</p>
-        </div>
-      </div>
-    );
+    return <DetailSkeleton backLabel="Kembali ke KDMP" />;
   }
 
   if (!kdmp) {

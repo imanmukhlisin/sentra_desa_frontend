@@ -371,7 +371,7 @@ export function FlutterHome({
       </section>
 
       {/* Section Produk & Filter Pencarian */}
-      <section id="produk-desa" className="sentra-container pt-8 md:pt-10">
+      <section id="produk-desa" className="sentra-container scroll-mt-[110px] pt-8 md:pt-10">
         {/* Fitur Cari yang rapi, presisi, dan tertata */}
         <div>
           <form
@@ -451,14 +451,21 @@ export function FlutterHome({
                 <button
                   key={category.key}
                   type="button"
-                  onClick={() => setSelectedCategory(category.key)}
-                  className={`inline-flex h-[44px] md:h-[48px] shrink-0 items-center gap-2.5 rounded-full px-5 md:px-6 text-xs sm:text-sm md:text-[15px] font-bold transition cursor-pointer select-none ${
+                  onClick={(e) => {
+                    setSelectedCategory(category.key);
+                    e.currentTarget.scrollIntoView({
+                      behavior: "smooth",
+                      inline: "center",
+                      block: "nearest"
+                    });
+                  }}
+                  className={`inline-flex h-[44px] md:h-[48px] shrink-0 items-center gap-2.5 rounded-full px-5 md:px-6 text-xs sm:text-sm md:text-[15px] font-bold snap-center transition-all duration-300 ease-out cursor-pointer select-none active:scale-95 ${
                     isActive
-                      ? "ambient-btn-primary"
-                      : "ambient-card text-[#171d18] hover:bg-white"
+                      ? "ambient-btn-primary scale-[1.02] shadow-[0_6px_20px_rgba(0,110,35,0.3)]"
+                      : "ambient-card text-[#171d18] hover:bg-white hover:scale-[1.01]"
                   }`}
                 >
-                  <Icon className={`h-4.5 w-4.5 sm:h-5 sm:w-5 ${isActive ? "text-white" : "text-[#006e23]"}`} />
+                  <Icon className={`h-4.5 w-4.5 sm:h-5 sm:w-5 transition-transform duration-300 ${isActive ? "text-white scale-110" : "text-[#006e23]"}`} />
                   {category.label}
                 </button>
               );

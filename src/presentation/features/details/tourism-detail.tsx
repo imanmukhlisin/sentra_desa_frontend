@@ -7,6 +7,7 @@ import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { formatCurrency } from "@/shared/utils/format";
 import { MapPinIcon, TourismIcon, PhoneIcon, ChevronLeftIcon, ChevronRightIcon } from "@/presentation/components/icons";
+import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function TourismDetail({ id }: { id: string }) {
   const [tourism, setTourism] = useState<DetailItem | null>(null);
@@ -38,14 +39,7 @@ export function TourismDetail({ id }: { id: string }) {
   }, [images.length]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent" />
-          <p className="text-sm font-bold text-slate-600">Memuat detail desa wisata...</p>
-        </div>
-      </div>
-    );
+    return <DetailSkeleton backLabel="Kembali ke Desa Wisata" />;
   }
 
   if (!tourism) {

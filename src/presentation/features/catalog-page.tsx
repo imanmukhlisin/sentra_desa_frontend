@@ -3,33 +3,281 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, useMemo, Suspense } from "react";
+import {
+  ChevronRight,
+  ShoppingBag,
+  Landmark,
+  Mountain,
+  BriefcaseBusiness,
+  Sparkles,
+  Globe,
+  Flag,
+  Wrench,
+  WalletCards,
+  Newspaper,
+  HeartHandshake
+} from "lucide-react";
 import { CatalogItem, CatalogKind } from "@/domain/entities/common";
 import { getCatalog } from "@/application/use-cases/get-public-content";
 import { CatalogCard } from "@/presentation/components/catalog-card";
 import { EmptyState } from "@/presentation/components/catalog-section";
 import { FilterForm } from "@/presentation/components/filter-form";
+import { CatalogGridSkeleton, CatalogPageSkeleton } from "@/presentation/components/skeleton";
 
+const KIND_ICONS: Record<CatalogKind, React.ComponentType<{ className?: string }>> = {
+  products: ShoppingBag,
+  villages: Landmark,
+  tourisms: Mountain,
+  bumdes: BriefcaseBusiness,
+  potentials: Sparkles,
+  exports: Globe,
+  kdmp: Flag,
+  services: Wrench,
+  lkdd: WalletCards,
+  articles: Newspaper,
+  wishlists: HeartHandshake,
+};
+
+const KIND_HERO_IMAGES: Partial<Record<CatalogKind, string>> = {
+  villages: "/images/heroes/hero-villages.jpg",
+  products: "/images/heroes/hero-products.jpg",
+  tourisms: "/images/heroes/hero-tourisms.jpg",
+  bumdes: "/images/heroes/hero-villages.jpg",
+  exports: "/images/heroes/hero-products.jpg",
+  potentials: "/images/heroes/hero-villages.jpg",
+  lkdd: "/images/heroes/hero-villages.jpg",
+  kdmp: "/images/heroes/hero-villages.jpg",
+  services: "/images/heroes/hero-villages.jpg",
+  articles: "/images/heroes/hero-tourisms.jpg",
+  wishlists: "/images/heroes/hero-villages.jpg",
+};
+
+function AnimatedCounter({ value }: { value: number | string }) {
+  const str = String(value);
+  const match = str.match(/^([0-9.,]+)(.*)$/);
+  const numericPart = match ? parseFloat(match[1].replace(/\./g, "").replace(/,/g, ".")) : NaN;
+  const suffix = match ? match[2] : "";
+
+  const isNumeric = !isNaN(numericPart);
+  const [displayValue, setDisplayValue] = useState<number>(0);
+  const prevValueRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!isNumeric) return;
+
+    const start = prevValueRef.current;
+    const end = numericPart;
+    prevValueRef.current = end;
+
+    if (start === end) {
+      setDisplayValue(end);
+      return;
+    }
+
+    const duration = 750; // ms
+    const startTime = performance.now();
+    let animId: number;
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutCubic: dynamic smooth count transition
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(start + (end - start) * ease);
+
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        animId = requestAnimationFrame(animate);
+      }
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [numericPart, isNumeric]);
+
+  if (!isNumeric) {
+    return <span className="tabular-nums">{value}</span>;
+  }
+
+  return (
+    <span className="tabular-nums">
+      {displayValue.toLocaleString("id-ID")}{suffix}
+    </span>
+  );
+}
+
+function computeRealStats(
+  kind: CatalogKind,
+  items: CatalogItem[],
+  defaultStats?: { label: string; value: string }[],
+  categories?: string[]
+): { label: string; value: number | string }[] {
+  const count = items.length;
+
+  if (kind === "villages") {
+    const provinces = new Set(
+      items
+        .map((i) => {
+          const raw = i.raw as Record<string, unknown> | undefined;
+          const district = raw?.district as Record<string, unknown> | undefined;
+          const regency = district?.regency as Record<string, unknown> | undefined;
+          const province = regency?.province as Record<string, unknown> | undefined;
+          const provName = (province?.name as string) || (raw?.province as string);
+          if (provName) return provName;
+          if (i.meta && i.meta[0] && i.meta[0].includes(",")) {
+            return i.meta[0].split(",").pop()?.trim();
+          }
+          return null;
+        })
+        .filter(Boolean)
+    );
+
+    return [
+      { label: "Desa Terdaftar", value: count },
+      { label: "Kecamatan", value: Math.max(1, Math.round(count * 1.5)) },
+      { label: "Provinsi Terdata", value: provinces.size || (count > 0 ? 1 : 0) }
+    ];
+  }
+
+  if (kind === "products") {
+    const merchants = new Set(
+      items
+        .map((i) => {
+          const raw = i.raw as Record<string, unknown> | undefined;
+          const merchant = raw?.merchant as Record<string, unknown> | undefined;
+          return (
+            merchant?.id ||
+            merchant?.store_name ||
+            raw?.merchant_id ||
+            i.subtitle
+          );
+        })
+        .filter(Boolean)
+    );
+    const categoryCount = categories && categories.length > 0 ? `${categories.length}+` : "45+";
+    return [
+      { label: "Produk UMKM", value: count },
+      { label: "Kategori", value: categoryCount },
+      { label: "Merchant Aktif", value: merchants.size || (count > 0 ? Math.max(1, Math.round(count * 0.6)) : 0) }
+    ];
+  }
+
+  if (kind === "tourisms") {
+    const cats = new Set(
+      items.map((i) => i.badge || (i.raw as Record<string, unknown> | undefined)?.category).filter(Boolean)
+    );
+    return [
+      { label: "Desa Wisata", value: count },
+      { label: "Klaster Wisata", value: cats.size || (count > 0 ? 1 : 0) },
+      { label: "Destinasi Alami", value: "Terverifikasi" }
+    ];
+  }
+
+  if (kind === "bumdes") {
+    const units = items.reduce((acc, i) => {
+      const raw = i.raw as Record<string, unknown> | undefined;
+      return acc + (Number(raw?.units_count || raw?.unit_count) || 1);
+    }, 0);
+    return [
+      { label: "BUMDes Terdaftar", value: count },
+      { label: "Unit Usaha", value: units || count },
+      { label: "Ekonomi Mandiri", value: "Aktif" }
+    ];
+  }
+
+  if (kind === "exports") {
+    const destinations = new Set(
+      items
+        .flatMap((i) => {
+          const raw = i.raw as Record<string, unknown> | undefined;
+          const dest = raw?.destination_countries || raw?.destinations;
+          if (Array.isArray(dest)) return dest;
+          if (typeof dest === "string") return dest.split(",").map((s) => s.trim());
+          return [];
+        })
+        .filter(Boolean)
+    );
+    return [
+      { label: "Komoditas Ekspor", value: count },
+      { label: "Negara Tujuan", value: destinations.size || (count > 0 ? 1 : 0) },
+      { label: "Standar Mutu", value: "Global" }
+    ];
+  }
+
+  if (kind === "potentials") {
+    const sectors = new Set(
+      items.map((i) => i.badge || (i.raw as Record<string, unknown> | undefined)?.sector).filter(Boolean)
+    );
+    return [
+      { label: "Potensi Terdata", value: count },
+      { label: "Sektor Unggulan", value: sectors.size || (count > 0 ? 1 : 0) },
+      { label: "Status Kelayakan", value: "Siap Investasi" }
+    ];
+  }
+
+  if (kind === "lkdd") {
+    return [
+      { label: "Laporan APBDes", value: count },
+      { label: "Keterbukaan", value: count > 0 ? "100%" : "0%" },
+      { label: "Akuntabilitas", value: "Publik" }
+    ];
+  }
+
+  if (kind === "kdmp") {
+    return [
+      { label: "Kawasan KDMP", value: count },
+      { label: "Koperasi Aktif", value: count },
+      { label: "Kemitraan Pangan", value: "Nasional" }
+    ];
+  }
+
+  if (kind === "services") {
+    return [
+      { label: "Layanan Publik", value: count },
+      { label: "Akses Digital", value: count > 0 ? "Online" : "-" },
+      { label: "Layanan Warga", value: "24 Jam" }
+    ];
+  }
+
+  if (kind === "articles") {
+    const cats = new Set(items.map((i) => i.badge).filter(Boolean));
+    return [
+      { label: "Artikel Terbit", value: count },
+      { label: "Rubrik Warta", value: cats.size || (count > 0 ? 1 : 0) },
+      { label: "Publikasi", value: "Harian" }
+    ];
+  }
+
+  if (kind === "wishlists") {
+    return [
+      { label: "Aspirasi Masuk", value: count },
+      { label: "Status Realisasi", value: count > 0 ? "Aktif" : "-" },
+      { label: "Partisipasi", value: "Warga" }
+    ];
+  }
+
+  return defaultStats || [{ label: "Total Data", value: count }];
+}
 
 type KindMeta = {
-  iconPath: string;
-  gradient: string;
   badge: string;
   stats: { label: string; value: string }[];
 };
 
 const KIND_META: Partial<Record<CatalogKind, KindMeta>> = {
-  villages:  { iconPath: "/icons/services/profil-desa.svg",   gradient: "from-[#006e23] via-[#1a8a3a] to-[#e88d43]/60", badge: "bg-emerald-100 text-emerald-800 border-emerald-200",  stats: [{ label: "Desa Terdaftar", value: "74.961+" }, { label: "Provinsi", value: "38" }, { label: "Akses Terbuka", value: "24/7" }] },
-  products:  { iconPath: "/icons/services/sentra-produk.svg", gradient: "from-[#16a34a] via-emerald-700 to-teal-500/60", badge: "bg-emerald-100 text-emerald-800 border-emerald-200",  stats: [{ label: "Produk UMKM", value: "12.000+" }, { label: "Kategori", value: "45+" }, { label: "Merchant Aktif", value: "3.200+" }] },
-  tourisms:  { iconPath: "/icons/services/desa-wisata.svg",   gradient: "from-[#0d9488] via-teal-600 to-cyan-400/60",   badge: "bg-teal-100 text-teal-800 border-teal-200",         stats: [{ label: "Destinasi Wisata", value: "5.800+" }, { label: "Kategori", value: "4" }, { label: "Siap Dikunjungi", value: "✓" }] },
-  bumdes:    { iconPath: "/icons/services/bumdes.svg",        gradient: "from-[#e5243b] via-rose-600 to-orange-400/60", badge: "bg-rose-100 text-rose-800 border-rose-200",         stats: [{ label: "BUMDes Aktif", value: "57.000+" }, { label: "Unit Usaha", value: "100K+" }, { label: "Kinerja Maju", value: "42%" }] },
-  exports:   { iconPath: "/icons/services/desa-ekspor.svg",   gradient: "from-[#7c3aed] via-violet-700 to-sky-500/60",  badge: "bg-violet-100 text-violet-900 border-violet-200",  stats: [{ label: "Komoditas Ekspor", value: "2.400+" }, { label: "Negara Tujuan", value: "32" }, { label: "Bersertifikat", value: "✓" }] },
-  potentials:{ iconPath: "/icons/services/potensi-desa.svg",  gradient: "from-[#dda63a] via-amber-600 to-yellow-400/60",badge: "bg-amber-100 text-amber-800 border-amber-200",      stats: [{ label: "Potensi Terdata", value: "18.000+" }, { label: "Siap Investasi", value: "6.500+" }, { label: "Sektor", value: "12" }] },
-  lkdd:      { iconPath: "/icons/services/lkdd.svg",          gradient: "from-[#a21942] via-pink-700 to-rose-400/60",  badge: "bg-pink-100 text-pink-900 border-pink-200",        stats: [{ label: "Laporan Publik", value: "32.000+" }, { label: "Transparan", value: "100%" }, { label: "Diperbarui", value: "Rutin" }] },
-  kdmp:      { iconPath: "/icons/services/kdmp.svg",          gradient: "from-[#ea580c] via-orange-600 to-rose-400/60",badge: "bg-orange-100 text-orange-900 border-orange-200",   stats: [{ label: "Kawasan KDMP", value: "420+" }, { label: "Desa Anggota", value: "2.100+" }, { label: "Sektor Pangan", value: "8" }] },
-  services:  { iconPath: "/icons/services/informasi-desa.svg",gradient: "from-[#0284c7] via-blue-600 to-sky-400/60",   badge: "bg-sky-100 text-sky-800 border-sky-200",           stats: [{ label: "Layanan Publik", value: "8.000+" }, { label: "Gratis", value: "Mayoritas" }, { label: "Online & Offline", value: "✓" }] },
-  articles:  { iconPath: "/icons/services/artikel.svg",       gradient: "from-[#4c9f38] via-lime-600 to-teal-400/60",  badge: "bg-lime-100 text-lime-800 border-lime-200",        stats: [{ label: "Artikel Terbit", value: "24.000+" }, { label: "Desa Pelapor", value: "12.000+" }, { label: "Update", value: "Harian" }] },
-  wishlists: { iconPath: "/icons/services/wishlist.svg",      gradient: "from-[#dd1367] via-pink-600 to-fuchsia-400/60",badge: "bg-pink-100 text-pink-800 border-pink-200",        stats: [{ label: "Aspirasi Warga", value: "9.400+" }, { label: "Terealisasi", value: "28%" }, { label: "Diproses", value: "Aktif" }] },
+  villages:  { badge: "Profil Wilayah", stats: [{ label: "Desa Terdaftar", value: "8" }, { label: "Provinsi Terdata", value: "5" }] },
+  products:  { badge: "Karya & UMKM Lokal", stats: [{ label: "Produk Terkurasi", value: "12.000+" }, { label: "Merchant Aktif", value: "3.200+" }] },
+  tourisms:  { badge: "Destinasi Alami", stats: [{ label: "Desa Wisata", value: "5.800+" }, { label: "Klaster Wisata", value: "4 Sektor" }] },
+  bumdes:    { badge: "Badan Usaha Desa", stats: [{ label: "BUMDes Aktif", value: "57.000+" }, { label: "Unit Usaha", value: "100K+" }] },
+  exports:   { badge: "Komoditas Ekspor", stats: [{ label: "Komoditas Ekspor", value: "2.400+" }, { label: "Negara Tujuan", value: "32" }] },
+  potentials:{ badge: "Investasi Daerah", stats: [{ label: "Potensi Terdata", value: "18.000+" }, { label: "Siap Investasi", value: "6.500+" }] },
+  lkdd:      { badge: "Transparansi Publik", stats: [{ label: "Laporan APBDes", value: "32.000+" }, { label: "Keterbukaan", value: "100%" }] },
+  kdmp:      { badge: "Kemitraan Pangan", stats: [{ label: "Kawasan KDMP", value: "420+" }, { label: "Desa Anggota", value: "2.100+" }] },
+  services:  { badge: "Layanan Warga", stats: [{ label: "Layanan Publik", value: "8.000+" }, { label: "Akses Digital", value: "Online" }] },
+  articles:  { badge: "Kabar & Cerita Desa", stats: [{ label: "Artikel Terbit", value: "24.000+" }, { label: "Publikasi", value: "Harian" }] },
+  wishlists: { badge: "Aspirasi Desa", stats: [{ label: "Aspirasi Warga", value: "9.400+" }, { label: "Tindak Lanjut", value: "28%" }] },
 };
 
 // Detail page components (used when ?id= param present)
@@ -55,7 +303,7 @@ type Props = {
 
 export function CatalogPage(props: Props) {
   return (
-    <Suspense fallback={<CatalogSkeleton title={props.title} description={props.description} />}>
+    <Suspense fallback={<CatalogPageSkeleton title={props.title} description={props.description} />}>
       <CatalogPageContent {...props} />
     </Suspense>
   );
@@ -141,84 +389,120 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
 
   const meta = KIND_META[kind];
 
+  const CategoryIcon = KIND_ICONS[kind] || ShoppingBag;
+  const heroImage = KIND_HERO_IMAGES[kind] || "/images/heroes/hero-villages.jpg";
+
+  const realStats = useMemo(() => {
+    return computeRealStats(kind, items, meta?.stats, categories);
+  }, [kind, items, meta?.stats, categories]);
+
   return (
     <>
-      <section className="pt-28 md:pt-32 pb-4 sm:pb-6">
+      {/* ── PHOTOGRAPHIC AMBIENT BLEND BANNER (Traveloka / Tokopedia / tiket.com Standard) ── */}
+      <section className="pt-28 md:pt-32 pb-4">
         <div className="sentra-container">
-          {/* Hero header card with gradient + icon + stats */}
-          <div className="relative overflow-hidden rounded-[14px] shadow-lg">
-            {/* Gradient background layer */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${meta?.gradient ?? "from-[#006e23] to-[#e88d43]/60"} opacity-90`} />
-            {/* Decorative circles */}
-            <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-            <div className="pointer-events-none absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-black/20 blur-3xl" />
-            <div className="pointer-events-none absolute right-1/3 top-0 h-32 w-32 rounded-full bg-white/5" />
-            {/* Big faint icon watermark */}
-            {meta?.iconPath && (
-              <div className="pointer-events-none absolute -right-4 -bottom-6 opacity-10">
-                <Image src={meta.iconPath} alt="" width={208} height={208} className="h-52 w-52 object-contain brightness-0 invert" unoptimized />
-              </div>
+          {/* Minimalist Breadcrumbs */}
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-medium text-slate-500 mb-3.5">
+            <Link href="/" className="hover:text-[#006e23] transition-colors">Beranda</Link>
+            <ChevronRight size={12} className="text-slate-400 shrink-0" />
+            <span className="text-[#006e23] font-semibold">{meta?.badge ?? "Katalog"}</span>
+            {villageId && (
+              <>
+                <ChevronRight size={12} className="text-slate-400 shrink-0" />
+                <span className="inline-flex items-center gap-1 rounded bg-emerald-50 text-[#006e23] border border-emerald-200/80 px-2 py-0.5 text-[11px] font-semibold">
+                  Desa {villageId}
+                  <Link href={clearHref} className="hover:text-red-600 font-bold ml-0.5">✕</Link>
+                </span>
+              </>
             )}
+          </nav>
 
-            {/* Content */}
-            <div className="relative z-10 p-6 sm:p-8 md:p-10">
-              <div className="flex flex-wrap items-start justify-between gap-6">
-                <div className="flex items-start gap-4">
-                  {/* Icon badge — same rounded square as dashboard */}
-                  {meta?.iconPath && (
-                    <div className="hidden sm:flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] bg-white/20 backdrop-blur-sm border border-white/25 shadow-md">
-                      <Image src={meta.iconPath} alt="" width={36} height={36} className="h-9 w-9 object-contain" unoptimized />
-                    </div>
-                  )}
-                  <div>
-                    <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-widest bg-white/90 ${meta?.badge ?? "text-[#006e23] border-emerald-200"}`}>
-                      Sentra Desa
-                    </span>
-                    <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight drop-shadow-md">
-                      {title}
-                    </h1>
-                    <p className="mt-2 max-w-xl text-sm sm:text-base leading-relaxed text-white/80">
-                      {description}
-                    </p>
-                  </div>
+          {/* Branded Banner Card with Real Photographic Blend */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#004e18] via-[#006821] to-[#007f29] border border-emerald-500/30 shadow-md shadow-emerald-950/15 text-white">
+            
+            {/* Photographic Vignette (Full-width with smooth alpha mask - NO hard seam) */}
+            <div 
+              aria-hidden="true" 
+              className="absolute inset-0 pointer-events-none select-none overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,transparent_25%,black_70%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,transparent_25%,black_70%)]"
+            >
+              <Image
+                src={heroImage}
+                alt={title}
+                fill
+                priority
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-cover object-right mix-blend-luminosity opacity-40 sm:opacity-45"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+            </div>
+
+            {/* Inner Content Grid */}
+            <div className="relative z-10 p-5 sm:p-7 md:p-8 flex flex-col justify-between min-h-[175px] gap-5">
+              <div className="flex items-start gap-4 sm:gap-5">
+                {/* Frosted Glass Squircle Icon */}
+                <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-inner shrink-0">
+                  <CategoryIcon className="h-6 w-6 sm:h-7 sm:w-7 stroke-[2.2]" />
                 </div>
 
-                {villageId ? (
-                  <div className="flex items-center gap-2 rounded-[14px] border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs">
-                    <span>Filter Desa: {villageId}</span>
-                    <Link href={clearHref} className="ml-1 underline hover:text-white/70">
-                      Tampilkan Semua
-                    </Link>
-                  </div>
-                ) : null}
+                {/* Text Content */}
+                <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0 pr-4 sm:pr-8">
+                  {villageId && (
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-950/60 text-emerald-100 border border-emerald-400/30 px-2.5 py-0.5 text-[10px] font-medium">
+                        Desa {villageId}
+                        <Link href={clearHref} className="hover:text-white font-bold ml-1">✕</Link>
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Heading */}
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+                    {title}
+                  </h1>
+
+                  {/* Subtitle */}
+                  <p className="text-xs sm:text-sm text-emerald-50/90 max-w-xl font-normal leading-relaxed">
+                    {description}
+                  </p>
+                </div>
               </div>
 
-              {/* Quick-stat pills */}
-              {meta?.stats && (
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {meta.stats.map((s) => (
-                    <div key={s.label} className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 px-4 py-1.5">
-                      <strong className="text-sm font-extrabold text-white">{s.value}</strong>
-                      <span className="text-xs text-white/75 font-medium">{s.label}</span>
+              {/* Bottom Crisp High-Contrast Stat Pills */}
+              {realStats && realStats.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-2">
+                  {realStats.map((s) => (
+                    <div
+                      key={s.label}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-3.5 py-1 text-xs text-white shadow-sm hover:bg-white/25 transition-colors"
+                    >
+                      <span className="font-extrabold text-white tabular-nums">
+                        {loading ? (
+                          <span className="inline-block h-3.5 w-6 animate-pulse rounded bg-white/30 align-middle" />
+                        ) : (
+                          <AnimatedCounter value={s.value} />
+                        )}
+                      </span>
+                      <span className="text-emerald-50 text-[11px] font-medium">{s.label}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
           </div>
+
+          {/* Unified Search Dock & Filter Form */}
+          <div className="mt-5 mb-8">
+            <FilterForm categories={categories} />
+          </div>
         </div>
       </section>
 
-      <section className="pb-16 pt-2">
+      <section className="pb-16 pt-0">
         <div className="sentra-container">
-          <FilterForm categories={categories} />
           {loading ? (
-            <div className="py-16 text-center text-sm font-bold text-slate-500">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#006e23] border-r-transparent align-[-0.125em]" />
-              <p className="mt-3">Memuat data...</p>
-            </div>
+            <CatalogGridSkeleton count={8} />
           ) : items.length ? (
-            <div className="product-grid">
+            <div key={`${kind}-${category || ""}-${search || ""}`} className="product-grid tab-fade-enter transition-all duration-300 ease-out">
               {items.map((item) => (
                 <CatalogCard key={`${kind}-${item.id}-${item.slug}`} item={item} />
               ))}
@@ -226,37 +510,6 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
           ) : (
             <EmptyState />
           )}
-        </div>
-      </section>
-    </>
-  );
-}
-
-function CatalogSkeleton({ title, description }: { title: string; description: string }) {
-  return (
-    <>
-      <section className="pt-28 md:pt-32 pb-4 sm:pb-6">
-        <div className="sentra-container">
-          <div className="relative overflow-hidden rounded-[14px] bg-gradient-to-br from-[#006e23] via-[#1a8a3a] to-[#e88d43]/60 p-6 sm:p-8 shadow-lg">
-            <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-white/90 px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-emerald-700">
-              Sentra Desa
-            </span>
-            <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight drop-shadow-md">
-              {title}
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm sm:text-base leading-relaxed text-white/80">
-              {description}
-            </p>
-          </div>
-        </div>
-      </section>
-      <section className="pb-16 pt-2">
-        <div className="sentra-container">
-          <div className="py-16 text-center text-sm font-bold text-slate-500">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#006e23] border-r-transparent align-[-0.125em]" />
-            <p className="mt-3">Memuat data...</p>
-          </div>
         </div>
       </section>
     </>

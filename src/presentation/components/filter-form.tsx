@@ -2,13 +2,42 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { ChevronDownIcon, SearchIcon } from "@/presentation/components/icons";
+import { Search, MapPin, ChevronDown, X, RotateCcw } from "lucide-react";
 import { getProvinces } from "@/application/use-cases/get-public-content";
+
+const CATEGORY_LABELS: Record<string, { label: string; icon?: string }> = {
+  makanan_minuman: { label: "Makanan & Minuman", icon: "🍱" },
+  kerajinan: { label: "Kerajinan", icon: "🪵" },
+  fashion: { label: "Fashion & Batik", icon: "👕" },
+  pertanian: { label: "Pertanian", icon: "🌾" },
+  perikanan: { label: "Perikanan", icon: "🐟" },
+  peternakan: { label: "Peternakan", icon: "🐄" },
+  jasa: { label: "Jasa Desa", icon: "🛠️" },
+  lainnya: { label: "Lainnya", icon: "📦" },
+  alam: { label: "Wisata Alam", icon: "🏔️" },
+  budaya: { label: "Wisata Budaya", icon: "🎭" },
+  buatan: { label: "Wisata Edukasi", icon: "🎡" },
+  kuliner: { label: "Kuliner Lokal", icon: "🍲" },
+  komoditas: { label: "Komoditas", icon: "🌱" },
+  perdagangan: { label: "Perdagangan", icon: "🏪" },
+  wisata: { label: "Wisata", icon: "🏖️" },
+  keuangan: { label: "Keuangan", icon: "💳" }
+};
 
 export function FilterForm({ categories = [] }: { categories?: string[] }) {
   const router = useRouter();
   const params = useSearchParams();
   const [provinces, setProvinces] = useState<{ id: number; name: string }[]>([]);
+
+  const searchQuery = params.get("search") ?? "";
+  const activeCategory = params.get("category") ?? "";
+  const provinceId = params.get("province_id") ?? "";
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
 
   useEffect(() => {
     getProvinces()
@@ -20,103 +49,248 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const query = new URLSearchParams();
+    const query = new URLSearchParams(params.toString());
 
-    // Preserve existing village_id query if active
+    // Preserve village_id
     const currentVillageId = params.get("village_id");
     if (currentVillageId) query.set("village_id", currentVillageId);
 
-    ["search", "category", "province_id"].forEach((key) => {
-      const value = String(data.get(key) ?? "").trim();
-      if (value) query.set(key, value);
-    });
+    if (searchInput.trim()) {
+      query.set("search", searchInput.trim());
+    } else {
+      query.delete("search");
+    }
 
     router.push(`?${query.toString()}`);
   }
 
+  const handleCategorySelect = (cat: string) => {
+    const query = new URLSearchParams(params.toString());
+    if (cat === activeCategory || !cat) {
+      query.delete("category");
+    } else {
+      query.set("category", cat);
+    }
+    router.push(`?${query.toString()}`);
+  };
+
+  const handleProvinceSelect = (provId: string) => {
+    const query = new URLSearchParams(params.toString());
+    if (provId) {
+      query.set("province_id", provId);
+    } else {
+      query.delete("province_id");
+    }
+    router.push(`?${query.toString()}`);
+  };
+
+  const removeFilter = (key: "search" | "category" | "province_id") => {
+    const query = new URLSearchParams(params.toString());
+    query.delete(key);
+    if (key === "search") setSearchInput("");
+    router.push(`?${query.toString()}`);
+  };
+
+  const resetAllFilters = () => {
+    setSearchInput("");
+    const query = new URLSearchParams();
+    const currentVillageId = params.get("village_id");
+    if (currentVillageId) query.set("village_id", currentVillageId);
+    router.push(`?${query.toString()}`);
+  };
+
   const hasCategories = categories && categories.length > 0;
-  const hasActiveFilter = Boolean(params.get("search") || params.get("category") || params.get("province_id"));
+  const hasActiveFilter = Boolean(searchQuery || activeCategory || provinceId);
 
   return (
-    <form
-      className={`w-full mb-8 rounded-[14px] ambient-card p-2.5 sm:p-3 grid gap-2.5 sm:gap-3 ${
-        hasCategories
-          ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_auto]"
-          : "grid-cols-1 sm:grid-cols-[1.8fr_1.2fr_auto]"
-      }`}
-      onSubmit={submit}
-    >
-      {/* Input Pencarian */}
-      <div className="relative flex items-center min-w-0">
-        <div className="pointer-events-none absolute left-4 flex items-center justify-center text-slate-400">
-          <SearchIcon className="h-5 w-5" />
+    <div className="w-full mb-8">
+      {/* ── Unified Search Dock (Crisp Geometry - Anti-Slop) ── */}
+      <form
+        onSubmit={submit}
+        className="group relative flex flex-col md:flex-row items-stretch md:items-center gap-1.5 p-1.5 sm:p-2 rounded-xl bg-white border border-slate-200 shadow-sm transition-all focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-300"
+      >
+        {/* 1. Search Field */}
+        <div className="relative flex-1 flex items-center min-w-0">
+          <div className="pointer-events-none absolute left-3 flex items-center justify-center text-slate-400 group-focus-within:text-slate-700 transition-colors">
+            <Search className="h-4 w-4" strokeWidth={2} />
+          </div>
+          <input
+            name="search"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Cari desa, produk, komoditas, atau kata kunci..."
+            className="h-10 sm:h-11 w-full rounded-lg bg-transparent pl-9 pr-8 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none transition"
+          />
+          {searchInput && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchInput("");
+                if (searchQuery) removeFilter("search");
+              }}
+              className="absolute right-2.5 flex h-4.5 w-4.5 items-center justify-center rounded bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 text-xs transition cursor-pointer"
+              title="Hapus pencarian"
+            >
+              <X size={11} strokeWidth={2.5} />
+            </button>
+          )}
         </div>
-        <input
-          name="search"
-          placeholder="Cari nama, deskripsi, atau kata kunci..."
-          defaultValue={params.get("search") ?? ""}
-          className="h-[52px] w-full rounded-[14px] border border-white/80 bg-white/85 pl-12 pr-4 text-sm sm:text-base font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition shadow-xs"
-        />
-      </div>
 
-      {hasCategories ? (
-        <div className="relative flex items-center min-w-0">
+        {/* 2. Category Dropdown */}
+        {hasCategories && (
+          <>
+            <div className="hidden md:block h-6 w-px bg-slate-200 shrink-0" />
+            <div className="relative md:w-48 flex items-center min-w-0 bg-slate-50 md:bg-transparent rounded-lg">
+              <select
+                name="category"
+                value={activeCategory}
+                onChange={(e) => handleCategorySelect(e.target.value)}
+                className="h-10 sm:h-11 w-full appearance-none rounded-lg bg-transparent pl-3 pr-7 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-900 focus:bg-white focus:outline-none transition cursor-pointer"
+              >
+                <option value="">Semua Kategori</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {CATEGORY_LABELS[cat]?.icon ? `${CATEGORY_LABELS[cat].icon} ` : ""}
+                    {CATEGORY_LABELS[cat]?.label || cat.replace(/_/g, " ").toUpperCase()}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-2.5 flex items-center justify-center text-slate-400">
+                <ChevronDown className="h-3.5 w-3.5" />
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* 3. Province Dropdown */}
+        <div className="hidden md:block h-6 w-px bg-slate-200 shrink-0" />
+        <div className="relative md:w-52 flex items-center min-w-0 bg-slate-50 md:bg-transparent rounded-lg">
+          <div className="pointer-events-none absolute left-2.5 flex items-center justify-center text-slate-400">
+            <MapPin className="h-3.5 w-3.5" />
+          </div>
           <select
-            name="category"
-            defaultValue={params.get("category") ?? ""}
-            className="h-[52px] w-full appearance-none rounded-[14px] border border-white/80 bg-white/85 px-4 pr-10 text-sm sm:text-base font-semibold text-slate-700 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition cursor-pointer shadow-xs"
+            name="province_id"
+            value={provinceId}
+            onChange={(e) => handleProvinceSelect(e.target.value)}
+            className="h-10 sm:h-11 w-full appearance-none rounded-lg bg-transparent pl-8 pr-7 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-900 focus:bg-white focus:outline-none transition cursor-pointer"
           >
-            <option value="">Semua Kategori</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category.replace(/_/g, " ").toUpperCase()}
+            <option value="">Semua Wilayah</option>
+            {provinces.map((prov) => (
+              <option key={prov.id} value={prov.id}>
+                {prov.name}
               </option>
             ))}
           </select>
-          <div className="pointer-events-none absolute right-4 flex items-center justify-center text-slate-400">
-            <ChevronDownIcon className="h-4 w-4" />
+          <div className="pointer-events-none absolute right-2.5 flex items-center justify-center text-slate-400">
+            <ChevronDown className="h-3.5 w-3.5" />
           </div>
         </div>
-      ) : null}
 
-      <div className="relative flex items-center min-w-0">
-        <select
-          name="province_id"
-          defaultValue={params.get("province_id") ?? ""}
-          className="h-[52px] w-full appearance-none rounded-[14px] border border-white/80 bg-white/85 px-4 pr-10 text-sm sm:text-base font-semibold text-slate-700 focus:bg-white focus:border-[#006e23]/60 focus:outline-none focus:ring-3 focus:ring-[#006e23]/10 transition cursor-pointer shadow-xs"
-        >
-          <option value="">Semua Wilayah (Provinsi)</option>
-          {provinces.map((prov) => (
-            <option key={prov.id} value={prov.id}>
-              {prov.name}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute right-4 flex items-center justify-center text-slate-400">
-          <ChevronDownIcon className="h-4 w-4" />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
+        {/* 4. Action Button */}
         <button
-          className="h-[52px] shrink-0 flex-1 sm:flex-initial inline-flex items-center justify-center gap-2.5 rounded-[14px] ambient-btn-primary px-7 sm:px-8 text-sm sm:text-base font-bold shadow-md transition active:scale-95 cursor-pointer"
           type="submit"
+          className="h-10 sm:h-11 shrink-0 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#006e23] hover:bg-[#005319] px-5 text-sm font-semibold text-white shadow-xs active:scale-[0.99] transition-all cursor-pointer"
         >
-          <SearchIcon className="h-5 w-5 text-white shrink-0" />
+          <Search className="h-3.5 w-3.5 text-white shrink-0" strokeWidth={2.5} />
           <span>Cari</span>
         </button>
-        {hasActiveFilter ? (
+      </form>
+
+      {/* ── Quick Category Tabs (Crisp Rectangular Chips) ── */}
+      {hasCategories && (
+        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
           <button
             type="button"
-            onClick={() => router.push("?")}
-            className="h-[52px] shrink-0 inline-flex items-center justify-center rounded-[14px] border border-slate-300 bg-white/85 px-5 text-sm font-bold text-slate-600 hover:bg-white hover:text-slate-900 transition active:scale-95 cursor-pointer shadow-xs"
-            title="Reset Filter"
+            onClick={() => handleCategorySelect("")}
+            className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+              !activeCategory
+                ? "bg-[#006e23] text-white border-[#006e23] shadow-xs"
+                : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200"
+            }`}
           >
-            Reset
+            <span>Semua</span>
           </button>
-        ) : null}
-      </div>
-    </form>
+          {categories.map((cat) => {
+            const meta = CATEGORY_LABELS[cat];
+            const isSelected = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => handleCategorySelect(cat)}
+                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+                  isSelected
+                    ? "bg-[#006e23] text-white border-[#006e23] font-semibold shadow-xs"
+                    : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200"
+                }`}
+              >
+                {meta?.icon && <span className="text-xs">{meta.icon}</span>}
+                <span>{meta?.label || cat.replace(/_/g, " ")}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── Active Filter Tags (Dismissible) ── */}
+      {hasActiveFilter && (
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            Filter Aktif:
+          </span>
+
+          {searchQuery && (
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-medium">
+              <span>Pencarian: &ldquo;{searchQuery}&rdquo;</span>
+              <button
+                type="button"
+                onClick={() => removeFilter("search")}
+                className="hover:text-red-600 font-bold ml-0.5 cursor-pointer"
+                title="Hapus pencarian"
+              >
+                ✕
+              </button>
+            </span>
+          )}
+
+          {activeCategory && (
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-medium">
+              <span>Kategori: {CATEGORY_LABELS[activeCategory]?.label || activeCategory}</span>
+              <button
+                type="button"
+                onClick={() => removeFilter("category")}
+                className="hover:text-red-600 font-bold ml-0.5 cursor-pointer"
+                title="Hapus filter kategori"
+              >
+                ✕
+              </button>
+            </span>
+          )}
+
+          {provinceId && (
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-medium">
+              <span>Provinsi: {provinces.find((p) => String(p.id) === provinceId)?.name || provinceId}</span>
+              <button
+                type="button"
+                onClick={() => removeFilter("province_id")}
+                className="hover:text-red-600 font-bold ml-0.5 cursor-pointer"
+                title="Hapus filter provinsi"
+              >
+                ✕
+              </button>
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={resetAllFilters}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-red-600 ml-1 cursor-pointer transition-colors"
+          >
+            <RotateCcw size={12} />
+            <span>Reset Semua</span>
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

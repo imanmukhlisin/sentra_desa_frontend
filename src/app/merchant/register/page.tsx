@@ -1,5 +1,10 @@
-import { SimpleFormPage } from "@/presentation/features/simple-form-page";
+import { Suspense } from "react";
+import { AuthView } from "@/presentation/features/auth-view";
 
-export default function Page() {
-  return <SimpleFormPage title="Daftar Merchant" description="Mulai menjual produk desa di Sentra Desa." fields={[{ name: "store_name", label: "Nama Toko" }, { name: "owner_name", label: "Nama Pemilik" }, { name: "phone", label: "Nomor WhatsApp" }, { name: "email", label: "Email", type: "email" }]} />;
+export default function MerchantRegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center pt-24 text-slate-500 font-semibold text-sm">Memuat...</div>}>
+      <AuthView initialMode="register" initialRole="merchant" />
+    </Suspense>
+  );
 }

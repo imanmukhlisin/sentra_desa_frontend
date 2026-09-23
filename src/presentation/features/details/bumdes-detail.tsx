@@ -8,6 +8,7 @@ import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-ca
 import { CatalogCard } from "@/presentation/components/catalog-card";
 import { formatCurrency } from "@/shared/utils/format";
 import { BumdesIcon, PhoneIcon, MapPinIcon, StoreIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function BumdesDetail({ id }: { id: string }) {
   const [bumdes, setBumdes] = useState<DetailItem | null>(null);
@@ -40,14 +41,7 @@ export function BumdesDetail({ id }: { id: string }) {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#006e23] border-t-transparent" />
-          <p className="text-xs font-bold text-slate-600">Memuat profil BUMDes...</p>
-        </div>
-      </div>
-    );
+    return <DetailSkeleton backLabel="Kembali ke BUMDes" />;
   }
 
   if (!bumdes) {

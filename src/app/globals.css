@@ -292,6 +292,8 @@
   .custom-horizontal-scrollbar {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
     scrollbar-width: thin;
     scrollbar-color: rgba(16, 185, 129, 0.35) transparent;
   }
@@ -326,6 +328,11 @@
   .animate-marquee-left:hover {
     animation-play-state: paused;
   }
+
+  /* Smooth tab & content transition */
+  .tab-fade-enter {
+    animation: tabFadeEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 }
 
 @keyframes marquee-left {
@@ -334,5 +341,16 @@
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes tabFadeEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

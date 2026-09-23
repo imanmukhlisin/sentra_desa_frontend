@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getFreshCatalog } from "@/application/use-cases/get-public-content";
 import { CatalogItem } from "@/domain/entities/common";
 import { CatalogCard } from "@/presentation/components/catalog-card";
+import { CatalogGridSkeleton } from "@/presentation/components/skeleton";
 
 export function HomeProducts({
   initialProducts,
@@ -45,16 +46,12 @@ export function HomeProducts({
   }, [category, search, initialProducts]);
 
   if (loading && !products.length) {
-    return (
-      <div className="px-5 py-4">
-        <div className="empty-state animate-pulse">Memuat produk...</div>
-      </div>
-    );
+    return <CatalogGridSkeleton count={8} />;
   }
 
   if (!products.length && refreshCompleted) {
     return (
-      <div className="px-5 py-4">
+      <div key={`empty-${category}-${search || ""}`} className="px-5 py-4 tab-fade-enter">
         <div className="empty-state">
           <p className="text-base font-bold text-slate-700">Produk tidak ditemukan</p>
           <p className="mt-1 text-xs text-slate-500">Belum ada produk untuk kategori ini.</p>
@@ -64,7 +61,12 @@ export function HomeProducts({
   }
 
   return (
-    <div className={`product-grid transition-opacity duration-200 ${loading ? "opacity-60" : "opacity-100"}`}>
+    <div
+      key={`${category}-${search || ""}`}
+      className={`product-grid tab-fade-enter transition-all duration-300 ease-out ${
+        loading ? "opacity-40 scale-[0.99] pointer-events-none" : "opacity-100 scale-100"
+      }`}
+    >
       {products.map((product) => (
         <CatalogCard key={`${product.id}-${product.slug}`} item={product} />
       ))}

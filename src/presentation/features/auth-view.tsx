@@ -1,23 +1,63 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Mail, MapPin, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2, Check } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Mail,
+  MapPin,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  Check,
+  ShoppingCart,
+  Store,
+  Landmark,
+  Phone,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
 import Image from "next/image";
 import { authClient } from "@/infrastructure/api/auth-client";
 
+export type AuthRole = "buyer" | "merchant" | "village_admin";
+
 interface AuthViewProps {
   initialMode?: "register" | "login";
+  initialRole?: AuthRole;
 }
 
-export function AuthView({ initialMode = "register" }: AuthViewProps) {
+export function AuthView({ initialMode = "register", initialRole }: AuthViewProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/";
+  const isFromCheckout = redirectUrl.startsWith("/checkout");
+
   const [isLoginMode, setIsLoginMode] = useState(initialMode === "login");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Role selection: default to "buyer" especially if from checkout
+  const [selectedRole, setSelectedRole] = useState<AuthRole>(
+    isFromCheckout ? "buyer" : initialRole || "buyer"
+  );
+
+  // Step 1 vs Step 2: User picks from 3 role cards first, unless initialRole is explicitly passed
+  const [hasSelectedRole, setHasSelectedRole] = useState<boolean>(
+    Boolean(initialRole)
+  );
+
+  // Form Fields
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regVillage, setRegVillage] = useState("");
+  const [regStoreName, setRegStoreName] = useState("");
+  const [regPhone, setRegPhone] = useState("");
+  const [regPosition, setRegPosition] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regAgreeTerms, setRegAgreeTerms] = useState(false);
 
@@ -29,14 +69,59 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
+
+  React.useEffect(() => {
+    if (countdown === null) return;
+    if (countdown <= 0) return;
+    const timer = setInterval(() => {
+      setCountdown((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  const roleConfig = {
+    buyer: {
+      title: "Daftar Akun Pembeli",
+      badge: "Pembeli / Warga",
+      desc: "Buat akun untuk belanja produk desa, checkout pesanan, dan pantau status pengiriman.",
+      btnText: "Daftar sebagai Pembeli",
+      nameLabel: "Nama Lengkap Pembeli",
+      namePlaceholder: "Cth: Budi Santoso",
+      emailHint: "Gunakan email aktif untuk konfirmasi pemesanan dan invoice."
+    },
+    merchant: {
+      title: "Daftar Toko UMKM Desa",
+      badge: "Pelaku Usaha",
+      desc: "Buka toko online desa dan pasarkan produk olahan, kerajinan, & karya lokal Anda.",
+      btnText: "Buka Toko & Daftar Merchant",
+      nameLabel: "Nama Pemilik Toko",
+      namePlaceholder: "Cth: Siti Aminah",
+      emailHint: "Email ini digunakan untuk mengelola toko dan menerima notifikasi pesanan."
+    },
+    village_admin: {
+      title: "Daftar Admin / Aparatur Desa",
+      badge: "Aparatur Desa",
+      desc: "Khusus perangkat pemerintah desa untuk mengelola portal informasi, LKDD, dan verifikasi UMKM.",
+      btnText: "Daftar sebagai Admin Desa",
+      nameLabel: "Nama Lengkap Aparatur",
+      namePlaceholder: "Cth: Ahmad Subagyo, S.P.",
+      emailHint: "Disarankan memakai email kedinasan atau email resmi pemerintah desa."
+    }
+  };
 
   const switchMode = (mode: "login" | "register") => {
     setIsLoginMode(mode === "login");
+    if (mode === "register" && !initialRole && !isFromCheckout) {
+      setHasSelectedRole(false);
+    }
     setErrorMessage(null);
     setFieldErrors({});
     setSuccessMessage(null);
+    setCountdown(null);
     if (typeof window !== "undefined") {
-      window.history.replaceState(null, "", mode === "login" ? "/login" : "/register");
+      const qs = redirectUrl && redirectUrl !== "/" ? `?redirect=${encodeURIComponent(redirectUrl)}` : "";
+      window.history.replaceState(null, "", (mode === "login" ? "/login" : "/register") + qs);
     }
   };
 
@@ -56,10 +141,43 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
     }
     setIsLoading(true);
     try {
-      const res = await authClient.register({ name: regName, email: regEmail, password: regPassword, village: regVillage });
+      const res = await authClient.register({
+        name: regName,
+        email: regEmail,
+        password: regPassword,
+        village: regVillage || (selectedRole === "merchant" ? regStoreName : "")
+      });
+
       if (res.status === "success") {
-        setSuccessMessage("Pendaftaran berhasil! Mengalihkan ke beranda...");
-        setTimeout(() => { router.push("/"); router.refresh(); }, 1200);
+        // Enrich user session with role and merchant data
+        const currentUser = authClient.getUser();
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            roles: [selectedRole],
+            merchant: selectedRole === "merchant" ? {
+              id: Date.now(),
+              store_name: regStoreName || "Toko Desa",
+              status: "approved"
+            } : null
+          };
+          authClient.setSession(authClient.getToken() || "temp_token", updatedUser);
+        }
+
+        setCountdown(3);
+        if (isFromCheckout) {
+          setSuccessMessage("Pendaftaran berhasil! Melanjutkan ke checkout...");
+          setTimeout(() => { router.push(redirectUrl); router.refresh(); }, 3000);
+        } else if (selectedRole === "merchant") {
+          setSuccessMessage("Pendaftaran Merchant berhasil! Mengalihkan ke Dashboard Toko...");
+          setTimeout(() => { router.push("/merchant/dashboard"); router.refresh(); }, 3000);
+        } else if (selectedRole === "village_admin") {
+          setSuccessMessage("Pendaftaran Admin Desa berhasil! Mengalihkan ke Beranda...");
+          setTimeout(() => { router.push("/"); router.refresh(); }, 3000);
+        } else {
+          setSuccessMessage("Pendaftaran berhasil! Selamat datang di Sentra Desa.");
+          setTimeout(() => { router.push(redirectUrl); router.refresh(); }, 3000);
+        }
       } else {
         setErrorMessage(res.message || "Pendaftaran gagal.");
         if (res.errors) setFieldErrors(res.errors);
@@ -84,8 +202,9 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
     try {
       const res = await authClient.login({ email: loginEmail, password: loginPassword });
       if (res.status === "success") {
-        setSuccessMessage("Login berhasil! Mengalihkan...");
-        setTimeout(() => { router.push("/"); router.refresh(); }, 1000);
+        setSuccessMessage(isFromCheckout ? "Login berhasil! Melanjutkan ke checkout..." : "Login berhasil! Mengalihkan...");
+        setCountdown(3);
+        setTimeout(() => { router.push(redirectUrl); router.refresh(); }, 3000);
       } else {
         setErrorMessage(res.message || "Email atau kata sandi salah.");
         if (res.errors) setFieldErrors(res.errors);
@@ -98,14 +217,24 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
   };
 
   const FormBrand = () => (
-    <div className="mb-5 flex items-center gap-2.5">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 p-1">
-        <Image src="/images/logo.png" alt="SentraDesa" width={32} height={32} className="h-full w-full object-contain" priority />
-      </div>
-      <div className="leading-tight text-left">
-        <div className="text-[15px] font-black text-[#006e23] uppercase tracking-wider font-sans">SENTRADESA</div>
-        <div className="text-[10px] font-semibold text-slate-400">Berdaya dari Desa</div>
-      </div>
+    <div className="mb-5 flex items-center justify-between">
+      <Link href="/" className="group flex items-center gap-2.5 cursor-pointer" title="Kembali ke Beranda">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 p-1 group-hover:border-[#006e23]/35 transition-colors">
+          <Image src="/images/logo.png" alt="SentraDesa" width={32} height={32} className="h-full w-full object-contain" priority />
+        </div>
+        <div className="leading-tight text-left">
+          <div className="text-[15px] font-black text-[#006e23] uppercase tracking-wider font-sans group-hover:text-[#005319] transition-colors">SENTRADESA</div>
+          <div className="text-[10px] font-semibold text-slate-400">Berdaya dari Desa</div>
+        </div>
+      </Link>
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-slate-400 hover:bg-slate-50 hover:text-[#006e23] transition-colors"
+        title="Kembali ke Beranda"
+      >
+        <ChevronLeft size={14} />
+        <span>Beranda</span>
+      </Link>
     </div>
   );
 
@@ -183,6 +312,13 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
           <p className="text-[13px] sm:text-sm text-slate-500 leading-relaxed mb-6">
             Masukkan email dan kata sandi Anda untuk mengakses portal SentraDesa.
           </p>
+
+          {isFromCheckout && (
+            <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-emerald-200/80 bg-emerald-50/80 p-3 text-xs font-semibold text-emerald-900">
+              <ShoppingCart size={18} className="shrink-0 text-[#006e23]" />
+              <span>Silakan masuk terlebih dahulu untuk melanjutkan proses checkout pesanan produk desa Anda.</span>
+            </div>
+          )}
 
           {errorMessage && isLoginMode && (
             <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
@@ -264,10 +400,15 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
             {/* Submit Button - Consistent with Dashboard */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || countdown !== null}
               className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
+              {countdown !== null ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  <span>Mengalihkan dalam {countdown}s...</span>
+                </>
+              ) : isLoading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
                   <span>Memverifikasi...</span>
@@ -331,178 +472,384 @@ export function AuthView({ initialMode = "register" }: AuthViewProps) {
 
           <FormBrand />
 
-          <h1 className="text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight mb-2">
-            Daftar Akun
-          </h1>
-          <p className="text-[13px] sm:text-sm text-slate-500 leading-relaxed mb-6">
-            Buat akun anda dulu. Setelah masuk anda bisa mulai mengelola website desa.
-          </p>
-
-          {errorMessage && !isLoginMode && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
-              <AlertCircle size={16} className="shrink-0 text-red-500" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-          {successMessage && !isLoginMode && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50/90 px-3.5 py-2.5 text-xs text-emerald-800 border border-emerald-200/80">
-              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
-              <span>{successMessage}</span>
-            </div>
-          )}
-
-          <form className="space-y-4" onSubmit={handleRegisterSubmit}>
-            {/* Nama Lengkap - Clean no icon like in reference */}
+          {!hasSelectedRole ? (
+            /* ── STEP 1: PILIH PERAN TERLEBIH DAHULU ── */
             <div>
-              <label className="block text-[13.5px] font-semibold text-slate-800 mb-1.5">Nama Lengkap</label>
-              <input
-                type="text"
-                required
-                value={regName}
-                onChange={(e) => setRegName(e.target.value)}
-                placeholder="Budi Santoso"
-                className="h-11 sm:h-12 w-full rounded-xl border border-slate-300/80 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
-              />
-              {fieldErrors.name && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.name[0]}</p>}
-            </div>
-
-            {/* Email Field with Envelope icon and helper text */}
-            <div>
-              <label className="block text-[13.5px] font-semibold text-slate-800 mb-1.5">Email</label>
-              <div className="relative group">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
-                  <Mail size={18} strokeWidth={1.8} />
-                </div>
-                <input
-                  type="email"
-                  required
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  placeholder="nama@lembaga.id"
-                  className="h-11 sm:h-12 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
-                />
+              <div className="mb-5">
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                  Daftar Akun
+                </h1>
+                <p className="mt-1 text-xs text-slate-500">
+                  Pilih jenis akun yang ingin Anda daftarkan:
+                </p>
               </div>
-              <p className="mt-1.5 text-[11.5px] text-slate-400 leading-normal">
-                Pakai email kerja yang aktif. Ke alamat inilah kabar verifikasi dan status akun dikirim.
-              </p>
-              {fieldErrors.email && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.email[0]}</p>}
-            </div>
 
-            {/* Desa & Kecamatan */}
-            <div>
-              <label className="block text-[13.5px] font-semibold text-slate-800 mb-1.5">Desa & Kecamatan</label>
-              <div className="relative group">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
-                  <MapPin size={18} strokeWidth={1.8} />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={regVillage}
-                  onChange={(e) => setRegVillage(e.target.value)}
-                  placeholder="Cth: Sukamaju, Ciawi"
-                  className="h-11 sm:h-12 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
-                />
-              </div>
-            </div>
-
-            {/* Kata Sandi with Checklist */}
-            <div>
-              <label className="block text-[13.5px] font-semibold text-slate-800 mb-1.5">Kata Sandi</label>
-              <div className="relative group">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
-                  <Lock size={18} strokeWidth={1.8} />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  minLength={8}
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="Masukkan kata sandi"
-                  className="h-11 sm:h-12 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
-                />
+              {/* 3 Clean Role Options */}
+              <div className="space-y-2.5">
+                {/* 1. Pembeli */}
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                  aria-label={showPassword ? "Sembunyikan" : "Tampilkan"}
+                  onClick={() => {
+                    setSelectedRole("buyer");
+                    setHasSelectedRole(true);
+                  }}
+                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3.5 text-left transition-all hover:border-[#006e23] hover:shadow-xs active:scale-[0.99] cursor-pointer"
                 >
-                  {showPassword ? <EyeOff size={18} strokeWidth={1.8} /> : <Eye size={18} strokeWidth={1.8} />}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-[#006e23] group-hover:text-white transition-colors">
+                      <ShoppingCart className="h-5 w-5" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-slate-900 group-hover:text-[#006e23] transition-colors">
+                          Pembeli / Warga
+                        </span>
+                        {isFromCheckout && (
+                          <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
+                            Untuk Belanja
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500">
+                        Belanja produk desa & lacak pesanan
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#006e23] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                </button>
+
+                {/* 2. Merchant UMKM */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRole("merchant");
+                    setHasSelectedRole(true);
+                  }}
+                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3.5 text-left transition-all hover:border-[#006e23] hover:shadow-xs active:scale-[0.99] cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-[#006e23] group-hover:text-white transition-colors">
+                      <Store className="h-5 w-5" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-slate-900 group-hover:text-[#006e23] transition-colors">
+                        Merchant UMKM
+                      </span>
+                      <p className="text-xs text-slate-500">
+                        Buka toko & pasarkan produk lokal desa
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#006e23] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                </button>
+
+                {/* 3. Admin Desa */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRole("village_admin");
+                    setHasSelectedRole(true);
+                  }}
+                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3.5 text-left transition-all hover:border-[#006e23] hover:shadow-xs active:scale-[0.99] cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-[#006e23] group-hover:text-white transition-colors">
+                      <Landmark className="h-5 w-5" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <span className="text-sm font-semibold text-slate-900 group-hover:text-[#006e23] transition-colors">
+                        Admin Desa
+                      </span>
+                      <p className="text-xs text-slate-500">
+                        Kelola portal desa, warta & transparansi LKDD
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#006e23] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
                 </button>
               </div>
 
-              {/* Password Requirements Checklist matching reference */}
-              <div className="mt-2.5 space-y-1 text-[11.5px] text-slate-500">
-                <p className="font-medium text-slate-600 mb-1">Kata sandi harus memuat:</p>
-                <div className="flex items-center gap-1.5">
-                  <Check size={13} strokeWidth={2.5} className={regPassword.length >= 8 ? "text-[#006e23]" : "text-slate-300"} />
-                  <span className={regPassword.length >= 8 ? "text-slate-700 font-medium" : "text-slate-500"}>Minimal 8 karakter</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Check size={13} strokeWidth={2.5} className={/[A-Z]/.test(regPassword) && /[a-z]/.test(regPassword) ? "text-[#006e23]" : "text-slate-300"} />
-                  <span className={/[A-Z]/.test(regPassword) && /[a-z]/.test(regPassword) ? "text-slate-700 font-medium" : "text-slate-500"}>Ada huruf besar dan huruf kecil</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Check size={13} strokeWidth={2.5} className={/\d/.test(regPassword) ? "text-[#006e23]" : "text-slate-300"} />
-                  <span className={/\d/.test(regPassword) ? "text-slate-700 font-medium" : "text-slate-500"}>Ada angka</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Check size={13} strokeWidth={2.5} className={/[!@#$%^&*(),.?":{}|<>]/.test(regPassword) ? "text-[#006e23]" : "text-slate-300"} />
-                  <span className={/[!@#$%^&*(),.?":{}|<>]/.test(regPassword) ? "text-slate-700 font-medium" : "text-slate-500"}>Ada simbol, misalnya ! @ # $ %</span>
-                </div>
+              {/* Divider & Switch */}
+              <div className="my-5 border-t border-slate-100" />
+
+              <p className="text-center text-[13px] text-slate-500">
+                Sudah punya akun?{" "}
+                <button
+                  type="button"
+                  onClick={() => switchMode("login")}
+                  className="font-bold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer ml-0.5"
+                >
+                  Masuk
+                </button>
+              </p>
+            </div>
+          ) : (
+            /* ── STEP 2: FORMULIR PENDAFTARAN SESUAI PERAN ── */
+            <div>
+              {/* Back to Step 1 Bar */}
+              <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
+                <button
+                  type="button"
+                  onClick={() => setHasSelectedRole(false)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Ganti jenis akun</span>
+                </button>
+
+                <span className="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md">
+                  {roleConfig[selectedRole].badge}
+                </span>
               </div>
 
-              {fieldErrors.password && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.password[0]}</p>}
-            </div>
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">
+                {roleConfig[selectedRole].title}
+              </h1>
+              <p className="text-xs text-slate-500 leading-relaxed mb-5">
+                {roleConfig[selectedRole].desc}
+              </p>
 
-            {/* Terms checkbox */}
-            <div className="flex items-start gap-2 pt-1">
-              <input
-                id="terms"
-                type="checkbox"
-                checked={regAgreeTerms}
-                onChange={(e) => setRegAgreeTerms(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#006e23] cursor-pointer shrink-0"
-              />
-              <label htmlFor="terms" className="text-[12px] leading-tight text-slate-500 cursor-pointer select-none">
-                Saya menyetujui Ketentuan Layanan dan Kebijakan Privasi SentraDesa.
-              </label>
-            </div>
-
-            {/* Submit Button - Consistent with Dashboard */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  <span>Memproses...</span>
-                </>
-              ) : (
-                <>
-                  <span>Daftar Akun</span>
-                  <ArrowRight size={17} />
-                </>
+              {errorMessage && !isLoginMode && (
+                <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
+                  <AlertCircle size={16} className="shrink-0 text-red-500" />
+                  <span>{errorMessage}</span>
+                </div>
               )}
-            </button>
-          </form>
+              {successMessage && !isLoginMode && (
+                <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50/90 px-3.5 py-2.5 text-xs text-emerald-800 border border-emerald-200/80">
+                  <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+                  <span>{successMessage}</span>
+                </div>
+              )}
 
-          {/* Divider & Switch */}
-          <div className="my-5 border-t border-slate-100" />
+              <form className="space-y-3.5" onSubmit={handleRegisterSubmit}>
+                {/* Nama Lengkap / Pemilik / Aparatur */}
+                <div>
+                  <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
+                    {roleConfig[selectedRole].nameLabel}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    placeholder={roleConfig[selectedRole].namePlaceholder}
+                    className="h-11 w-full rounded-xl border border-slate-300/80 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                  />
+                  {fieldErrors.name && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.name[0]}</p>}
+                </div>
 
-          <p className="text-center text-[13.5px] text-slate-500">
-            Sudah punya akun?{" "}
-            <button
-              type="button"
-              onClick={() => switchMode("login")}
-              className="font-bold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer ml-0.5"
-            >
-              Masuk
-            </button>
-          </p>
+                {/* Khusus Merchant: Nama Toko & Nomor WA */}
+                {selectedRole === "merchant" && (
+                  <>
+                    <div>
+                      <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">Nama Toko / Usaha UMKM</label>
+                      <div className="relative group">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
+                          <Store size={17} strokeWidth={1.8} />
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={regStoreName}
+                          onChange={(e) => setRegStoreName(e.target.value)}
+                          placeholder="Cth: Keripik Singkong Barokah"
+                          className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">Nomor WhatsApp Toko</label>
+                      <div className="relative group">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
+                          <Phone size={17} strokeWidth={1.8} />
+                        </div>
+                        <input
+                          type="tel"
+                          required
+                          value={regPhone}
+                          onChange={(e) => setRegPhone(e.target.value)}
+                          placeholder="081234567890"
+                          className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Khusus Admin Desa: Jabatan di Desa */}
+                {selectedRole === "village_admin" && (
+                  <div>
+                    <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">Jabatan di Pemerintahan Desa</label>
+                    <div className="relative group">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
+                        <Briefcase size={17} strokeWidth={1.8} />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={regPosition}
+                        onChange={(e) => setRegPosition(e.target.value)}
+                        placeholder="Cth: Sekretaris Desa / Kaur Pemerintahan"
+                        className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Desa / Lokasi (Wajib untuk Merchant & Admin Desa, Opsional untuk Pembeli) */}
+                <div>
+                  <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
+                    {selectedRole === "village_admin"
+                      ? "Nama Desa yang Dikelola"
+                      : selectedRole === "merchant"
+                      ? "Desa & Kecamatan Lokasi Toko"
+                      : "Kota / Desa Asal (Opsional)"}
+                  </label>
+                  <div className="relative group">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
+                      <MapPin size={17} strokeWidth={1.8} />
+                    </div>
+                    <input
+                      type="text"
+                      required={selectedRole !== "buyer"}
+                      value={regVillage}
+                      onChange={(e) => setRegVillage(e.target.value)}
+                      placeholder={
+                        selectedRole === "village_admin"
+                          ? "Cth: Desa Panundaan, Kec. Ciwidey"
+                          : selectedRole === "merchant"
+                          ? "Cth: Desa Sukamaju, Kec. Ciawi"
+                          : "Cth: Bandung / Desa Panundaan"
+                      }
+                      className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Email Field */}
+                <div>
+                  <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">Email</label>
+                  <div className="relative group">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
+                      <Mail size={17} strokeWidth={1.8} />
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      placeholder="nama@email.id"
+                      className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                    />
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-400 leading-normal">
+                    {roleConfig[selectedRole].emailHint}
+                  </p>
+                  {fieldErrors.email && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.email[0]}</p>}
+                </div>
+
+                {/* Kata Sandi with Checklist */}
+                <div>
+                  <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">Kata Sandi</label>
+                  <div className="relative group">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
+                      <Lock size={17} strokeWidth={1.8} />
+                    </div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      minLength={8}
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      placeholder="Masukkan kata sandi"
+                      className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                      aria-label={showPassword ? "Sembunyikan" : "Tampilkan"}
+                    >
+                      {showPassword ? <EyeOff size={17} strokeWidth={1.8} /> : <Eye size={17} strokeWidth={1.8} />}
+                    </button>
+                  </div>
+
+                  {/* Password Requirements Checklist */}
+                  <div className="mt-2 space-y-1 text-[11px] text-slate-500">
+                    <p className="font-medium text-slate-600 mb-0.5">Kata sandi harus memuat:</p>
+                    <div className="flex items-center gap-1.5">
+                      <Check size={12} strokeWidth={2.5} className={regPassword.length >= 8 ? "text-[#006e23]" : "text-slate-300"} />
+                      <span className={regPassword.length >= 8 ? "text-slate-700 font-medium" : "text-slate-500"}>Minimal 8 karakter</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Check size={12} strokeWidth={2.5} className={/[A-Z]/.test(regPassword) && /[a-z]/.test(regPassword) ? "text-[#006e23]" : "text-slate-300"} />
+                      <span className={/[A-Z]/.test(regPassword) && /[a-z]/.test(regPassword) ? "text-slate-700 font-medium" : "text-slate-500"}>Ada huruf besar dan huruf kecil</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Check size={12} strokeWidth={2.5} className={/\d/.test(regPassword) ? "text-[#006e23]" : "text-slate-300"} />
+                      <span className={/\d/.test(regPassword) ? "text-slate-700 font-medium" : "text-slate-500"}>Ada angka</span>
+                    </div>
+                  </div>
+
+                  {fieldErrors.password && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.password[0]}</p>}
+                </div>
+
+                {/* Terms checkbox */}
+                <div className="flex items-start gap-2 pt-1">
+                  <input
+                    id="terms"
+                    type="checkbox"
+                    checked={regAgreeTerms}
+                    onChange={(e) => setRegAgreeTerms(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-[#006e23] cursor-pointer shrink-0"
+                  />
+                  <label htmlFor="terms" className="text-[12px] leading-tight text-slate-500 cursor-pointer select-none">
+                    Saya menyetujui Ketentuan Layanan dan Kebijakan Privasi SentraDesa.
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading || countdown !== null}
+                  className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {countdown !== null ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Mengalihkan dalam {countdown}s...</span>
+                    </>
+                  ) : isLoading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Memproses...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{roleConfig[selectedRole].btnText}</span>
+                      <ArrowRight size={17} />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Divider & Switch */}
+              <div className="my-5 border-t border-slate-100" />
+
+              <p className="text-center text-[13.5px] text-slate-500">
+                Sudah punya akun?{" "}
+                <button
+                  type="button"
+                  onClick={() => switchMode("login")}
+                  className="font-bold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer ml-0.5"
+                >
+                  Masuk
+                </button>
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
