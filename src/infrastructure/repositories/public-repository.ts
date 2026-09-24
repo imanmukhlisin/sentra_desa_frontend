@@ -437,9 +437,270 @@ export const sampleExports: CatalogItem[] = [
   }
 ];
 
+export const sampleVillages: CatalogItem[] = [
+  {
+    id: "51080317",
+    slug: "51080317",
+    title: "Desa Cibadak",
+    subtitle: "Ciampea, Kab. Bogor, Jawa Barat",
+    description: "Desa Cibadak memiliki potensi besar di bidang pertanian, pariwisata, dan UMKM. Masyarakat desa aktif mengembangkan produk unggulan daerah.",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80",
+    href: "/profil-desa/?id=51080317",
+    badge: "Profil Desa",
+    meta: ["Ciampea, Kab. Bogor, Jawa Barat", "6.302 Jiwa", "45.79 Ha"],
+    raw: {
+      id: 51080317,
+      code: "3201032002",
+      name: "Desa Cibadak",
+      population: 6302,
+      area_size: "45.79",
+      head_name: "Kepala Desa Desa Cibadak",
+      district: {
+        name: "Ciampea",
+        regency: {
+          name: "KABUPATEN BOGOR",
+          province: { name: "JAWA BARAT" }
+        }
+      }
+    }
+  },
+  {
+    id: "51080356",
+    slug: "51080356",
+    title: "Desa Kedewatan",
+    subtitle: "Ubud, Kab. Badung, Bali",
+    description: "Desa Kedewatan memiliki keunggulan ekowisata perbukitan, kerajinan seni ukir, dan budaya agraris yang lestari.",
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&auto=format&fit=crop&q=80",
+    href: "/profil-desa/?id=51080356",
+    badge: "Profil Desa",
+    meta: ["Ubud, Kab. Badung, Bali", "4.164 Jiwa", "27.52 Ha"],
+    raw: {
+      id: 51080356,
+      code: "5108032006",
+      name: "Desa Kedewatan",
+      population: 4164,
+      area_size: "27.52",
+      head_name: "Kepala Desa Desa Kedewatan",
+      district: {
+        name: "Ubud",
+        regency: {
+          name: "KABUPATEN BADUNG",
+          province: { name: "BALI" }
+        }
+      }
+    }
+  },
+  {
+    id: "51080309",
+    slug: "51080309",
+    title: "Desa Leuwiliang",
+    subtitle: "Leuwiliang, Kab. Bogor, Jawa Barat",
+    description: "Pusat perniagaan dan sentra komoditas pertanian perbukitan dengan kelembagaan ekonomi desa yang produktif.",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80",
+    href: "/profil-desa/?id=51080309",
+    badge: "Profil Desa",
+    meta: ["Leuwiliang, Kab. Bogor, Jawa Barat", "12.050 Jiwa", "28.23 Ha"],
+    raw: {
+      id: 51080309,
+      code: "3201022001",
+      name: "Desa Leuwiliang",
+      population: 12050,
+      area_size: "28.23",
+      head_name: "Kepala Desa Desa Leuwiliang",
+      district: {
+        name: "Leuwiliang",
+        regency: {
+          name: "KABUPATEN BOGOR",
+          province: { name: "JAWA BARAT" }
+        }
+      }
+    }
+  },
+  {
+    id: "51080347",
+    slug: "51080347",
+    title: "Desa Lukluk",
+    subtitle: "Mengwi, Kab. Badung, Bali",
+    description: "Desa agraris dengan sistem subak tradisional yang terawat serta sentra pengrajin cenderamata lokal khas Bali.",
+    image: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=600&auto=format&fit=crop&q=80",
+    href: "/profil-desa/?id=51080347",
+    badge: "Profil Desa",
+    meta: ["Mengwi, Kab. Badung, Bali", "6.280 Jiwa", "23.24 Ha"],
+    raw: {
+      id: 51080347,
+      code: "5108022003",
+      name: "Desa Lukluk",
+      population: 6280,
+      area_size: "23.24",
+      head_name: "Kepala Desa Desa Lukluk",
+      district: {
+        name: "Mengwi",
+        regency: {
+          name: "KABUPATEN BADUNG",
+          province: { name: "BALI" }
+        }
+      }
+    }
+  },
+  {
+    id: "51080308",
+    slug: "51080308",
+    title: "Desa Sukaluyu",
+    subtitle: "Nanggung, Kab. Bogor, Jawa Barat",
+    description: "Kawasan pertanian terpadu dan perkebunan teh rakyat dengan pemandangan pegunungan asri.",
+    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=600&auto=format&fit=crop&q=80",
+    href: "/profil-desa/?id=51080308",
+    badge: "Profil Desa",
+    meta: ["Nanggung, Kab. Bogor, Jawa Barat", "8.808 Jiwa", "18.86 Ha"],
+    raw: {
+      id: 51080308,
+      code: "3201012009",
+      name: "Desa Sukaluyu",
+      population: 8808,
+      area_size: "18.86",
+      head_name: "Kepala Desa Desa Sukaluyu",
+      district: {
+        name: "Nanggung",
+        regency: {
+          name: "KABUPATEN BOGOR",
+          province: { name: "JAWA BARAT" }
+        }
+      }
+    }
+  },
+  {
+    id: "51080328",
+    slug: "51080328",
+    title: "Desa Sukawening",
+    subtitle: "Ciwidey, Kab. Bandung, Jawa Barat",
+    description: "Sentra hortikultura dataran tinggi, agrowisata stroberi, dan pengolahan produk organik masyarakat Ciwidey.",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80",
+    href: "/profil-desa/?id=51080328",
+    badge: "Profil Desa",
+    meta: ["Ciwidey, Kab. Bandung, Jawa Barat", "4.331 Jiwa", "9.03 Ha"],
+    raw: {
+      id: 51080328,
+      code: "3204012007",
+      name: "Desa Sukawening",
+      population: 4331,
+      area_size: "9.03",
+      head_name: "Kepala Desa Desa Sukawening",
+      district: {
+        name: "Ciwidey",
+        regency: {
+          name: "KABUPATEN BANDUNG",
+          province: { name: "JAWA BARAT" }
+        }
+      }
+    }
+  }
+];
+
+export const sampleTourisms: CatalogItem[] = [
+  {
+    id: "tour-1",
+    slug: "bukit-campuhan-ekowisata",
+    title: "Bukit Campuhan Ekowisata",
+    subtitle: "Desa Kedewatan, Ubud, Bali",
+    description: "Jalur trekking punggung bukit hijau nan asri dengan panorama lembah sungai dan hembusan angin segar pegunungan Ubud.",
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&auto=format&fit=crop&q=80",
+    href: "/desa-wisata/?id=tour-1",
+    badge: "Wisata Alam",
+    price: 15000,
+    meta: ["Desa Kedewatan, Ubud, Bali", "Tiket Rp 15.000", "Buka 06.00 - 18.00"],
+    raw: { category: "alam", entrance_fee: 15000, village: { name: "Desa Kedewatan" } }
+  },
+  {
+    id: "tour-2",
+    slug: "air-terjun-curug-luhur",
+    title: "Air Terjun Curug Luhur",
+    subtitle: "Desa Cibadak, Ciampea, Bogor",
+    description: "Destinasi wisata air terjun kembar alami dengan kolam pemandian mata air pegunungan yang jernih dan sejuk.",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80",
+    href: "/desa-wisata/?id=tour-2",
+    badge: "Wisata Alam",
+    price: 20000,
+    meta: ["Desa Cibadak, Ciampea, Bogor", "Tiket Rp 20.000", "Buka 07.00 - 17.00"],
+    raw: { category: "alam", entrance_fee: 20000, village: { name: "Desa Cibadak" } }
+  },
+  {
+    id: "tour-3",
+    slug: "desa-wisata-budaya-lukluk",
+    title: "Desa Wisata Budaya Lukluk",
+    subtitle: "Desa Lukluk, Mengwi, Bali",
+    description: "Pusat pelestarian seni tari, arsitektur pura tradisional, dan kerajinan ukir kayu khas perdesaan Badung.",
+    image: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=600&auto=format&fit=crop&q=80",
+    href: "/desa-wisata/?id=tour-3",
+    badge: "Wisata Budaya",
+    price: 25000,
+    meta: ["Desa Lukluk, Mengwi, Bali", "Tiket Rp 25.000", "Buka Setiap Hari"],
+    raw: { category: "budaya", entrance_fee: 25000, village: { name: "Desa Lukluk" } }
+  }
+];
+
+export const samplePotentials: CatalogItem[] = [
+  {
+    id: "pot-1",
+    slug: "pertanian-kopi-arabika-organik",
+    title: "Perkebunan Kopi Arabika Organik",
+    subtitle: "Desa Sukawening, Ciwidey, Bandung",
+    description: "Potensi perkebunan kopi arabika dataran tinggi 1.400 mdpl dengan kapasitas panen 35 ton per tahun dan standar mutu ekspor.",
+    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&auto=format&fit=crop&q=80",
+    href: "/potensi-desa/?id=pot-1",
+    badge: "Perkebunan",
+    price: 450000000,
+    meta: ["Desa Sukawening, Ciwidey", "Luas 25 Ha", "Siap Investasi"],
+    raw: { sector: "perkebunan", area_size: "25", economic_value: 450000000, is_investment_ready: true, village: { name: "Desa Sukawening" } }
+  },
+  {
+    id: "pot-2",
+    slug: "budidaya-vanili-organik-premium",
+    title: "Budidaya Vanili Organik Premium",
+    subtitle: "Desa Kedewatan, Ubud, Bali",
+    description: "Sentra perkebunan vanili organik kualitas ekspor dengan sistem greenhouse modern dan kemitraan kelompok tani.",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80",
+    href: "/potensi-desa/?id=pot-2",
+    badge: "Pertanian",
+    price: 320000000,
+    meta: ["Desa Kedewatan, Ubud, Bali", "Luas 12 Ha", "Siap Investasi"],
+    raw: { sector: "pertanian", area_size: "12", economic_value: 320000000, is_investment_ready: true, village: { name: "Desa Kedewatan" } }
+  }
+];
+
+export const sampleBumdes: CatalogItem[] = [
+  {
+    id: "bum-1",
+    slug: "bumdes-makmur-jaya",
+    title: "BUMDes Makmur Jaya",
+    subtitle: "Desa Sukaluyu, Nanggung, Bogor",
+    description: "Badan Usaha Milik Desa yang mengelola unit perdagangan pupuk, simpan pinjam produktif, dan logistik panen pertanian.",
+    image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=80",
+    href: "/bumdes/?id=bum-1",
+    badge: "BUMDes Maju",
+    meta: ["Desa Sukaluyu, Nanggung, Bogor", "3 Unit Usaha", "25 Karyawan"],
+    raw: { performance_category: "maju", director_name: "Direktur Ahmad", unit_count: 3, village: { name: "Desa Sukaluyu" } }
+  },
+  {
+    id: "bum-2",
+    slug: "bumdes-sejahtera-mandiri",
+    title: "BUMDes Sejahtera Mandiri",
+    subtitle: "Desa Lukluk, Mengwi, Bali",
+    description: "Pengembangan potensi desa di bidang unit pengelola ekowisata, sentra oleh-oleh kerajinan, dan peternakan terpadu.",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format&fit=crop&q=80",
+    href: "/bumdes/?id=bum-2",
+    badge: "BUMDes Berkembang",
+    meta: ["Desa Lukluk, Mengwi, Bali", "3 Unit Usaha", "18 Karyawan"],
+    raw: { performance_category: "berkembang", director_name: "Direktur Budi", unit_count: 3, village: { name: "Desa Lukluk" } }
+  }
+];
+
 const fallbackCatalogMap: Partial<Record<CatalogKind, CatalogItem[]>> = {
+  villages: sampleVillages,
   products: sampleProducts,
   articles: sampleArticles,
+  tourisms: sampleTourisms,
+  potentials: samplePotentials,
+  bumdes: sampleBumdes,
   lkdd: sampleLkdd,
   wishlists: sampleWishlists,
   kdmp: sampleKdmp,
