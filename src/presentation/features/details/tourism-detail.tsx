@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { formatCurrency } from "@/shared/utils/format";
-import { MapPinIcon, TourismIcon, PhoneIcon, ChevronLeftIcon, ChevronRightIcon } from "@/presentation/components/icons";
+import { MapPinIcon, TourismIcon, PhoneIcon, ChevronLeftIcon, ChevronRightIcon, CheckIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function TourismDetail({ id }: { id: string }) {
@@ -67,10 +67,8 @@ export function TourismDetail({ id }: { id: string }) {
 
   return (
     <div className="min-h-screen bg-transparent pb-20">
-      <div className="h-[92px] md:h-[98px]" />
-
-      {/* Hero Section Full Edge-to-Edge */}
-      <section className="relative w-full overflow-hidden bg-slate-900 text-white pt-8 pb-16 md:pt-10 md:pb-22">
+      {/* Hero Section Full Edge-to-Edge menyatu sampai ujung atas layar di balik navbar */}
+      <section className="relative w-full overflow-hidden bg-slate-900 text-white pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-18 md:pb-20 shadow-md">
         {images.map((imgUrl, idx) => (
           <div
             key={`${imgUrl}-${idx}`}
@@ -86,27 +84,24 @@ export function TourismDetail({ id }: { id: string }) {
 
         {images.length > 1 && (
           <>
-            <button type="button" onClick={() => setCurrentSlide((p) => (p - 1 + images.length) % images.length)} aria-label="Foto sebelumnya" className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md">
+            <button type="button" onClick={() => setCurrentSlide((p) => (p - 1 + images.length) % images.length)} aria-label="Foto sebelumnya" className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-[14px] bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md">
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
-            <button type="button" onClick={() => setCurrentSlide((p) => (p + 1) % images.length)} aria-label="Foto berikutnya" className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md">
+            <button type="button" onClick={() => setCurrentSlide((p) => (p + 1) % images.length)} aria-label="Foto berikutnya" className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-[14px] bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md">
               <ChevronRightIcon className="h-5 w-5" />
             </button>
           </>
         )}
 
         <div className="sentra-container relative z-10">
-          <div className="mb-6 md:mb-8">
-            <Link href="/desa-wisata" className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/40 hover:bg-black/70 backdrop-blur-md px-4 py-2 text-xs sm:text-sm font-bold text-white transition shadow-sm active:scale-95 cursor-pointer">
+          <div className="mb-4 sm:mb-6">
+            <Link href="/desa-wisata" className="inline-flex items-center gap-1.5 rounded-[12px] border border-white/30 bg-black/40 hover:bg-black/70 backdrop-blur-md px-3.5 py-1.5 text-xs sm:text-sm font-bold text-white transition shadow-sm active:scale-95 cursor-pointer">
               <ChevronLeftIcon className="h-4 w-4" />
               <span>Kembali ke Desa Wisata</span>
             </Link>
           </div>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl text-left">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/90 bg-white/95 backdrop-blur-md px-3.5 py-1 text-xs font-extrabold text-red-700 shadow-md mb-3">
-                <TourismIcon className="h-3.5 w-3.5" /> Destinasi Wisata Desa
-              </span>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
                 {tourism.title}
               </h1>
@@ -159,7 +154,10 @@ export function TourismDetail({ id }: { id: string }) {
           </h2>
           <div className="flex flex-wrap gap-2">
             {facilities.map((fac, idx) => (
-              <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20">✓ {fac.trim()}</span>
+              <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20 inline-flex items-center gap-1.5">
+                <CheckIcon className="h-3 w-3 shrink-0" />
+                <span>{fac.trim()}</span>
+              </span>
             ))}
           </div>
         </div>

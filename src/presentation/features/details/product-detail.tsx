@@ -7,10 +7,9 @@ import { getCatalog, getDetail } from "@/application/use-cases/get-public-conten
 import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-carousel";
 import { CatalogCard } from "@/presentation/components/catalog-card";
 import { formatCurrency } from "@/shared/utils/format";
-import { ChevronLeftIcon, PhoneIcon, StoreIcon, MapPinIcon, ShoppingCartIcon } from "@/presentation/components/icons";
+import { ChevronLeftIcon, PhoneIcon, MapPinIcon, ShoppingCartIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 import { useCart } from "@/presentation/context/cart-context";
-import { authClient } from "@/infrastructure/api/auth-client";
 
 export function ProductDetail({ id }: { id: string }) {
   const [product, setProduct] = useState<DetailItem | null>(null);
@@ -18,12 +17,7 @@ export function ProductDetail({ id }: { id: string }) {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"desc" | "spec" | "reviews">("desc");
   const [otherProducts, setOtherProducts] = useState<CatalogItem[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { addItem } = useCart();
-
-  useEffect(() => {
-    setIsLoggedIn(Boolean(authClient.getToken()));
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -62,10 +56,10 @@ export function ProductDetail({ id }: { id: string }) {
     return (
       <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16">
         <div className="sentra-container px-4 text-center">
-          <div className="rounded-[10px] ambient-card p-8 max-w-md mx-auto my-12">
+          <div className="rounded-[14px] ambient-card p-8 max-w-md mx-auto my-12">
             <h1 className="text-xl font-black text-slate-800">Produk Tidak Ditemukan</h1>
             <p className="mt-2 text-xs text-slate-500">Produk yang Anda cari tidak tersedia atau stok telah habis.</p>
-            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-2xl font-bold" href="/sentra-produk/">
+            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-[14px] font-bold" href="/sentra-produk/">
               Kembali ke Sentra Produk
             </Link>
           </div>
@@ -83,10 +77,39 @@ export function ProductDetail({ id }: { id: string }) {
   const stock = Number(raw.stock ?? 25);
   const weight = Number(raw.weight ?? 250);
   const unit = String(raw.unit || "pcs");
-  const price = product.price || 0;
-  const discountPrice = Number(raw.discount_price ?? 0);
-  const effectivePrice = discountPrice > 0 && discountPrice < price ? discountPrice : price;
-  const totalPrice = effectivePrice * quantity;
+  const quality = String(raw.quality || raw.kualitas || "100% Asli");
+  const partner = String(raw.partner || raw.mitra || "BUMDes");
+
+  const basePrice = Number(product.price || 0);
+  const rawDiscountPrice = Number(raw.discount_price ?? raw.promo_price ?? raw.discountPrice ?? 0);
+  const rawOriginalPrice = Number(raw.original_price ?? raw.originalPrice ?? 0);
+  const rawDiscountPercent = Number(
+    raw.discount_percent ??
+    raw.discount_percentage ??
+    (typeof raw.discount === "number" ? raw.discount : parseFloat(String(raw.discount || "").replace("%", "")) || 0)
+  );
+  const rawDiscountAmount = Number(raw.potongan_harga ?? raw.discount_amount ?? 0);
+
+  let normalPrice = basePrice;
+  let effectivePrice = basePrice;
+
+  if (rawDiscountPrice > 0 && rawDiscountPrice < basePrice) {
+    normalPrice = basePrice;
+    effectivePrice = rawDiscountPrice;
+  } else if (rawOriginalPrice > basePrice && basePrice > 0) {
+    normalPrice = rawOriginalPrice;
+    effectivePrice = basePrice;
+  } else if (rawDiscountPercent > 0 && rawDiscountPercent < 100 && basePrice > 0) {
+    normalPrice = basePrice;
+    effectivePrice = Math.round(basePrice * (1 - rawDiscountPercent / 100));
+  } else if (rawDiscountAmount > 0 && rawDiscountAmount < basePrice) {
+    normalPrice = basePrice;
+    effectivePrice = basePrice - rawDiscountAmount;
+  }
+
+  const hasDiscount = normalPrice > effectivePrice && effectivePrice > 0;
+  const savingsAmount = hasDiscount ? normalPrice - effectivePrice : 0;
+  const savingsPercent = hasDiscount ? Math.round((savingsAmount / normalPrice) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20">
@@ -97,51 +120,56 @@ export function ProductDetail({ id }: { id: string }) {
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Sentra Produk</span>
           </Link>
-          <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
-            {product.badge || "Produk Desa"}
+          <span className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#16a34a]/10 border border-[#16a34a]/20 px-3 py-1 text-[11px] font-extrabold text-[#16a34a] uppercase tracking-wider">
+            <ServiceSquircle service="sentra-produk" size="sm" />
+            <span>{product.badge || "Produk Desa"}</span>
           </span>
         </div>
       </div>
 
       <div className="sentra-container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Left Column: Gallery */}
-          <div className="lg:col-span-6">
-            <div className="ambient-card overflow-hidden rounded-[14px] shadow-md border border-white/85">
-              <ImageGalleryCarousel images={images} title={product.title} />
+          <div className="lg:col-span-6 flex flex-col">
+            <div className="ambient-card overflow-hidden rounded-[14px] shadow-md border border-white/85 flex-1 flex flex-col h-full min-h-[380px] sm:min-h-[460px] lg:min-h-full">
+              <ImageGalleryCarousel
+                images={images}
+                title={product.title}
+                className="h-full w-full min-h-[380px] sm:min-h-[460px] lg:min-h-full aspect-[16/11] lg:aspect-auto flex-1 rounded-[14px]"
+              />
             </div>
           </div>
 
           {/* Right Column: Info, Merchant Card, Quantity, Purchase Actions */}
-          <div className="lg:col-span-6 space-y-5">
-            <div className="ambient-card rounded-[14px] p-6 sm:p-8 shadow-md border border-white/85 space-y-6">
+          <div className="lg:col-span-6 flex flex-col">
+            <div className="ambient-card rounded-[14px] p-6 sm:p-8 shadow-md border border-white/85 space-y-6 flex-1 flex flex-col justify-between">
               <div>
-                <span className="inline-flex rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-xs font-extrabold text-[#006e23] uppercase tracking-wider">
-                  {product.badge || "Olahan Lokal"}
-                </span>
-                <h1 className="mt-3 text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
+                <h1 className="text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
                   {product.title}
                 </h1>
-                <div className="mt-4 flex items-baseline gap-2.5">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#006e23] tabular-nums">
+                <div className="mt-2.5 flex flex-wrap items-baseline gap-2.5">
+                  <span className="font-headline text-3xl sm:text-4xl font-extrabold text-[#006e23] tracking-tight">
                     {formatCurrency(effectivePrice)}
                   </span>
-                  {discountPrice > 0 && discountPrice < price ? (
-                    <span className="text-base line-through text-slate-400 font-bold">
-                      {formatCurrency(price)}
-                    </span>
-                  ) : null}
-                  <span className="text-xs font-bold text-slate-400">/ {unit}</span>
+                  {hasDiscount && (
+                    <div className="inline-flex items-center gap-2">
+                      <span className="text-sm sm:text-base font-semibold text-slate-400 line-through">
+                        {formatCurrency(normalPrice)}
+                      </span>
+                      <span className="rounded-[6px] bg-red-50 border border-red-200/80 px-2 py-0.5 text-xs font-bold text-red-600">
+                        Hemat {savingsPercent}%
+                      </span>
+                    </div>
+                  )}
+                  <span className="text-xs font-semibold text-slate-500">/ {unit}</span>
                 </div>
               </div>
 
               {/* Merchant Store Card */}
-              <div className="flex items-center justify-between gap-3 rounded-[14px] border border-white/90 bg-white/85 p-4 shadow-2xs">
+              <div className="flex items-center justify-between gap-3 rounded-[14px] border border-slate-200/80 bg-white/90 p-3.5 shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#006e23]/10 text-[#006e23]">
-                    <StoreIcon className="h-6 w-6" />
-                  </div>
+                  <ServiceSquircle service="sentra-produk" size="md" />
                   <div>
                     <strong className="block text-sm sm:text-base font-extrabold text-[#171d18]">{merchantName}</strong>
                     {village.id ? (
@@ -162,55 +190,60 @@ export function ProductDetail({ id }: { id: string }) {
                   href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20${encodeURIComponent(merchantName)},%20saya%20tertarik%20dengan%20produk%20${encodeURIComponent(product.title)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
                 >
                   <PhoneIcon className="h-3.5 w-3.5 text-[#006e23]" /> Chat
                 </a>
               </div>
 
-              {/* Specs Badge */}
-              <div className="grid grid-cols-2 gap-3.5 text-xs">
-                <div className="rounded-2xl border border-white/90 bg-white/85 p-3.5 shadow-2xs text-center">
-                  <span className="text-slate-400 block text-[11px] font-bold uppercase tracking-wider">Stok Tersedia</span>
-                  <strong className="text-[#171d18] font-extrabold text-sm sm:text-base block mt-0.5">{stock} Pcs</strong>
+              {/* Product Feature / Specs Mini Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                <div className="rounded-[12px] border border-slate-200/80 bg-white/95 p-3 text-center shadow-2xs hover:border-[#006e23]/30 transition-colors">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Stok</span>
+                  <strong className="text-slate-800 font-extrabold text-xs sm:text-sm block mt-0.5 truncate">{stock} {unit}</strong>
                 </div>
-                <div className="rounded-2xl border border-white/90 bg-white/85 p-3.5 shadow-2xs text-center">
-                  <span className="text-slate-400 block text-[11px] font-bold uppercase tracking-wider">Berat Pengiriman</span>
-                  <strong className="text-[#171d18] font-extrabold text-sm sm:text-base block mt-0.5">{weight} gram</strong>
+
+                <div className="rounded-[12px] border border-slate-200/80 bg-white/95 p-3 text-center shadow-2xs hover:border-[#006e23]/30 transition-colors">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Berat</span>
+                  <strong className="text-slate-800 font-extrabold text-xs sm:text-sm block mt-0.5 truncate">{weight >= 1000 ? `${(weight / 1000).toLocaleString("id-ID")} kg` : `${weight} gr`}</strong>
+                </div>
+
+                <div className="rounded-[12px] border border-slate-200/80 bg-white/95 p-3 text-center shadow-2xs hover:border-[#006e23]/30 transition-colors">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Kualitas</span>
+                  <strong className="text-slate-800 font-extrabold text-xs sm:text-sm block mt-0.5 truncate">{quality}</strong>
+                </div>
+
+                <div className="rounded-[12px] border border-slate-200/80 bg-white/95 p-3 text-center shadow-2xs hover:border-[#006e23]/30 transition-colors">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Mitra</span>
+                  <strong className="text-slate-800 font-extrabold text-xs sm:text-sm block mt-0.5 truncate">{partner}</strong>
                 </div>
               </div>
 
               {/* Quantity Counter Selector */}
-              <div className="space-y-2 pt-2 border-t border-slate-200/70">
+              <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-200/70">
                 <label className="block text-xs font-bold text-slate-700">Jumlah Pembelian</label>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center rounded-2xl border border-slate-200 bg-white p-1 shadow-2xs">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-slate-100 text-slate-700 font-bold transition disabled:opacity-40 cursor-pointer"
-                      disabled={quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <span className="w-12 text-center text-base font-extrabold text-slate-800">{quantity}</span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-slate-100 text-slate-700 font-bold transition cursor-pointer"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="text-right">
-                    <span className="block text-[11px] text-slate-400 font-bold uppercase tracking-wider">Subtotal</span>
-                    <strong className="text-xl sm:text-2xl font-extrabold text-[#006e23]">{formatCurrency(totalPrice)}</strong>
-                  </div>
+                <div className="flex items-center rounded-[10px] border border-slate-200 bg-white p-1 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="flex h-9 w-9 items-center justify-center rounded-[8px] hover:bg-slate-100 text-slate-700 font-bold transition disabled:opacity-40 cursor-pointer"
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="w-12 text-center text-base font-extrabold text-slate-800">{quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                    className="flex h-9 w-9 items-center justify-center rounded-[8px] hover:bg-slate-100 text-slate-700 font-bold transition cursor-pointer"
+                  >
+                    +
+                  </button>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -226,27 +259,20 @@ export function ProductDetail({ id }: { id: string }) {
                       true
                     );
                   }}
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-[14px] border-2 border-[#006e23] bg-white py-3 px-4 text-xs sm:text-sm font-extrabold text-[#006e23] hover:bg-[#006e23]/5 transition active:scale-95 shadow-2xs cursor-pointer"
+                  className="flex-1 ambient-btn-primary inline-flex items-center justify-center gap-2 rounded-[14px] py-3.5 px-5 text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
                 >
                   <ShoppingCartIcon className="h-4 w-4" />
                   <span>+ Keranjang</span>
                 </button>
 
-                <Link
-                  href={isLoggedIn ? `/checkout?product_id=${product.id}&quantity=${quantity}` : `/login?redirect=${encodeURIComponent(`/checkout?product_id=${product.id}&quantity=${quantity}`)}`}
-                  className="flex-1 ambient-btn-primary flex items-center justify-center text-center py-3 px-4 rounded-[14px] text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
-                >
-                  {isLoggedIn ? "Beli Sekarang" : "Masuk untuk Beli"}
-                </Link>
-
                 <a
-                  href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20saya%20ingin%20pesan%20${encodeURIComponent(product.title)}%20sebanyak%20${quantity}%20pcs.`}
+                  href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20saya%20ingin%20pesan%20${encodeURIComponent(product.title)}%20sebanyak%20${quantity}%20${unit}.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-[14px] border border-slate-200 bg-white/90 px-4 py-3 text-xs sm:text-sm font-bold text-slate-700 hover:bg-white hover:text-slate-900 transition shadow-2xs active:scale-95"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-[14px] border border-slate-200 bg-white hover:bg-slate-50 py-3.5 px-5 text-xs sm:text-sm font-bold text-slate-700 transition shadow-2xs active:scale-95"
                   title="Pesan via WhatsApp"
                 >
-                  <PhoneIcon className="h-3.5 w-3.5 text-[#006e23]" />
+                  <PhoneIcon className="h-4 w-4 text-[#006e23]" />
                   <span>WhatsApp</span>
                 </a>
               </div>
@@ -281,7 +307,9 @@ export function ProductDetail({ id }: { id: string }) {
                 {product.body ? (
                   <div dangerouslySetInnerHTML={{ __html: product.body }} />
                 ) : (
-                  <p>{product.description || "Deskripsi produk belum diisi secara lengkap oleh merchant desa."}</p>
+                  <p className="leading-relaxed font-medium">
+                    {product.description || "Deskripsi produk belum diisi secara lengkap oleh merchant desa."}
+                  </p>
                 )}
               </div>
             ) : (
@@ -292,16 +320,28 @@ export function ProductDetail({ id }: { id: string }) {
                 </div>
                 <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Stok Produk</span>
-                  <span className="font-bold text-slate-800">{stock} Pcs</span>
+                  <span className="font-bold text-slate-800">{stock} {unit}</span>
                 </div>
                 <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Berat Bersih</span>
-                  <span className="font-bold text-slate-800">{weight} gram</span>
+                  <span className="font-bold text-slate-800">{weight >= 1000 ? `${(weight / 1000).toLocaleString("id-ID")} kg` : `${weight} gram`}</span>
                 </div>
                 <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
                   <span className="text-slate-500 font-medium">Kategori</span>
                   <span className="font-bold text-slate-800">{product.badge || "Produk Desa"}</span>
                 </div>
+                {hasDiscount && (
+                  <>
+                    <div className="flex justify-between p-3.5 rounded-[14px] bg-white/80 border border-slate-200/70">
+                      <span className="text-slate-500 font-medium">Harga Normal</span>
+                      <span className="font-bold text-slate-400 line-through">{formatCurrency(normalPrice)}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 rounded-[14px] bg-emerald-50/70 border border-emerald-200/80">
+                      <span className="text-emerald-700 font-medium">Potongan Harga</span>
+                      <span className="font-extrabold text-[#006e23]">Hemat {formatCurrency(savingsAmount)} ({savingsPercent}%)</span>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>

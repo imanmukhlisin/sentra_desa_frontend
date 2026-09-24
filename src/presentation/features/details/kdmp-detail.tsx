@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { formatCurrency } from "@/shared/utils/format";
-import { KdmpIcon, MapPinIcon, ChevronLeftIcon, PhoneIcon } from "@/presentation/components/icons";
+import { KdmpIcon, MapPinIcon, ChevronLeftIcon, PhoneIcon, CheckIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function KdmpDetail({ id }: { id: string }) {
@@ -91,7 +91,7 @@ export function KdmpDetail({ id }: { id: string }) {
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke KDMP</span>
           </Link>
-          <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
+          <span className="rounded-[10px] bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
             Status: {status}
           </span>
         </div>
@@ -101,8 +101,9 @@ export function KdmpDetail({ id }: { id: string }) {
         {/* Main Info Card */}
         <div className="ambient-card rounded-[14px] p-6 md:p-8 shadow-xs space-y-6">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-xs font-extrabold text-[#006e23] uppercase tracking-wider">
-              <KdmpIcon className="h-3.5 w-3.5" /> Koperasi Desa Merah Putih
+            <span className="inline-flex items-center gap-2 rounded-[10px] bg-[#ea580c]/10 border border-[#ea580c]/20 px-3.5 py-1 text-xs font-extrabold text-[#ea580c] uppercase tracking-wider">
+              <ServiceSquircle service="kdmp" size="sm" />
+              <span>Koperasi Desa Merah Putih</span>
             </span>
             <h1 className="mt-3 text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
               {kdmp.title}
@@ -117,37 +118,37 @@ export function KdmpDetail({ id }: { id: string }) {
             <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Nomor Badan Hukum</span>
               <strong className="text-xs font-black text-slate-900 mt-1 block truncate" title={nomorBadanHukum}>
-                📜 {nomorBadanHukum}
+                {nomorBadanHukum}
               </strong>
             </div>
             <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kode Registrasi KDMP</span>
               <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate">
-                🆔 {code}
+                {code}
               </strong>
             </div>
             <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Ketua Koperasi</span>
               <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate" title={ketuaName}>
-                👤 {ketuaName}
+                {ketuaName}
               </strong>
             </div>
             <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Jumlah Anggota</span>
               <strong className="text-xs font-extrabold text-slate-800 mt-1 block">
-                👥 {totalMembers > 0 ? `${totalMembers} Anggota` : "Terverifikasi Aktif"}
+                {totalMembers > 0 ? `${totalMembers} Anggota` : "Terverifikasi Aktif"}
               </strong>
             </div>
             <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Modal Awal Koperasi</span>
               <strong className="text-xs font-extrabold text-slate-800 mt-1 block">
-                💰 {modalAwal > 0 ? formatCurrency(modalAwal) : "Simpanan Pokok Anggota"}
+                {modalAwal > 0 ? formatCurrency(modalAwal) : "Simpanan Pokok Anggota"}
               </strong>
             </div>
             <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Aset Koperasi</span>
               <strong className="text-xs font-black text-[#006e23] mt-1 block">
-                📈 {totalAssets > 0 ? formatCurrency(totalAssets) : "Dalam Penilaian"}
+                {totalAssets > 0 ? formatCurrency(totalAssets) : "Dalam Penilaian"}
               </strong>
             </div>
           </div>
@@ -157,8 +158,9 @@ export function KdmpDetail({ id }: { id: string }) {
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">Unit Usaha Koperasi Aktif</h3>
               <div className="flex flex-wrap gap-2">
                 {unitsList.map((u, idx) => (
-                  <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20">
-                    ✓ {unitLabels[u] || u.replace(/_/g, " ").toUpperCase()}
+                  <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20 inline-flex items-center gap-1.5">
+                    <CheckIcon className="h-3 w-3 shrink-0" />
+                    <span>{unitLabels[u] || u.replace(/_/g, " ").toUpperCase()}</span>
                   </span>
                 ))}
               </div>

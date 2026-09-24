@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { CatalogItem, DetailItem } from "@/domain/entities/common";
 import { getCatalog, getDetail } from "@/application/use-cases/get-public-content";
 import { CatalogCard } from "@/presentation/components/catalog-card";
-import { ArticleIcon, UserIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { ArticleIcon, UserIcon, ChevronLeftIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function ArtikelDetail({ id }: { id: string }) {
@@ -73,7 +73,7 @@ export function ArtikelDetail({ id }: { id: string }) {
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Artikel Desa</span>
           </Link>
-          <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
+          <span className="rounded-[10px] bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
             {article.badge || "Kabar Desa"}
           </span>
         </div>
@@ -82,8 +82,9 @@ export function ArtikelDetail({ id }: { id: string }) {
       <div className="sentra-container max-w-4xl">
         <article className="ambient-card rounded-[14px] p-6 md:p-10 shadow-xs space-y-6">
           <div>
-            <span className="inline-flex items-center rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
-              {article.badge || "Artikel Terbaru"}
+            <span className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#4c9f38]/10 border border-[#4c9f38]/20 px-3 py-1 text-[11px] font-extrabold text-[#4c9f38] uppercase tracking-wider">
+              <ServiceSquircle service="artikel" size="sm" />
+              <span>{article.badge || "Artikel Terbaru"}</span>
             </span>
             <h1 className="mt-3 text-2xl md:text-4xl font-extrabold text-[#171d18] leading-tight tracking-tight">
               {article.title}
@@ -93,7 +94,7 @@ export function ArtikelDetail({ id }: { id: string }) {
                 <UserIcon className="h-4 w-4 text-[#006e23]" /> {author}
               </span>
               <span>•</span>
-              <span className="font-medium">📅 {publishDate}</span>
+              <span className="font-medium">{publishDate}</span>
             </div>
           </div>
 

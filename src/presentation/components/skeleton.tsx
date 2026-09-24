@@ -14,19 +14,19 @@ export function Skeleton({
 
 export function CatalogCardSkeleton() {
   return (
-    <div className="ambient-card flex flex-col overflow-hidden rounded-[14px] h-full">
+    <div className="ambient-card-interactive flex flex-col overflow-hidden rounded-[22px] h-full">
       {/* Media placeholder */}
-      <div className="relative aspect-square w-full overflow-hidden bg-slate-200/70 animate-pulse" />
+      <div className="relative aspect-square w-full overflow-hidden bg-slate-200/70 animate-pulse border-b border-slate-200/70" />
 
       {/* Body */}
       <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
         <div className="space-y-2.5">
+          <Skeleton className="h-3.5 w-1/3 rounded-md" />
           <Skeleton className="h-4 sm:h-5 w-3/4 rounded-md" />
           <Skeleton className="h-3 sm:h-3.5 w-full rounded-md" />
-          <Skeleton className="h-3 sm:h-3.5 w-2/3 rounded-md" />
         </div>
 
-        <div className="mt-4 sm:mt-5 flex items-center justify-between gap-2 border-t border-dashed border-[#e6dcce] pt-3.5">
+        <div className="mt-4 sm:mt-5 flex items-center justify-between gap-2 border-t border-slate-200/80 pt-3.5">
           <Skeleton className="h-5 sm:h-6 w-24 rounded-lg" />
           <Skeleton className="h-8 w-16 rounded-xl" />
         </div>
@@ -61,7 +61,7 @@ export function CatalogPageSkeleton({
               <Skeleton className="h-4 w-32" />
               <div className="flex items-center gap-3">
                 <Skeleton className="h-8 sm:h-10 w-64" />
-                <Skeleton className="h-6 w-24 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-[10px]" />
               </div>
               <Skeleton className="h-4 w-96 max-w-full" />
             </div>
@@ -109,13 +109,13 @@ export function DetailSkeleton({
         <div className="sentra-container mb-6 max-w-4xl">
           <div className="ambient-card flex items-center justify-between rounded-[14px] px-5 py-3.5 shadow-xs">
             <Skeleton className="h-4 w-36" />
-            <Skeleton className="h-5 w-20 rounded-full" />
+            <Skeleton className="h-5 w-20 rounded-[10px]" />
           </div>
         </div>
 
         <div className="sentra-container max-w-4xl">
           <div className="ambient-card rounded-[14px] p-6 md:p-10 shadow-xs space-y-6">
-            <Skeleton className="h-5 w-24 rounded-full" />
+            <Skeleton className="h-5 w-24 rounded-[10px]" />
             <Skeleton className="h-8 md:h-10 w-3/4" />
             <div className="flex gap-3">
               <Skeleton className="h-4 w-28" />
@@ -140,10 +140,10 @@ export function DetailSkeleton({
       <div className="sentra-container mb-6">
         <div className="ambient-card flex flex-wrap items-center justify-between gap-3 rounded-[14px] px-5 py-3.5 shadow-xs">
           <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-4 rounded-full" />
+            <Skeleton className="h-4 w-4 rounded-[4px]" />
             <Skeleton className="h-4 w-36" />
           </div>
-          <Skeleton className="h-6 w-24 rounded-full" />
+          <Skeleton className="h-6 w-24 rounded-[10px]" />
         </div>
       </div>
 
@@ -152,8 +152,8 @@ export function DetailSkeleton({
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Media / Gallery area */}
           <div className="lg:col-span-7">
-            <div className="ambient-card overflow-hidden rounded-2xl p-4 sm:p-5">
-              <Skeleton className="aspect-square sm:aspect-[4/3] w-full rounded-xl" />
+            <div className="ambient-card overflow-hidden rounded-[14px] p-4 sm:p-5">
+              <Skeleton className="aspect-square sm:aspect-[4/3] w-full rounded-[10px]" />
               <div className="mt-4 flex gap-3">
                 <Skeleton className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl" />
                 <Skeleton className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl" />
@@ -164,8 +164,8 @@ export function DetailSkeleton({
 
           {/* Info area */}
           <div className="space-y-6 lg:col-span-5">
-            <div className="ambient-card space-y-4 rounded-2xl p-6 sm:p-7">
-              <Skeleton className="h-5 w-28 rounded-full" />
+            <div className="ambient-card space-y-4 rounded-[14px] p-6 sm:p-7">
+              <Skeleton className="h-5 w-28 rounded-[10px]" />
               <Skeleton className="h-7 sm:h-9 w-4/5" />
               <Skeleton className="h-6 w-1/3" />
               <div className="border-t border-dashed border-[#e6dcce] pt-4 space-y-2.5">

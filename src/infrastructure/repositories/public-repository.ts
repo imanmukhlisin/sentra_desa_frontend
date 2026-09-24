@@ -38,11 +38,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Seni • Rp 2.450.000",
     description: "Alat musik gamelan ukir kayu jati dan perunggu buatan seniman desa Bali.",
     image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
-    href: "/product/gamelan-bali",
+    href: "/sentra-produk/?id=gamelan-bali",
     badge: "KERAJINAN",
     price: 2450000,
     meta: ["Desa Seni, Bali"],
-    raw: {}
+    raw: { discount_price: 2199000, stock: 12, weight: 15000, unit: "set" }
   },
   {
     id: "sample-2",
@@ -51,11 +51,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Kreatif • Rp 125.000",
     description: "Tas ramah lingkungan buatan tangan dari serat bambu & rotan desa pilihan.",
     image: "https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&auto=format&fit=crop&q=80",
-    href: "/product/tas-anyaman-bamboo",
+    href: "/sentra-produk/?id=tas-anyaman-bamboo",
     badge: "KERAJINAN",
     price: 125000,
     meta: ["Desa Kreatif, Tasikmalaya"],
-    raw: {}
+    raw: { discount_price: 110000, stock: 45, weight: 350, unit: "pcs" }
   },
   {
     id: "sample-3",
@@ -64,11 +64,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Banjar Agung • Rp 22.000",
     description: "Kacang Gurih sangat gurih, renyah dan enak olahan petani lokal.",
     image: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=600&auto=format&fit=crop&q=80",
-    href: "/product/kacang-gurih",
+    href: "/sentra-produk/?id=kacang-gurih",
     badge: "MAKANAN_MINUMAN",
     price: 22000,
     meta: ["Desa Banjar Agung, OKU Selatan"],
-    raw: {}
+    raw: { discount_price: 18500, stock: 80, weight: 200, unit: "bks" }
   },
   {
     id: "sample-4",
@@ -77,11 +77,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Sukamaju • Rp 18.000",
     description: "Keripik singkong renyah dengan bumbu pedas manis istimewa khas desa.",
     image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&auto=format&fit=crop&q=80",
-    href: "/product/keripik-singkong-pedas-manis",
+    href: "/sentra-produk/?id=keripik-singkong-pedas-manis",
     badge: "MAKANAN_MINUMAN",
-    price: 18000,
+    price: 25000,
     meta: ["Desa Sukamaju, Kab. Bandung"],
-    raw: {}
+    raw: { discount_price: 21250, stock: 100, weight: 250, unit: "pcs" }
   },
   {
     id: "sample-3",
@@ -90,11 +90,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Asri • Rp 85.000",
     description: "Madu hutan murni dipanen langsung dari pepohonan hutan desa tanpa bahan pengawet.",
     image: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=600&auto=format&fit=crop&q=80",
-    href: "/product/madu-hutan-alami",
+    href: "/sentra-produk/?id=madu-hutan-alami",
     badge: "Pertanian",
     price: 85000,
     meta: ["Desa Asri, Kab. Bandung"],
-    raw: {}
+    raw: { discount_price: 75000, stock: 30, weight: 500, unit: "btl" }
   },
   {
     id: "sample-4",
@@ -103,11 +103,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Argopuro • Rp 45.000",
     description: "Biji kopi robusta pilihan dari perkebunan dataran tinggi desa dengan aroma mantap.",
     image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&auto=format&fit=crop&q=80",
-    href: "/product/kopi-robusta-desa",
+    href: "/sentra-produk/?id=kopi-robusta-desa",
     badge: "Makanan & Minuman",
     price: 45000,
     meta: ["Desa Argopuro, Kab. Jember"],
-    raw: {}
+    raw: { discount_price: 39000, stock: 50, weight: 250, unit: "bks" }
   },
   {
     id: "sample-5",
@@ -116,11 +116,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Kreatif • Rp 65.000",
     description: "Kerajinan tangan ramah lingkungan berupa anyaman bambu tahan lama dan artistik.",
     image: "https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&auto=format&fit=crop&q=80",
-    href: "/product/kerajinan-anyaman-bambu",
+    href: "/sentra-produk/?id=kerajinan-anyaman-bambu",
     badge: "Kerajinan",
     price: 65000,
     meta: ["Desa Kreatif, Kab. Tasikmalaya"],
-    raw: {}
+    raw: { discount_price: 55000, stock: 25, weight: 400, unit: "pcs" }
   },
   {
     id: "sample-6",
@@ -129,11 +129,11 @@ export const sampleProducts: CatalogItem[] = [
     subtitle: "Desa Pesisir • Rp 50.000",
     description: "Virgin Coconut Oil (VCO) hasil olahan dingin kelapa segar pesisir desa.",
     image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&auto=format&fit=crop&q=80",
-    href: "/product/minyak-kelapa-vco",
+    href: "/sentra-produk/?id=minyak-kelapa-vco",
     badge: "Pertanian",
     price: 50000,
     meta: ["Desa Pesisir, Kab. Kebumen"],
-    raw: {}
+    raw: { discount_price: 42000, stock: 60, weight: 250, unit: "btl" }
   }
 ];
 

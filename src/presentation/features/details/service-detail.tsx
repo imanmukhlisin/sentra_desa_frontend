@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { formatCurrency } from "@/shared/utils/format";
-import { NewsIcon, MapPinIcon, PhoneIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { NewsIcon, MapPinIcon, PhoneIcon, ChevronLeftIcon, CheckIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function ServiceDetail({ id }: { id: string }) {
@@ -83,7 +83,7 @@ export function ServiceDetail({ id }: { id: string }) {
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Informasi Desa</span>
           </Link>
-          <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
+          <span className="rounded-[10px] bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
             {isContent ? "Informasi Publik Desa" : "Layanan Administrasi Desa"}
           </span>
         </div>
@@ -93,8 +93,9 @@ export function ServiceDetail({ id }: { id: string }) {
         {/* Main Info Card */}
         <div className="ambient-card rounded-[14px] p-6 md:p-8 shadow-xs space-y-5">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-xs font-extrabold text-[#006e23] uppercase tracking-wider">
-              <NewsIcon className="h-3.5 w-3.5" /> {categoryLabel}
+            <span className="inline-flex items-center gap-2 rounded-[10px] bg-[#0284c7]/10 border border-[#0284c7]/20 px-3.5 py-1 text-xs font-extrabold text-[#0284c7] uppercase tracking-wider">
+              <ServiceSquircle service="layanan-desa" size="sm" />
+              <span>{categoryLabel}</span>
             </span>
             <h1 className="mt-3 text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
               {service.title}
@@ -131,13 +132,13 @@ export function ServiceDetail({ id }: { id: string }) {
               <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Estimasi Waktu</span>
                 <strong className="text-sm font-extrabold text-slate-800 mt-1 block">
-                  ⏱ {processingTime}
+                  {processingTime}
                 </strong>
               </div>
               <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-4 shadow-xs">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Jam Layanan</span>
                 <strong className="text-sm font-extrabold text-slate-800 mt-1 block">
-                  🏢 {officeHours}
+                  {officeHours}
                 </strong>
               </div>
             </div>
@@ -153,8 +154,8 @@ export function ServiceDetail({ id }: { id: string }) {
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {requirements.map((req, idx) => (
                 <li key={idx} className="flex items-start gap-3 rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 text-xs font-bold text-slate-700 shadow-xs">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#006e23]/10 text-[11px] font-black text-[#006e23]">
-                    ✓
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-[#006e23]/10 text-[#006e23]">
+                    <CheckIcon className="h-3 w-3" />
                   </span>
                   <span>{req}</span>
                 </li>

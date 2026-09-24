@@ -9,20 +9,18 @@ import {
   Lock,
   Eye,
   EyeOff,
-  ArrowRight,
   Loader2,
   AlertCircle,
   CheckCircle2,
   Check,
-  ShoppingCart,
   Store,
-  Landmark,
   Phone,
   Briefcase,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
 import Image from "next/image";
+import { ShoppingCartIcon } from "@/presentation/components/icons";
 import { authClient } from "@/infrastructure/api/auth-client";
 
 export type AuthRole = "buyer" | "merchant" | "village_admin";
@@ -31,6 +29,56 @@ interface AuthViewProps {
   initialMode?: "register" | "login";
   initialRole?: AuthRole;
 }
+
+const ROLE_SELECTION_CARDS: {
+  role: AuthRole;
+  title: string;
+  desc: string;
+  icon: string;
+  color: string;
+  glowClass: string;
+  borderHover: string;
+  shadowHover: string;
+  titleHover: string;
+  chevronHover: string;
+}[] = [
+  {
+    role: "buyer",
+    title: "Pembeli / Warga",
+    desc: "Belanja produk desa & lacak pesanan",
+    icon: "/icons/services/sentra-produk.svg",
+    color: "#0284c7",
+    glowClass: "from-sky-100/70 via-sky-50/25 to-transparent",
+    borderHover: "hover:border-[#0284c7]/45",
+    shadowHover: "hover:shadow-[0_8px_22px_-4px_rgba(2,132,199,0.18)]",
+    titleHover: "group-hover:text-[#0284c7]",
+    chevronHover: "group-hover:bg-[#0284c7]"
+  },
+  {
+    role: "merchant",
+    title: "Merchant UMKM",
+    desc: "Buka toko & pasarkan produk lokal desa",
+    icon: "/icons/services/bumdes.svg",
+    color: "#e5243b",
+    glowClass: "from-rose-100/70 via-rose-50/25 to-transparent",
+    borderHover: "hover:border-[#e5243b]/45",
+    shadowHover: "hover:shadow-[0_8px_22px_-4px_rgba(229,36,59,0.18)]",
+    titleHover: "group-hover:text-[#e5243b]",
+    chevronHover: "group-hover:bg-[#e5243b]"
+  },
+  {
+    role: "village_admin",
+    title: "Admin Desa",
+    desc: "Kelola portal desa, warta & transparansi LKDD",
+    icon: "/icons/services/profil-desa.svg",
+    color: "#006e23",
+    glowClass: "from-emerald-100/70 via-emerald-50/25 to-transparent",
+    borderHover: "hover:border-[#006e23]/45",
+    shadowHover: "hover:shadow-[0_8px_22px_-4px_rgba(0,110,35,0.18)]",
+    titleHover: "group-hover:text-[#006e23]",
+    chevronHover: "group-hover:bg-[#006e23]"
+  }
+];
 
 export function AuthView({ initialMode = "register", initialRole }: AuthViewProps) {
   const router = useRouter();
@@ -82,10 +130,11 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
 
   const roleConfig = {
     buyer: {
-      title: "Daftar Akun Pembeli",
+      title: "Daftar Sebagai Pembeli",
       badge: "Pembeli / Warga",
       desc: "Buat akun untuk belanja produk desa, checkout pesanan, dan pantau status pengiriman.",
       btnText: "Daftar sebagai Pembeli",
+      btnClass: "bg-gradient-to-r from-[#0369a1] via-[#0284c7] to-[#0369a1] shadow-[0_12px_28px_-4px_rgba(2,132,199,0.45)] hover:shadow-[0_16px_34px_-4px_rgba(2,132,199,0.55)]",
       nameLabel: "Nama Lengkap Pembeli",
       namePlaceholder: "Cth: Budi Santoso",
       emailHint: "Gunakan email aktif untuk konfirmasi pemesanan dan invoice."
@@ -95,15 +144,17 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
       badge: "Pelaku Usaha",
       desc: "Buka toko online desa dan pasarkan produk olahan, kerajinan, & karya lokal Anda.",
       btnText: "Buka Toko & Daftar Merchant",
+      btnClass: "bg-gradient-to-r from-[#be123c] via-[#e5243b] to-[#be123c] shadow-[0_12px_28px_-4px_rgba(229,36,59,0.45)] hover:shadow-[0_16px_34px_-4px_rgba(229,36,59,0.55)]",
       nameLabel: "Nama Pemilik Toko",
       namePlaceholder: "Cth: Siti Aminah",
       emailHint: "Email ini digunakan untuk mengelola toko dan menerima notifikasi pesanan."
     },
     village_admin: {
-      title: "Daftar Admin / Aparatur Desa",
+      title: "Daftar Admin Desa",
       badge: "Aparatur Desa",
       desc: "Khusus perangkat pemerintah desa untuk mengelola portal informasi, LKDD, dan verifikasi UMKM.",
       btnText: "Daftar sebagai Admin Desa",
+      btnClass: "bg-gradient-to-r from-[#14532d] via-[#006e23] to-[#14532d] shadow-[0_12px_28px_-4px_rgba(0,110,35,0.45)] hover:shadow-[0_16px_34px_-4px_rgba(0,110,35,0.55)]",
       nameLabel: "Nama Lengkap Aparatur",
       namePlaceholder: "Cth: Ahmad Subagyo, S.P.",
       emailHint: "Disarankan memakai email kedinasan atau email resmi pemerintah desa."
@@ -216,25 +267,31 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
     }
   };
 
-  const FormBrand = () => (
-    <div className="mb-5 flex items-center justify-between">
-      <Link href="/" className="group flex items-center gap-2.5 cursor-pointer" title="Kembali ke Beranda">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 p-1 group-hover:border-[#006e23]/35 transition-colors">
-          <Image src="/images/logo.png" alt="SentraDesa" width={32} height={32} className="h-full w-full object-contain" priority />
-        </div>
-        <div className="leading-tight text-left">
-          <div className="text-[15px] font-black text-[#006e23] uppercase tracking-wider font-sans group-hover:text-[#005319] transition-colors">SENTRADESA</div>
-          <div className="text-[10px] font-semibold text-slate-400">Berdaya dari Desa</div>
-        </div>
+  const FormBrand = ({ showHomeButton = true }: { showHomeButton?: boolean }) => (
+    <div className="mb-6 flex items-center justify-between">
+      <Link href="/" className="group flex items-center gap-2 sm:gap-2.5 cursor-pointer" title="Kembali ke Beranda">
+        <Image
+          src="/images/logo.png"
+          alt="Logo SentraDesa"
+          width={36}
+          height={36}
+          className="h-8 w-8 sm:h-9 sm:w-9 object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105"
+          priority
+        />
+        <span className="font-headline font-extrabold text-[18px] sm:text-[20px] text-slate-900 tracking-tight">
+          Sentra<span className="text-[#006e23]">Desa</span>
+        </span>
       </Link>
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-slate-400 hover:bg-slate-50 hover:text-[#006e23] transition-colors"
-        title="Kembali ke Beranda"
-      >
-        <ChevronLeft size={14} />
-        <span>Beranda</span>
-      </Link>
+      {showHomeButton && (
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 rounded-[14px] border border-slate-200/90 bg-white/90 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-[#006e23] hover:border-[#006e23]/30 hover:bg-emerald-50/50 transition-all active:scale-95 shadow-xs"
+          title="Kembali ke Beranda"
+        >
+          <ChevronLeft size={14} />
+          <span>Beranda</span>
+        </Link>
+      )}
     </div>
   );
 
@@ -272,7 +329,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
         }
       ` }} />
 
-      {/* ── LEFT SIDE: LOGIN FORM (Styled like reference card) ── */}
+      {/* ── LEFT SIDE: LOGIN FORM (Styled matching SentraDesa Dashboard) ── */}
       <div
         className={`absolute top-0 left-0 h-full w-full lg:w-1/2 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col px-4 py-6 sm:px-8 lg:px-12 xl:px-16 transition-all duration-1000 ease-[cubic-bezier(0.65,0,0.35,1)] ${
           isLoginMode
@@ -281,53 +338,31 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
         }`}
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        <div className="relative z-10 mx-auto my-auto w-full max-w-[430px] rounded-[14px] bg-white p-7 sm:p-9 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08),0_4px_16px_-2px_rgba(0,0,0,0.03)] border border-slate-100/90 text-left">
-          {/* Mobile Tab Switcher */}
-          <div className="lg:hidden mb-5 p-1 rounded-xl bg-slate-100/90 flex items-center gap-1 border border-slate-200/60">
-            <button
-              type="button"
-              onClick={() => switchMode("login")}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                isLoginMode ? "bg-white text-[#006e23] shadow-xs" : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              Masuk
-            </button>
-            <button
-              type="button"
-              onClick={() => switchMode("register")}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                !isLoginMode ? "bg-white text-[#006e23] shadow-xs" : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              Daftar Akun
-            </button>
-          </div>
-
+        <div className="relative z-10 mx-auto my-auto w-full max-w-[440px] rounded-[14px] bg-white/95 backdrop-blur-2xl p-6 sm:p-9 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,110,35,0.06)] border border-white/90 text-left">
           <FormBrand />
 
-          <h1 className="text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight mb-2">
+          <h1 className="font-headline text-2xl sm:text-[26px] font-extrabold text-slate-900 tracking-tight mb-2">
             Masuk ke Akun
           </h1>
-          <p className="text-[13px] sm:text-sm text-slate-500 leading-relaxed mb-6">
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6">
             Masukkan email dan kata sandi Anda untuk mengakses portal SentraDesa.
           </p>
 
           {isFromCheckout && (
-            <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-emerald-200/80 bg-emerald-50/80 p-3 text-xs font-semibold text-emerald-900">
-              <ShoppingCart size={18} className="shrink-0 text-[#006e23]" />
+            <div className="mb-4 flex items-center gap-2.5 rounded-[14px] border border-emerald-200/80 bg-emerald-50/80 p-3 text-xs font-semibold text-emerald-900">
+              <ShoppingCartIcon size={18} className="shrink-0 text-[#006e23]" />
               <span>Silakan masuk terlebih dahulu untuk melanjutkan proses checkout pesanan produk desa Anda.</span>
             </div>
           )}
 
           {errorMessage && isLoginMode && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
+            <div className="mb-4 flex items-center gap-2 rounded-[14px] bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
               <AlertCircle size={16} className="shrink-0 text-red-500" />
               <span>{errorMessage}</span>
             </div>
           )}
           {successMessage && isLoginMode && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50/90 px-3.5 py-2.5 text-xs text-emerald-800 border border-emerald-200/80">
+            <div className="mb-4 flex items-center gap-2 rounded-[14px] bg-emerald-50/90 px-3.5 py-2.5 text-xs text-emerald-800 border border-emerald-200/80">
               <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
               <span>{successMessage}</span>
             </div>
@@ -336,7 +371,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
           <form className="space-y-4" onSubmit={handleLoginSubmit}>
             {/* Email Field */}
             <div>
-              <label className="block text-[13.5px] font-semibold text-slate-800 mb-1.5">Email</label>
+              <label className="block text-[13px] font-bold text-slate-800 mb-1.5">Email</label>
               <div className="relative group">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
                   <Mail size={18} strokeWidth={1.8} />
@@ -347,7 +382,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   placeholder="nama@lembaga.id"
-                  className="h-11 sm:h-12 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                  className="h-12 w-full rounded-[14px] border border-slate-200/90 bg-slate-50/70 hover:bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#006e23] focus:ring-4 focus:ring-[#006e23]/12 focus:outline-none transition-all shadow-2xs"
                 />
               </div>
               {fieldErrors.email && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.email[0]}</p>}
@@ -356,8 +391,8 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[13.5px] font-semibold text-slate-800">Kata Sandi</label>
-                <button type="button" className="text-xs font-semibold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer">Lupa sandi?</button>
+                <label className="block text-[13px] font-bold text-slate-800">Kata Sandi</label>
+                <button type="button" className="text-xs font-bold text-[#006e23] hover:text-[#00521b] hover:underline cursor-pointer">Lupa sandi?</button>
               </div>
               <div className="relative group">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 group-focus-within:text-[#006e23] transition-colors">
@@ -369,7 +404,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="Masukkan kata sandi"
-                  className="h-11 sm:h-12 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                  className="h-12 w-full rounded-[14px] border border-slate-200/90 bg-slate-50/70 hover:bg-white pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#006e23] focus:ring-4 focus:ring-[#006e23]/12 focus:outline-none transition-all shadow-2xs"
                 />
                 <button
                   type="button"
@@ -390,9 +425,9 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                 type="checkbox"
                 checked={loginRemember}
                 onChange={(e) => setLoginRemember(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 accent-[#006e23] cursor-pointer shrink-0"
+                className="h-4 w-4 rounded-md border-slate-300 accent-[#006e23] cursor-pointer shrink-0"
               />
-              <label htmlFor="remember" className="text-[12.5px] text-slate-600 cursor-pointer select-none">
+              <label htmlFor="remember" className="text-[12.5px] font-medium text-slate-600 cursor-pointer select-none">
                 Ingat saya di perangkat ini
               </label>
             </div>
@@ -401,23 +436,20 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
             <button
               type="submit"
               disabled={isLoading || countdown !== null}
-              className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="mt-5 flex h-12 sm:h-13 w-full items-center justify-center rounded-[14px] bg-gradient-to-r from-[#14532d] via-[#1b5e30] to-[#14532d] text-sm sm:text-base font-bold text-white transition-all duration-200 shadow-[0_12px_28px_-4px_rgba(20,83,45,0.45)] hover:shadow-[0_16px_34px_-4px_rgba(20,83,45,0.55)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed border-t border-white/20"
             >
               {countdown !== null ? (
-                <>
+                <div className="flex items-center gap-2">
                   <Loader2 size={18} className="animate-spin" />
                   <span>Mengalihkan dalam {countdown}s...</span>
-                </>
+                </div>
               ) : isLoading ? (
-                <>
+                <div className="flex items-center gap-2">
                   <Loader2 size={18} className="animate-spin" />
                   <span>Memverifikasi...</span>
-                </>
+                </div>
               ) : (
-                <>
-                  <span>Masuk</span>
-                  <ArrowRight size={17} />
-                </>
+                <span>Masuk</span>
               )}
             </button>
           </form>
@@ -425,12 +457,12 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
           {/* Divider & Switch */}
           <div className="my-5 border-t border-slate-100" />
 
-          <p className="text-center text-[13.5px] text-slate-500">
+          <p className="text-center text-xs sm:text-[13.5px] text-slate-500">
             Belum punya akun?{" "}
             <button
               type="button"
               onClick={() => switchMode("register")}
-              className="font-bold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer ml-0.5"
+              className="font-bold text-[#006e23] hover:text-[#00521b] hover:underline cursor-pointer ml-0.5"
             >
               Daftar Akun
             </button>
@@ -447,137 +479,74 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
         }`}
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        <div className="relative z-10 mx-auto my-auto w-full max-w-[430px] rounded-[14px] bg-white p-7 sm:p-9 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08),0_4px_16px_-2px_rgba(0,0,0,0.03)] border border-slate-100/90 text-left">
-          {/* Mobile Tab Switcher */}
-          <div className="lg:hidden mb-5 p-1 rounded-xl bg-slate-100/90 flex items-center gap-1 border border-slate-200/60">
-            <button
-              type="button"
-              onClick={() => switchMode("login")}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                isLoginMode ? "bg-white text-[#006e23] shadow-xs" : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              Masuk
-            </button>
-            <button
-              type="button"
-              onClick={() => switchMode("register")}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                !isLoginMode ? "bg-white text-[#006e23] shadow-xs" : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              Daftar Akun
-            </button>
-          </div>
-
-          <FormBrand />
+        <div className="relative z-10 mx-auto my-auto w-full max-w-[440px] rounded-[14px] bg-white/95 backdrop-blur-2xl p-6 sm:p-9 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,110,35,0.06)] border border-white/90 text-left">
+          <FormBrand showHomeButton={!hasSelectedRole} />
 
           {!hasSelectedRole ? (
             /* ── STEP 1: PILIH PERAN TERLEBIH DAHULU ── */
             <div>
               <div className="mb-5">
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                <h1 className="font-headline text-2xl sm:text-[26px] font-extrabold text-slate-900 tracking-tight mb-1.5">
                   Daftar Akun
                 </h1>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="text-xs sm:text-sm text-slate-500">
                   Pilih jenis akun yang ingin Anda daftarkan:
                 </p>
               </div>
 
-              {/* 3 Clean Role Options */}
-              <div className="space-y-2.5">
-                {/* 1. Pembeli */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedRole("buyer");
-                    setHasSelectedRole(true);
-                  }}
-                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3.5 text-left transition-all hover:border-[#006e23] hover:shadow-xs active:scale-[0.99] cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-[#006e23] group-hover:text-white transition-colors">
-                      <ShoppingCart className="h-5 w-5" strokeWidth={1.8} />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-slate-900 group-hover:text-[#006e23] transition-colors">
-                          Pembeli / Warga
-                        </span>
-                        {isFromCheckout && (
-                          <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
-                            Untuk Belanja
-                          </span>
-                        )}
+              {/* 3 Lively Role Options with official service assets */}
+              <div className="space-y-3 sm:space-y-3.5">
+                {ROLE_SELECTION_CARDS.map((item) => (
+                  <button
+                    key={item.role}
+                    type="button"
+                    onClick={() => {
+                      setSelectedRole(item.role);
+                      setHasSelectedRole(true);
+                    }}
+                    className={`group relative overflow-hidden flex w-full items-center justify-between rounded-[14px] bg-white border border-slate-200/90 p-3.5 sm:p-4 text-left shadow-xs transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer ${item.borderHover} ${item.shadowHover}`}
+                  >
+                    {/* Subtle Bottom Gradient Glow */}
+                    <div className={`absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t ${item.glowClass} opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none`} />
+
+                    <div className="relative z-10 flex items-center gap-3.5 min-w-0">
+                      <div
+                        className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-[14px] shadow-sm transition-transform duration-200 group-hover:scale-105 border border-white/20"
+                        style={{ backgroundColor: item.color }}
+                      >
+                        <Image
+                          src={item.icon}
+                          alt={item.title}
+                          width={24}
+                          height={24}
+                          className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain drop-shadow-xs"
+                        />
                       </div>
-                      <p className="text-xs text-slate-500">
-                        Belanja produk desa & lacak pesanan
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <span className={`font-headline text-[15px] sm:text-[16px] font-bold text-slate-900 ${item.titleHover} transition-colors duration-200 block tracking-tight`}>
+                          {item.title}
+                        </span>
+                        <p className="text-xs text-slate-500 group-hover:text-slate-600 transition-colors duration-200 mt-0.5 leading-tight">
+                          {item.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#006e23] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </button>
-
-                {/* 2. Merchant UMKM */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedRole("merchant");
-                    setHasSelectedRole(true);
-                  }}
-                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3.5 text-left transition-all hover:border-[#006e23] hover:shadow-xs active:scale-[0.99] cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-[#006e23] group-hover:text-white transition-colors">
-                      <Store className="h-5 w-5" strokeWidth={1.8} />
+                    <div className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-slate-100/90 text-slate-400 ${item.chevronHover} group-hover:text-white transition-all duration-200 ml-2 group-hover:translate-x-0.5`}>
+                      <ChevronRight className="h-4 w-4" />
                     </div>
-                    <div>
-                      <span className="text-sm font-semibold text-slate-900 group-hover:text-[#006e23] transition-colors">
-                        Merchant UMKM
-                      </span>
-                      <p className="text-xs text-slate-500">
-                        Buka toko & pasarkan produk lokal desa
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#006e23] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </button>
-
-                {/* 3. Admin Desa */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedRole("village_admin");
-                    setHasSelectedRole(true);
-                  }}
-                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3.5 text-left transition-all hover:border-[#006e23] hover:shadow-xs active:scale-[0.99] cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-[#006e23] group-hover:text-white transition-colors">
-                      <Landmark className="h-5 w-5" strokeWidth={1.8} />
-                    </div>
-                    <div>
-                      <span className="text-sm font-semibold text-slate-900 group-hover:text-[#006e23] transition-colors">
-                        Admin Desa
-                      </span>
-                      <p className="text-xs text-slate-500">
-                        Kelola portal desa, warta & transparansi LKDD
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#006e23] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </button>
+                  </button>
+                ))}
               </div>
 
               {/* Divider & Switch */}
               <div className="my-5 border-t border-slate-100" />
 
-              <p className="text-center text-[13px] text-slate-500">
+              <p className="text-center text-xs sm:text-[13px] text-slate-500">
                 Sudah punya akun?{" "}
                 <button
                   type="button"
                   onClick={() => switchMode("login")}
-                  className="font-bold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer ml-0.5"
+                  className="font-bold text-[#006e23] hover:text-[#00521b] hover:underline cursor-pointer ml-0.5"
                 >
                   Masuk
                 </button>
@@ -596,10 +565,6 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                   <ChevronLeft className="h-4 w-4" />
                   <span>Ganti jenis akun</span>
                 </button>
-
-                <span className="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md">
-                  {roleConfig[selectedRole].badge}
-                </span>
               </div>
 
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">
@@ -610,13 +575,13 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
               </p>
 
               {errorMessage && !isLoginMode && (
-                <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
+                <div className="mb-4 flex items-center gap-2 rounded-[14px] bg-red-50/90 px-3.5 py-2.5 text-xs text-red-700 border border-red-200/80">
                   <AlertCircle size={16} className="shrink-0 text-red-500" />
                   <span>{errorMessage}</span>
                 </div>
               )}
               {successMessage && !isLoginMode && (
-                <div className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50/90 px-3.5 py-2.5 text-xs text-emerald-800 border border-emerald-200/80">
+                <div className="mb-4 flex items-center gap-2 rounded-[14px] bg-emerald-50/90 px-3.5 py-2.5 text-xs text-emerald-800 border border-emerald-200/80">
                   <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
                   <span>{successMessage}</span>
                 </div>
@@ -634,7 +599,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
                     placeholder={roleConfig[selectedRole].namePlaceholder}
-                    className="h-11 w-full rounded-xl border border-slate-300/80 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                    className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                   />
                   {fieldErrors.name && <p className="mt-1 text-[11.5px] text-red-500 font-medium">{fieldErrors.name[0]}</p>}
                 </div>
@@ -654,7 +619,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                           value={regStoreName}
                           onChange={(e) => setRegStoreName(e.target.value)}
                           placeholder="Cth: Keripik Singkong Barokah"
-                          className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                          className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                         />
                       </div>
                     </div>
@@ -671,7 +636,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                           value={regPhone}
                           onChange={(e) => setRegPhone(e.target.value)}
                           placeholder="081234567890"
-                          className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                          className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                         />
                       </div>
                     </div>
@@ -692,7 +657,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                         value={regPosition}
                         onChange={(e) => setRegPosition(e.target.value)}
                         placeholder="Cth: Sekretaris Desa / Kaur Pemerintahan"
-                        className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                        className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                       />
                     </div>
                   </div>
@@ -723,7 +688,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                           ? "Cth: Desa Sukamaju, Kec. Ciawi"
                           : "Cth: Bandung / Desa Panundaan"
                       }
-                      className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                      className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
                 </div>
@@ -741,7 +706,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
                       placeholder="nama@email.id"
-                      className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                      className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
                   <p className="mt-1 text-[11px] text-slate-400 leading-normal">
@@ -764,7 +729,7 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="Masukkan kata sandi"
-                      className="h-11 w-full rounded-xl border border-slate-300/80 bg-white pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
+                      className="h-11 w-full rounded-[14px] border border-slate-300/80 bg-white pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#006e23] focus:ring-2 focus:ring-[#006e23]/15 focus:outline-none transition-all shadow-2xs"
                     />
                     <button
                       type="button"
@@ -814,23 +779,20 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
                 <button
                   type="submit"
                   disabled={isLoading || countdown !== null}
-                  className="ambient-btn-primary mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-[#006e23] hover:bg-[#005319] active:scale-[0.98] text-sm sm:text-base font-bold text-white transition-all shadow-[0_8px_22px_-3px_rgba(195,140,95,0.4),0_3px_8px_rgba(0,110,35,0.25)] hover:shadow-[0_12px_28px_-3px_rgba(195,140,95,0.5),0_4px_12px_rgba(0,110,35,0.35)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className={`mt-5 flex h-12 sm:h-13 w-full items-center justify-center rounded-[14px] text-sm sm:text-base font-bold text-white transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed border-t border-white/20 ${roleConfig[selectedRole].btnClass}`}
                 >
                   {countdown !== null ? (
-                    <>
+                    <div className="flex items-center gap-2">
                       <Loader2 size={18} className="animate-spin" />
                       <span>Mengalihkan dalam {countdown}s...</span>
-                    </>
+                    </div>
                   ) : isLoading ? (
-                    <>
+                    <div className="flex items-center gap-2">
                       <Loader2 size={18} className="animate-spin" />
                       <span>Memproses...</span>
-                    </>
+                    </div>
                   ) : (
-                    <>
-                      <span>{roleConfig[selectedRole].btnText}</span>
-                      <ArrowRight size={17} />
-                    </>
+                    <span>{roleConfig[selectedRole].btnText}</span>
                   )}
                 </button>
               </form>
@@ -838,12 +800,12 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
               {/* Divider & Switch */}
               <div className="my-5 border-t border-slate-100" />
 
-              <p className="text-center text-[13.5px] text-slate-500">
+              <p className="text-center text-xs sm:text-[13.5px] text-slate-500">
                 Sudah punya akun?{" "}
                 <button
                   type="button"
                   onClick={() => switchMode("login")}
-                  className="font-bold text-[#006e23] hover:text-[#005319] hover:underline cursor-pointer ml-0.5"
+                  className="font-bold text-[#006e23] hover:text-[#00521b] hover:underline cursor-pointer ml-0.5"
                 >
                   Masuk
                 </button>
@@ -881,12 +843,13 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
           <div className={`w-full max-w-md flex-col items-start text-left transition-all duration-800 ease-[cubic-bezier(0.65,0,0.35,1)] delay-150 ${
             !isLoginMode ? "flex opacity-100 translate-x-0" : "hidden opacity-0 -translate-x-8 pointer-events-none"
           }`}>
-            <div className="mb-2 h-1 w-10 rounded-full bg-gradient-to-r from-[#006e23] to-emerald-400" />
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-emerald-400 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] font-sans">Pangan & Kemandirian Desa</p>
-            <h1 className="mb-3 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)] font-sans">
-              SentraDesa
+            <div className="mb-3 inline-flex items-center rounded-[10px] bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300">
+              Pangan & Kemandirian Desa
+            </div>
+            <h1 className="font-headline mb-3 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-md">
+              Sentra<span className="text-emerald-400">Desa</span>
             </h1>
-            <p className="text-xs sm:text-sm md:text-base font-medium leading-relaxed text-white max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] font-sans">
+            <p className="text-xs sm:text-sm md:text-base font-medium leading-relaxed text-white/90 max-w-md drop-shadow-sm">
               Platform terpadu tata kelola potensi komoditas, transparansi ekonomi, dan kemandirian UMKM desa seluruh Nusantara.
             </p>
           </div>
@@ -895,12 +858,13 @@ export function AuthView({ initialMode = "register", initialRole }: AuthViewProp
           <div className={`w-full max-w-md flex-col items-start text-left transition-all duration-800 ease-[cubic-bezier(0.65,0,0.35,1)] delay-150 ${
             isLoginMode ? "flex opacity-100 translate-x-0" : "hidden opacity-0 translate-x-8 pointer-events-none"
           }`}>
-            <div className="mb-2 h-1 w-10 rounded-full bg-gradient-to-r from-[#006e23] to-emerald-400" />
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-emerald-400 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] font-sans">Tata Kelola & Potensi Desa</p>
-            <h1 className="mb-3 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)] font-sans">
-              SentraDesa
+            <div className="mb-3 inline-flex items-center rounded-[10px] bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300">
+              Tata Kelola & Potensi Desa
+            </div>
+            <h1 className="font-headline mb-3 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-md">
+              Sentra<span className="text-emerald-400">Desa</span>
             </h1>
-            <p className="text-xs sm:text-sm md:text-base font-medium leading-relaxed text-white max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] font-sans">
+            <p className="text-xs sm:text-sm md:text-base font-medium leading-relaxed text-white/90 max-w-md drop-shadow-sm">
               Dashboard terpadu pengelolaan ekonomi desa, transparansi tata kelola, dan monitoring kemajuan komoditas lokal.
             </p>
           </div>

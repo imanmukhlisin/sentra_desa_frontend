@@ -23,8 +23,8 @@ export function SimpleFormPage({ title, description, fields }: { title: string; 
           </div>
 
           {submitted ? (
-            <div className="mt-6 rounded-xl bg-emerald-50/90 border border-emerald-200/80 p-5 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-[#006e23] mb-3">
+            <div className="mt-6 rounded-[14px] bg-emerald-50/90 border border-emerald-200/80 p-5 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[14px] bg-emerald-100 text-[#006e23] mb-3">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
@@ -51,7 +51,7 @@ export function SimpleFormPage({ title, description, fields }: { title: string; 
               ))}
               <div className="pt-3">
                 <button
-                  className="ambient-btn-primary w-full rounded-xl py-3 px-5 text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
+                  className="ambient-btn-primary w-full rounded-[14px] py-3 px-5 text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
                   type="submit"
                 >
                   Kirim & Konfirmasi

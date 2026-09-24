@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap');
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
 @font-face {
   font-family: "Roboto";
@@ -173,18 +174,26 @@
   }
 
   .ambient-card-interactive {
-    @apply ambient-card cursor-pointer select-none;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(203, 213, 225, 0.85);
     border-radius: 14px;
+    box-shadow: 
+      0 4px 20px -2px rgba(15, 23, 42, 0.05),
+      0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    user-select: none;
   }
 
   .ambient-card-interactive:hover {
-    background: rgba(255, 255, 255, 0.94);
-    transform: translateY(-3px);
-    border-color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.96);
+    transform: translateY(-4px);
+    border-color: rgba(148, 163, 184, 0.7);
     box-shadow: 
-      0 20px 42px -6px rgba(180, 145, 120, 0.26),
-      0 6px 16px -2px rgba(180, 145, 120, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 1);
+      0 16px 36px -6px rgba(15, 23, 42, 0.1),
+      0 6px 16px -2px rgba(15, 23, 42, 0.05);
   }
 
   /* Soft glowing green button like in reference */
@@ -205,21 +214,60 @@
     transform: translateY(-1px);
   }
 
-  .glass-header {
-    @apply fixed inset-x-0 top-0 z-50 h-[92px] md:h-[98px] border-b border-white/70 backdrop-blur-[18px];
+  .floating-pill-header {
+    @apply fixed top-2.5 sm:top-5 md:top-6 inset-x-0 z-50 mx-auto w-full max-w-[1240px] px-4 md:px-6 flex justify-center pointer-events-none;
+  }
+
+  .floating-pill-nav {
+    @apply pointer-events-auto w-full h-12 sm:h-[72px] md:h-[78px] rounded-[14px] flex items-center justify-between gap-1.5 sm:gap-6 px-3 sm:px-7 md:px-8 select-none transition-all duration-500 ease-out;
+  }
+
+  /* State 1: When at top directly floating over the full-bleed hero image */
+  .floating-pill-nav-top {
     background: linear-gradient(
       90deg, 
-      rgba(225, 236, 226, 0.92) 0%, 
-      rgba(240, 246, 239, 0.88) 25%, 
-      rgba(250, 248, 245, 0.88) 50%, 
-      rgba(254, 243, 233, 0.88) 75%, 
-      rgba(254, 226, 206, 0.92) 100%
+      rgba(255, 255, 255, 0.9) 0%, 
+      rgba(240, 253, 244, 0.85) 30%, 
+      rgba(254, 252, 242, 0.85) 70%, 
+      rgba(255, 255, 255, 0.9) 100%
     );
-    box-shadow: 0 4px 20px -4px rgba(180, 145, 120, 0.12), inset 0 -1px 0 rgba(255, 255, 255, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: 
+      0 14px 38px -4px rgba(0, 0, 0, 0.25),
+      0 4px 14px -2px rgba(0, 0, 0, 0.12),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+  }
+
+  /* State 2: When scrolled down over content - Animasi warna berubah menyala */
+  .floating-pill-nav-scrolled {
+    background: linear-gradient(
+      90deg, 
+      rgba(167, 243, 208, 0.98) 0%, 
+      rgba(236, 253, 243, 0.97) 24%, 
+      rgba(255, 255, 255, 0.99) 50%, 
+      rgba(255, 251, 235, 0.97) 76%, 
+      rgba(254, 215, 170, 0.98) 100%
+    );
+    border: 1.5px solid rgba(255, 255, 255, 1);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    box-shadow: 
+      0 18px 48px -4px rgba(0, 110, 35, 0.32),
+      0 8px 26px -2px rgba(234, 88, 12, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.95),
+      inset 0 1.5px 2px rgba(255, 255, 255, 1),
+      inset 0 -1.5px 2px rgba(0, 110, 35, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .glass-header {
+    @apply floating-pill-header;
   }
 
   .icon-button {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#b9ccb5] bg-white text-[#171d18] shadow-sm transition hover:bg-[#eff6ec] hover:scale-105 active:scale-95;
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-[14px] border border-[#b9ccb5] bg-white text-[#171d18] shadow-sm transition hover:bg-[#eff6ec] hover:scale-105 active:scale-95;
   }
 
   .sentra-button {
@@ -258,7 +306,7 @@
   }
 
   .form-panel {
-    @apply mx-auto my-12 grid max-w-[520px] gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-flutter;
+    @apply mx-auto my-12 grid max-w-[520px] gap-3 rounded-[14px] border border-slate-200 bg-white p-6 shadow-flutter;
   }
 
   .detail-hero {
@@ -266,11 +314,11 @@
   }
 
   .detail-image {
-    @apply overflow-hidden rounded-2xl bg-slate-100 shadow-flutter;
+    @apply overflow-hidden rounded-[14px] bg-slate-100 shadow-flutter;
   }
 
   .detail-copy {
-    @apply rounded-2xl bg-white p-5 shadow-flutter;
+    @apply rounded-[14px] bg-white p-5 shadow-flutter;
   }
 
   .content {

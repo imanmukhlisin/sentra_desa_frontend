@@ -160,12 +160,56 @@ function resolveArticles(backendArticles?: CatalogItem[]): ArticleDisplayItem[] 
 }
 
 
-const defaultHeroSlides = [
-  { id: "hero-1", image: "/images/header-sentradesa-1.webp", title: "Panorama Sawah Sentra Desa" },
-  { id: "hero-2", image: "/bg-desa.jpg", title: "Kawasan Pedesaan Nusantara" },
-  { id: "hero-3", image: "/images/articles/berita-1.jpg", title: "Kerajinan BUMDes Desa" },
-  { id: "hero-4", image: "/images/articles/berita-2.jpg", title: "Rempah & Pertanian Desa" },
-  { id: "hero-5", image: "/images/articles/berita-3.jpg", title: "Sentra Pasar Pangan Desa" }
+type HeroSlide = {
+  id: string;
+  image: string;
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  ctaHref: string;
+};
+
+const defaultHeroSlides: HeroSlide[] = [
+  {
+    id: "hero-1",
+    image: "/images/header-sentradesa-1.webp",
+    title: "Produk Desa,\ndibeli melalui Sentra Desa.",
+    subtitle: "Kita dukung ekonomi desa: produsen menyediakan komoditas dan produk unggulan, Sentra Desa menjadi perantara transaksi terpercaya, dan pengiriman menjangkau seluruh nusantara.",
+    ctaText: "Lihat Produk",
+    ctaHref: "#produk-desa"
+  },
+  {
+    id: "hero-2",
+    image: "/bg-desa.jpg",
+    title: "Potensi Alam &\nKomoditas Unggulan Desa",
+    subtitle: "Eksplorasi hasil bumi, rempah, dan komoditas pertanian terbaik langsung dari petani dan kelompok tani lokal di seluruh nusantara.",
+    ctaText: "Jelajahi Potensi",
+    ctaHref: "/potensi-desa/"
+  },
+  {
+    id: "hero-3",
+    image: "/images/articles/berita-1.jpg",
+    title: "BUMDes Berdaya,\nEkonomi Warga Mandiri",
+    subtitle: "Karya kerajinan tangan artistik dan inovasi unit usaha BUMDes yang siap bersaing di pasar nasional hingga pasar ekspor global.",
+    ctaText: "Lihat BUMDes",
+    ctaHref: "/bumdes/"
+  },
+  {
+    id: "hero-4",
+    image: "/images/articles/berita-2.jpg",
+    title: "Pesona Desa Wisata &\nKekayaan Budaya Nusantara",
+    subtitle: "Nikmati keindahan panorama alam, ekowisata perbukitan, serta tradisi luhur masyarakat perdesaan yang ramah dan lestari.",
+    ctaText: "Kunjungi Wisata",
+    ctaHref: "/desa-wisata/"
+  },
+  {
+    id: "hero-5",
+    image: "/images/articles/berita-3.jpg",
+    title: "Ketahanan Pangan &\nTransparansi Membangun Desa",
+    subtitle: "Kemitraan pangan KDMP serta transparansi keterbukaan tata kelola desa demi kesejahteraan bersama seluruh masyarakat.",
+    ctaText: "Profil Desa",
+    ctaHref: "/profil-desa/"
+  }
 ];
 
 export function FlutterHome({
@@ -181,27 +225,40 @@ export function FlutterHome({
   const [activeSearch, setActiveSearch] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const bannerSlides = useMemo(() => {
+  const bannerSlides: HeroSlide[] = useMemo(() => {
     if (highlights && highlights.length > 0 && highlights.some((h) => h.image)) {
       return highlights.filter((h) => Boolean(h.image)).map((h, i) => ({
         id: h.id || `highlight-${i}`,
         image: h.image!,
-        title: h.title || "Sentra Desa"
+        title: h.title || defaultHeroSlides[i % defaultHeroSlides.length].title,
+        subtitle: h.subtitle || defaultHeroSlides[i % defaultHeroSlides.length].subtitle,
+        ctaText: h.link_label || defaultHeroSlides[i % defaultHeroSlides.length].ctaText,
+        ctaHref: h.link_url || defaultHeroSlides[i % defaultHeroSlides.length].ctaHref
       }));
     }
     return defaultHeroSlides;
   }, [highlights]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loadedSlideIndices, setLoadedSlideIndices] = useState<number[]>([0]);
 
-  // Otomatis bergerak berganti slide setiap 4 detik
+  // Otomatis berganti slide setiap 4.5 detik + lazy load slide berikutnya
   useEffect(() => {
     if (bannerSlides.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
-    }, 4000);
+      setCurrentSlide((prev) => {
+        const next = (prev + 1) % bannerSlides.length;
+        setLoadedSlideIndices((curr) => (curr.includes(next) ? curr : [...curr, next]));
+        return next;
+      });
+    }, 4500);
     return () => clearInterval(interval);
   }, [bannerSlides.length]);
+
+  const goToSlide = (idx: number) => {
+    setLoadedSlideIndices((prev) => (prev.includes(idx) ? prev : [...prev, idx]));
+    setCurrentSlide(idx);
+  };
 
   const scrollByOffset = (ref: React.RefObject<HTMLDivElement | null>, offset: number) => {
     ref.current?.scrollBy({ left: offset, behavior: "smooth" });
@@ -218,30 +275,35 @@ export function FlutterHome({
 
   return (
     <div className="sentra-shell">
-      <div className="h-[92px] md:h-[98px]" />
+      {/* Hero Section: Full Edge-to-Edge Slideshow Gambar Otomatis Bergerak dengan Gradasi Halus */}
+      <section className="relative w-full overflow-hidden bg-slate-900 text-white pt-28 pb-20 sm:pt-32 md:pt-40 md:pb-28">
+        {/* Full Image Backgrounds - Lazy loaded & GPU accelerated cross-fade */}
+        {bannerSlides.map((slide, idx) => {
+          const isLoaded = loadedSlideIndices.includes(idx);
+          if (!isLoaded) return null;
 
-      {/* Hero Section: Full Slideshow Gambar Otomatis Bergerak dengan Gradasi Halus */}
-      <section className="relative w-full overflow-hidden bg-slate-900 text-white pt-12 pb-20 md:pt-16 md:pb-24">
-        {/* Full Image Backgrounds - Multi slide with smooth cross-fade and motion */}
-        {bannerSlides.map((slide, idx) => (
-          <div
-            key={slide.id || idx}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-              idx === currentSlide
-                ? "opacity-100 scale-100 z-0"
-                : "opacity-0 scale-105 pointer-events-none z-0"
-            }`}
-          >
-            <Image
-              src={slide.image}
-              alt={slide.title}
-              fill
-              priority={idx === 0}
-              className="object-cover object-center"
-              unoptimized
-            />
-          </div>
-        ))}
+          return (
+            <div
+              key={slide.id || idx}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out will-change-[opacity] transform-gpu ${
+                idx === currentSlide
+                  ? "opacity-100 z-0"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                fill
+                priority={idx === 0}
+                loading={idx === 0 ? "eager" : "lazy"}
+                sizes="100vw"
+                className="object-cover object-center"
+                unoptimized
+              />
+            </div>
+          );
+        })}
 
         {/* Gradasi Lembut agar teks terbaca sangat jelas */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-[1]" />
@@ -252,42 +314,59 @@ export function FlutterHome({
           <>
             <button
               type="button"
-              onClick={() => setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length)}
+              onClick={() => goToSlide((currentSlide - 1 + bannerSlides.length) % bannerSlides.length)}
               aria-label="Slide sebelumnya"
-              className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
+              className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-[14px] bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
             <button
               type="button"
-              onClick={() => setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)}
+              onClick={() => goToSlide((currentSlide + 1) % bannerSlides.length)}
               aria-label="Slide berikutnya"
-              className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
+              className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-[14px] bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
           </>
         )}
 
-        {/* Hero Content */}
-        <div className="sentra-container relative z-10">
-          <div className="max-w-2xl text-left">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-sans text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-              Produk Desa
-              <br />
-              dibeli melalui SentraDesa
-            </h1>
-            <p className="mt-4 text-xs sm:text-sm md:text-base text-white font-medium font-sans leading-relaxed max-w-xl drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
-              Produsen desa menyediakan komoditas unggulan dan SentraDesa menjadi perantara terpercaya dengan pengiriman ke seluruh nusantara
-            </p>
-            <div className="mt-6">
-              <a
-                href="#produk-desa"
-                className="inline-flex items-center justify-center rounded-lg bg-[#d97706] hover:bg-[#b45309] text-white px-5 py-2.5 text-xs sm:text-sm font-bold shadow-lg transition duration-200"
-              >
-                Lihat Produk
-              </a>
-            </div>
+        {/* Hero Content - Dinamis berganti mengikuti active slide */}
+        <div className="sentra-container relative z-10 pointer-events-none">
+          <div className="relative min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex items-center">
+            {bannerSlides.map((slide, idx) => {
+              const isActive = idx === currentSlide;
+              return (
+                <div
+                  key={slide.id || idx}
+                  className={`w-full max-w-2xl text-left transition-[opacity,transform] duration-500 ease-out will-change-[opacity,transform] ${
+                    isActive
+                      ? "opacity-100 translate-y-0 relative z-10 pointer-events-auto"
+                      : "opacity-0 -translate-y-2.5 absolute inset-0 pointer-events-none"
+                  }`}
+                >
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-sans text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+                    {slide.title.split("\n").map((line, lIdx, arr) => (
+                      <span key={lIdx}>
+                        {line}
+                        {lIdx < arr.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </h1>
+                  <p className="mt-4 text-xs sm:text-sm md:text-base text-white font-medium font-sans leading-relaxed max-w-xl drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                    {slide.subtitle}
+                  </p>
+                  <div className="mt-6">
+                    <a
+                      href={slide.ctaHref}
+                      className="inline-flex items-center justify-center rounded-[14px] bg-[#d97706] hover:bg-[#b45309] text-white px-5 py-2.5 text-xs sm:text-sm font-bold shadow-lg transition duration-200"
+                    >
+                      {slide.ctaText}
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -298,7 +377,7 @@ export function FlutterHome({
               <button
                 key={i}
                 type="button"
-                onClick={() => setCurrentSlide(i)}
+                onClick={() => goToSlide(i)}
                 aria-label={`Slide ${i + 1}`}
                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                   currentSlide === i ? "w-6 bg-white shadow-md ring-2 ring-white/60" : "w-2 bg-white/60 hover:bg-white"
@@ -311,17 +390,16 @@ export function FlutterHome({
 
       {/* Section 11 Kategori Layanan Desa */}
       <section className="sentra-container pt-8 md:pt-10">
-        <div className="flex flex-col items-center gap-3.5 sm:gap-4 md:gap-5">
-          {/* Row 1: 6 items (spans full width of container) */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 md:gap-5 w-full">
-            {villageFeatures.slice(0, 6).map((item) => (
+          {/* 11 Kategori Layanan Desa dengan Jarak yang Seragam & Konsisten */}
+          <div className="flex flex-wrap justify-center items-start gap-x-4 sm:gap-x-6 md:gap-x-8 lg:gap-x-9 gap-y-6 sm:gap-y-7 md:gap-y-8 w-full max-w-5xl mx-auto">
+            {villageFeatures.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
-                className="group ambient-card-interactive flex flex-col items-center justify-center rounded-[14px] p-3.5 sm:p-4 md:py-5 md:px-3 text-center w-full active:scale-95"
+                className="group flex flex-col items-center justify-start text-center w-[92px] sm:w-[105px] md:w-[118px] lg:w-[124px] transition-transform duration-200 hover:-translate-y-1 active:scale-95 cursor-pointer"
               >
                 <div
-                  className="flex h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 items-center justify-center rounded-xl shadow-[0_8px_20px_-3px_rgba(0,0,0,0.12)] transition-transform duration-200 group-hover:scale-105"
+                  className="flex h-14 w-14 sm:h-16 sm:w-16 md:h-[68px] md:w-[68px] items-center justify-center rounded-[14px] shadow-[0_6px_18px_-2px_rgba(0,0,0,0.14)] transition-all duration-200 group-hover:scale-108 group-hover:shadow-[0_10px_24px_-2px_rgba(0,0,0,0.22)]"
                   style={{ backgroundColor: item.color }}
                 >
                   <Image
@@ -333,42 +411,14 @@ export function FlutterHome({
                     unoptimized
                   />
                 </div>
-                <span className="mt-3 font-sans text-xs sm:text-sm md:text-[14px] font-bold text-[#171d18] group-hover:text-[#006e23] transition-colors leading-tight">
+                <span className="mt-2.5 font-sans text-xs sm:text-[13px] md:text-sm font-bold text-[#171d18] group-hover:text-[#006e23] transition-colors leading-tight text-center">
                   {item.title}
                 </span>
               </Link>
             ))}
           </div>
-
-          {/* Row 2: 5 items (centered with matching card widths) */}
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5 w-full">
-            {villageFeatures.slice(6, 11).map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="group ambient-card-interactive flex flex-col items-center justify-center rounded-[14px] p-3.5 sm:p-4 md:py-5 md:px-3 text-center w-[calc(50%-0.5rem)] sm:w-[calc((100%-5*1rem)/6)] md:w-[calc((100%-5*1.25rem)/6)] min-w-[100px] active:scale-95"
-              >
-                <div
-                  className="flex h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 items-center justify-center rounded-xl shadow-[0_8px_20px_-3px_rgba(0,0,0,0.12)] transition-transform duration-200 group-hover:scale-105"
-                  style={{ backgroundColor: item.color }}
-                >
-                  <Image
-                    src={item.iconPath}
-                    alt={item.title}
-                    width={36}
-                    height={36}
-                    className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 object-contain drop-shadow-xs"
-                    unoptimized
-                  />
-                </div>
-                <span className="mt-3 font-sans text-xs sm:text-sm md:text-[14px] font-bold text-[#171d18] group-hover:text-[#006e23] transition-colors leading-tight">
-                  {item.title}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
       </section>
+
 
       {/* Section Produk & Filter Pencarian */}
       <section id="produk-desa" className="sentra-container scroll-mt-[110px] pt-8 md:pt-10">
@@ -432,7 +482,7 @@ export function FlutterHome({
         {/* Filter Kategori Produk */}
         <div className="mt-5 flex items-center gap-3">
           <button
-            className="ambient-card flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full text-slate-700 hover:bg-white hover:text-[#006e23] transition cursor-pointer active:scale-95"
+            className="ambient-card flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-[14px] text-slate-700 hover:bg-white hover:text-[#006e23] transition cursor-pointer active:scale-95"
             type="button"
             aria-label="Geser kategori ke kiri"
             onClick={() => scrollByOffset(scrollRef, -260)}
@@ -459,7 +509,7 @@ export function FlutterHome({
                       block: "nearest"
                     });
                   }}
-                  className={`inline-flex h-[44px] md:h-[48px] shrink-0 items-center gap-2.5 rounded-full px-5 md:px-6 text-xs sm:text-sm md:text-[15px] font-bold snap-center transition-all duration-300 ease-out cursor-pointer select-none active:scale-95 ${
+                  className={`inline-flex h-[44px] md:h-[48px] shrink-0 items-center gap-2.5 rounded-[14px] px-5 md:px-6 text-xs sm:text-sm md:text-[15px] font-bold snap-center transition-all duration-300 ease-out cursor-pointer select-none active:scale-95 ${
                     isActive
                       ? "ambient-btn-primary scale-[1.02] shadow-[0_6px_20px_rgba(0,110,35,0.3)]"
                       : "ambient-card text-[#171d18] hover:bg-white hover:scale-[1.01]"
@@ -473,7 +523,7 @@ export function FlutterHome({
           </div>
 
           <button
-            className="ambient-card flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full text-slate-700 hover:bg-white hover:text-[#006e23] transition cursor-pointer active:scale-95"
+            className="ambient-card flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-[14px] text-slate-700 hover:bg-white hover:text-[#006e23] transition cursor-pointer active:scale-95"
             type="button"
             aria-label="Geser kategori ke kanan"
             onClick={() => scrollByOffset(scrollRef, 260)}

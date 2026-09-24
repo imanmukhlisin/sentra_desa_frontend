@@ -9,21 +9,13 @@ import { unwrapList, mapCatalogItem } from "@/infrastructure/repositories/public
 import { CatalogCard } from "@/presentation/components/catalog-card";
 import {
   ArrowRightIcon,
-  BumdesIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  GlobeIcon,
-  KdmpIcon,
-  LkddIcon,
   MapPinIcon,
-  NewsIcon,
-  PotentialIcon,
-  StoreIcon,
-  TourismIcon,
-  VillageIcon,
-  WishlistIcon,
   PhoneIcon,
-  SearchIcon
+  SearchIcon,
+  VillageIcon,
+  ServiceSquircle
 } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 import { formatCurrency } from "@/shared/utils/format";
@@ -31,25 +23,19 @@ import { formatCurrency } from "@/shared/utils/format";
 type ModuleSectionProps = {
   title: string;
   subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
+  service: string;
   items: CatalogItem[];
   moreHref: string;
 };
 
-function ModuleSection({ title, subtitle, icon: Icon, color, items, moreHref }: ModuleSectionProps) {
+function ModuleSection({ title, subtitle, service, items, moreHref }: ModuleSectionProps) {
   if (!items || items.length === 0) return null;
 
   return (
     <section className="mt-8 rounded-[14px] ambient-card p-6 sm:p-8 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 pb-4">
         <div className="flex items-center gap-3.5">
-          <div
-            className="flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-md"
-            style={{ backgroundColor: color }}
-          >
-            <Icon className="h-6 w-6" />
-          </div>
+          <ServiceSquircle service={service} size="lg" />
           <div>
             <h3 className="text-lg sm:text-xl font-extrabold text-[#171d18]">{title}</h3>
             <p className="text-xs sm:text-sm font-medium text-slate-500">{subtitle}</p>
@@ -153,11 +139,11 @@ export function ProfileDesaDetail({ id }: { id: string }) {
     return (
       <div className="min-h-screen bg-transparent pt-28 md:pt-32 pb-16">
         <div className="sentra-container px-4 text-center">
-          <div className="rounded-[10px] ambient-card p-8 max-w-md mx-auto my-12">
+          <div className="rounded-[14px] ambient-card p-8 max-w-md mx-auto my-12">
             <VillageIcon className="h-12 w-12 text-slate-400 mx-auto" />
             <h1 className="mt-4 text-xl font-black text-slate-800">Profil Desa Tidak Ditemukan</h1>
             <p className="mt-2 text-xs text-slate-500">Data profil desa dengan ID tersebut belum tersedia.</p>
-            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-2xl font-bold" href="/profil-desa">
+            <Link className="ambient-btn-primary mt-6 inline-flex text-xs px-6 py-3 rounded-[14px] font-bold" href="/profil-desa">
               Kembali ke Daftar Desa
             </Link>
           </div>
@@ -178,11 +164,8 @@ export function ProfileDesaDetail({ id }: { id: string }) {
 
   return (
     <div className="min-h-screen bg-transparent pb-20">
-      {/* Spacer untuk fixed glass-header */}
-      <div className="h-[92px] md:h-[98px]" />
-
-      {/* Hero Section: Full Edge-to-Edge Hero Banner seperti di Dashboard Utama */}
-      <section className="relative w-full overflow-hidden bg-slate-900 text-white pt-8 pb-16 md:pt-10 md:pb-22">
+      {/* Hero Section: Full Edge-to-Edge Hero Banner menyatu sampai ujung atas layar di balik navbar */}
+      <section className="relative w-full overflow-hidden bg-slate-900 text-white pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-18 md:pb-20 shadow-md">
         {/* Full Image Backgrounds - Multi slide dengan smooth transition */}
         {images.map((imgUrl, idx) => (
           <div
@@ -215,7 +198,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
               type="button"
               onClick={() => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length)}
               aria-label="Foto sebelumnya"
-              className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
+              className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-[14px] bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
@@ -223,7 +206,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
               type="button"
               onClick={() => setCurrentSlide((prev) => (prev + 1) % images.length)}
               aria-label="Foto berikutnya"
-              className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
+              className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 md:h-11 md:w-11 items-center justify-center rounded-[14px] bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition cursor-pointer shadow-md"
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
@@ -233,10 +216,10 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         {/* Hero Content */}
         <div className="sentra-container relative z-10">
           {/* Tombol Back yang Disesuaikan di dalam Hero Banner */}
-          <div className="mb-6 md:mb-8">
+          <div className="mb-4 sm:mb-6">
             <Link
               href="/profil-desa"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/40 hover:bg-black/70 backdrop-blur-md px-4 py-2 text-xs sm:text-sm font-bold text-white transition shadow-sm active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-[12px] border border-white/30 bg-black/40 hover:bg-black/70 backdrop-blur-md px-3.5 py-1.5 text-xs sm:text-sm font-bold text-white transition shadow-sm active:scale-95 cursor-pointer"
             >
               <ChevronLeftIcon className="h-4 w-4" />
               <span>Kembali ke List Profil Desa</span>
@@ -245,9 +228,6 @@ export function ProfileDesaDetail({ id }: { id: string }) {
 
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl text-left">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/90 bg-white/95 backdrop-blur-md px-3.5 py-1 text-xs font-extrabold text-[#006e23] shadow-md mb-3">
-                <VillageIcon className="h-3.5 w-3.5 text-[#006e23]" /> Profil Desa Sentra
-              </span>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
                 {village.title}
               </h1>
@@ -410,8 +390,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Potensi Desa"
           subtitle="Peluang investasi, komoditas unggulan & sumber daya alam desa"
-          icon={PotentialIcon}
-          color="#E65100"
+          service="potensi-desa"
           items={potentials}
           moreHref={`/potensi-desa?village_id=${village.id}`}
         />
@@ -419,8 +398,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="BUMDes"
           subtitle="Badan Usaha Milik Desa & unit bisnis produktif"
-          icon={BumdesIcon}
-          color="#4E342E"
+          service="bumdes"
           items={bumdes}
           moreHref={`/bumdes?village_id=${village.id}`}
         />
@@ -428,8 +406,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Desa Wisata"
           subtitle="Destinasi daya tarik rekreasi & keindahan alam desa"
-          icon={TourismIcon}
-          color="#C62828"
+          service="desa-wisata"
           items={tourisms}
           moreHref={`/desa-wisata?village_id=${village.id}`}
         />
@@ -437,8 +414,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Sentra Produk UMKM"
           subtitle="Produk makanan, olahan pertanian & kerajinan lokal desa"
-          icon={StoreIcon}
-          color="#2E7D32"
+          service="sentra-produk"
           items={products}
           moreHref={`/sentra-produk?village_id=${village.id}`}
         />
@@ -446,8 +422,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Komoditas Desa Ekspor"
           subtitle="Produk komoditas unggulan desa berdaya saing pasar global"
-          icon={GlobeIcon}
-          color="#00695C"
+          service="desa-ekspor"
           items={exports}
           moreHref={`/desa-ekspor?village_id=${village.id}`}
         />
@@ -455,8 +430,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Laporan Keuangan (LKDD)"
           subtitle="Transparansi realisasi anggaran pendapatan & belanja APBDes"
-          icon={LkddIcon}
-          color="#006064"
+          service="lkdd"
           items={lkdd}
           moreHref={`/lkdd?village_id=${village.id}`}
         />
@@ -464,8 +438,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Layanan Desa"
           subtitle="Panduan & pengajuan dokumen administrasi publik desa"
-          icon={NewsIcon}
-          color="#00695C"
+          service="layanan-desa"
           items={services}
           moreHref={`/layanan-desa?village_id=${village.id}`}
         />
@@ -473,8 +446,7 @@ export function ProfileDesaDetail({ id }: { id: string }) {
         <ModuleSection
           title="Artikel & Kabar Desa"
           subtitle="Berita terkini dan publikasi kegiatan pembangunan desa"
-          icon={NewsIcon}
-          color="#1565C0"
+          service="artikel"
           items={articles}
           moreHref={`/artikel?village_id=${village.id}`}
         />

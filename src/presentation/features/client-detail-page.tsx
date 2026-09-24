@@ -25,10 +25,10 @@ export function ClientDetailPage() {
     return (
       <div className="min-h-screen bg-slate-50 pt-[112px]">
         <div className="sentra-container px-4 text-center">
-          <div className="empty-state my-12 bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+          <div className="empty-state my-12 bg-white rounded-[14px] p-8 border border-slate-200 shadow-sm">
             <h1 className="text-xl font-black text-slate-800">Konten tidak ditemukan</h1>
             <p className="mt-2 text-sm text-slate-500 max-w-md mx-auto">Parameter ID tidak valid atau belum ditentukan.</p>
-            <Link className="sentra-button-primary mt-6 text-xs px-5 py-2.5 inline-flex" href="/">
+            <Link className="ambient-btn-primary rounded-[14px] mt-6 text-xs px-5 py-2.5 inline-flex font-bold" href="/">
               Kembali ke Beranda
             </Link>
           </div>

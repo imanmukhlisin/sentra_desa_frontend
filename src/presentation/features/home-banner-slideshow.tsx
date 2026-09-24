@@ -174,7 +174,7 @@ export function HomeBannerSlideshow({ highlights = [] }: HomeBannerSlideshowProp
                   handlePrev();
                 }}
                 aria-label="Slide sebelumnya"
-                className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white opacity-0 backdrop-blur-sm transition duration-300 hover:bg-black/70 group-hover:opacity-100"
+                className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-[14px] bg-black/40 p-2 text-white opacity-0 backdrop-blur-sm transition duration-300 hover:bg-black/70 group-hover:opacity-100"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button>
@@ -186,7 +186,7 @@ export function HomeBannerSlideshow({ highlights = [] }: HomeBannerSlideshowProp
                   handleNext();
                 }}
                 aria-label="Slide berikutnya"
-                className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white opacity-0 backdrop-blur-sm transition duration-300 hover:bg-black/70 group-hover:opacity-100"
+                className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-[14px] bg-black/40 p-2 text-white opacity-0 backdrop-blur-sm transition duration-300 hover:bg-black/70 group-hover:opacity-100"
               >
                 <ChevronRightIcon className="h-5 w-5" />
               </button>

@@ -6,7 +6,7 @@ import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-carousel";
 import { formatCurrency } from "@/shared/utils/format";
-import { PotentialIcon, MapPinIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { PotentialIcon, MapPinIcon, ChevronLeftIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function PotentialDetail({ id }: { id: string }) {
@@ -78,11 +78,11 @@ export function PotentialDetail({ id }: { id: string }) {
           </Link>
           <div className="flex items-center gap-2">
             {developmentStatus ? (
-              <span className="rounded-full bg-slate-100 border border-slate-300 px-3 py-1 text-[11px] font-extrabold uppercase text-slate-700">
+              <span className="rounded-[10px] bg-slate-100 border border-slate-300 px-3 py-1 text-[11px] font-extrabold uppercase text-slate-700">
                 {developmentStatus}
               </span>
             ) : null}
-            <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
+            <span className="rounded-[10px] bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
               {isInvestmentReady ? "Siap Kemitraan Investasi" : "Dalam Pembinaan"}
             </span>
           </div>
@@ -97,9 +97,7 @@ export function PotentialDetail({ id }: { id: string }) {
             </div>
 
             <div className={`p-4 rounded-[14px] border ${isInvestmentReady ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' : 'bg-amber-50/80 border-amber-200 text-amber-900'} flex items-start gap-3 shadow-xs`}>
-              <span className={`p-2 rounded-[10px] ${isInvestmentReady ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                <PotentialIcon className="h-6 w-6" />
-              </span>
+              <ServiceSquircle service="potensi-desa" size="md" />
               <div>
                 <h4 className="font-extrabold text-sm">{isInvestmentReady ? "Siap Kerjasama Kemitraan Investasi" : "Pengembangan Sektor Potensial"}</h4>
                 <p className="mt-1 text-xs opacity-90 leading-relaxed">
@@ -125,8 +123,9 @@ export function PotentialDetail({ id }: { id: string }) {
           <div className="lg:col-span-6 space-y-5">
             <div className="ambient-card rounded-[14px] p-6 sm:p-8 shadow-xs space-y-5">
               <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-xs font-extrabold text-[#006e23] uppercase tracking-wider">
-                  <PotentialIcon className="h-3.5 w-3.5" /> {potential.badge || "Komoditas Unggulan"}
+                <span className="inline-flex items-center gap-2 rounded-[10px] bg-[#dda63a]/10 border border-[#dda63a]/20 px-3.5 py-1 text-xs font-extrabold text-[#b47e18] uppercase tracking-wider">
+                  <ServiceSquircle service="potensi-desa" size="sm" />
+                  <span>{potential.badge || "Komoditas Unggulan"}</span>
                 </span>
                 <h1 className="mt-3 text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
                   {potential.title}
@@ -165,7 +164,7 @@ export function PotentialDetail({ id }: { id: string }) {
                   rel="noopener noreferrer"
                   className="flex-1 ambient-btn-primary rounded-[14px] px-6 py-3.5 text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 shadow-sm transition"
                 >
-                  🤝 Ajukan Kemitraan Investasi
+                  Ajukan Kemitraan Investasi
                 </a>
                 {villageId ? (
                   <Link

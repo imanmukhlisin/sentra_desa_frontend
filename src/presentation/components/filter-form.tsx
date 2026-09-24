@@ -5,23 +5,23 @@ import { FormEvent, useEffect, useState } from "react";
 import { Search, MapPin, ChevronDown, X, RotateCcw } from "lucide-react";
 import { getProvinces } from "@/application/use-cases/get-public-content";
 
-const CATEGORY_LABELS: Record<string, { label: string; icon?: string }> = {
-  makanan_minuman: { label: "Makanan & Minuman", icon: "🍱" },
-  kerajinan: { label: "Kerajinan", icon: "🪵" },
-  fashion: { label: "Fashion & Batik", icon: "👕" },
-  pertanian: { label: "Pertanian", icon: "🌾" },
-  perikanan: { label: "Perikanan", icon: "🐟" },
-  peternakan: { label: "Peternakan", icon: "🐄" },
-  jasa: { label: "Jasa Desa", icon: "🛠️" },
-  lainnya: { label: "Lainnya", icon: "📦" },
-  alam: { label: "Wisata Alam", icon: "🏔️" },
-  budaya: { label: "Wisata Budaya", icon: "🎭" },
-  buatan: { label: "Wisata Edukasi", icon: "🎡" },
-  kuliner: { label: "Kuliner Lokal", icon: "🍲" },
-  komoditas: { label: "Komoditas", icon: "🌱" },
-  perdagangan: { label: "Perdagangan", icon: "🏪" },
-  wisata: { label: "Wisata", icon: "🏖️" },
-  keuangan: { label: "Keuangan", icon: "💳" }
+const CATEGORY_LABELS: Record<string, { label: string }> = {
+  makanan_minuman: { label: "Makanan & Minuman" },
+  kerajinan: { label: "Kerajinan" },
+  fashion: { label: "Fashion & Batik" },
+  pertanian: { label: "Pertanian" },
+  perikanan: { label: "Perikanan" },
+  peternakan: { label: "Peternakan" },
+  jasa: { label: "Jasa Desa" },
+  lainnya: { label: "Lainnya" },
+  alam: { label: "Wisata Alam" },
+  budaya: { label: "Wisata Budaya" },
+  buatan: { label: "Wisata Edukasi" },
+  kuliner: { label: "Kuliner Lokal" },
+  komoditas: { label: "Komoditas" },
+  perdagangan: { label: "Perdagangan" },
+  wisata: { label: "Wisata" },
+  keuangan: { label: "Keuangan" }
 };
 
 export function FilterForm({ categories = [] }: { categories?: string[] }) {
@@ -107,7 +107,7 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
       {/* ── Unified Search Dock (Crisp Geometry - Anti-Slop) ── */}
       <form
         onSubmit={submit}
-        className="group relative flex flex-col md:flex-row items-stretch md:items-center gap-1.5 p-1.5 sm:p-2 rounded-xl bg-white border border-slate-200 shadow-sm transition-all focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-300"
+        className="group relative flex flex-col md:flex-row items-stretch md:items-center gap-1.5 p-1.5 sm:p-2 rounded-[14px] bg-white border border-slate-200 shadow-sm transition-all focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-300"
       >
         {/* 1. Search Field */}
         <div className="relative flex-1 flex items-center min-w-0">
@@ -150,7 +150,6 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
                 <option value="">Semua Kategori</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
-                    {CATEGORY_LABELS[cat]?.icon ? `${CATEGORY_LABELS[cat].icon} ` : ""}
                     {CATEGORY_LABELS[cat]?.label || cat.replace(/_/g, " ").toUpperCase()}
                   </option>
                 ))}
@@ -189,7 +188,7 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
         {/* 4. Action Button */}
         <button
           type="submit"
-          className="h-10 sm:h-11 shrink-0 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#006e23] hover:bg-[#005319] px-5 text-sm font-semibold text-white shadow-xs active:scale-[0.99] transition-all cursor-pointer"
+          className="h-10 sm:h-11 shrink-0 inline-flex items-center justify-center gap-1.5 rounded-[10px] bg-[#006e23] hover:bg-[#005319] px-5 text-sm font-semibold text-white shadow-xs active:scale-[0.99] transition-all cursor-pointer"
         >
           <Search className="h-3.5 w-3.5 text-white shrink-0" strokeWidth={2.5} />
           <span>Cari</span>
@@ -202,7 +201,7 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
           <button
             type="button"
             onClick={() => handleCategorySelect("")}
-            className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+            className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-semibold border transition-all cursor-pointer ${
               !activeCategory
                 ? "bg-[#006e23] text-white border-[#006e23] shadow-xs"
                 : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200"
@@ -218,13 +217,12 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
                 key={cat}
                 type="button"
                 onClick={() => handleCategorySelect(cat)}
-                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium border transition-all cursor-pointer ${
                   isSelected
                     ? "bg-[#006e23] text-white border-[#006e23] font-semibold shadow-xs"
                     : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200"
                 }`}
               >
-                {meta?.icon && <span className="text-xs">{meta.icon}</span>}
                 <span>{meta?.label || cat.replace(/_/g, " ")}</span>
               </button>
             );
@@ -245,10 +243,10 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
               <button
                 type="button"
                 onClick={() => removeFilter("search")}
-                className="hover:text-red-600 font-bold ml-0.5 cursor-pointer"
+                className="hover:text-red-600 ml-0.5 cursor-pointer flex items-center"
                 title="Hapus pencarian"
               >
-                ✕
+                <X className="h-3 w-3" />
               </button>
             </span>
           )}
@@ -259,10 +257,10 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
               <button
                 type="button"
                 onClick={() => removeFilter("category")}
-                className="hover:text-red-600 font-bold ml-0.5 cursor-pointer"
+                className="hover:text-red-600 ml-0.5 cursor-pointer flex items-center"
                 title="Hapus filter kategori"
               >
-                ✕
+                <X className="h-3 w-3" />
               </button>
             </span>
           )}
@@ -273,10 +271,10 @@ export function FilterForm({ categories = [] }: { categories?: string[] }) {
               <button
                 type="button"
                 onClick={() => removeFilter("province_id")}
-                className="hover:text-red-600 font-bold ml-0.5 cursor-pointer"
+                className="hover:text-red-600 ml-0.5 cursor-pointer flex items-center"
                 title="Hapus filter provinsi"
               >
-                ✕
+                <X className="h-3 w-3" />
               </button>
             </span>
           )}

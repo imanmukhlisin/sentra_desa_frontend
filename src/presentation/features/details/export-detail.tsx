@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { ImageGalleryCarousel } from "@/presentation/components/image-gallery-carousel";
-import { GlobeIcon, MapPinIcon, PhoneIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { GlobeIcon, MapPinIcon, PhoneIcon, ChevronLeftIcon, AwardIcon, MailIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function ExportDetail({ id }: { id: string }) {
@@ -87,74 +87,84 @@ export function ExportDetail({ id }: { id: string }) {
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Desa Ekspor</span>
           </Link>
-          <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
+          <span className="rounded-[10px] bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
             {exportStatus}
           </span>
         </div>
       </div>
 
       <div className="sentra-container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-[14px] border border-white/85 bg-white/70 shadow-xs">
-              <ImageGalleryCarousel images={images} title={item.title} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Column: Gallery Card */}
+          <div className="lg:col-span-6 flex flex-col">
+            <div className="ambient-card overflow-hidden rounded-[14px] shadow-md border border-white/85 flex-1 flex flex-col h-full min-h-[380px] sm:min-h-[460px] lg:min-h-full">
+              <ImageGalleryCarousel
+                images={images}
+                title={item.title}
+                className="h-full w-full min-h-[380px] sm:min-h-[460px] lg:min-h-full aspect-[16/11] lg:aspect-auto flex-1 rounded-[14px]"
+              />
             </div>
           </div>
 
-          <div className="lg:col-span-6 space-y-5">
-            <div className="ambient-card rounded-[14px] p-6 sm:p-8 shadow-xs space-y-5">
-              <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-xs font-extrabold text-[#006e23] uppercase tracking-wider">
-                  <GlobeIcon className="h-3.5 w-3.5" /> Komoditas Ekspor Desa
-                </span>
-                <h1 className="mt-3 text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
-                  {item.title}
-                </h1>
-                <p className="mt-2 text-xs md:text-sm text-slate-500 flex items-center gap-1.5 font-medium">
-                  <MapPinIcon className="h-4 w-4 text-[#006e23] shrink-0" />
-                  {item.subtitle || item.meta?.join(", ") || "Indonesia"}
-                </p>
+          {/* Right Column: Spec & Inquiry Card */}
+          <div className="lg:col-span-6 flex flex-col">
+            <div className="ambient-card rounded-[14px] p-6 sm:p-8 shadow-md border border-white/85 space-y-6 flex-1 flex flex-col justify-between">
+              <div className="space-y-5">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-[10px] bg-[#7c3aed]/10 border border-[#7c3aed]/20 px-3.5 py-1 text-xs font-extrabold text-[#7c3aed] uppercase tracking-wider">
+                    <ServiceSquircle service="desa-ekspor" size="sm" />
+                    <span>Komoditas Ekspor Desa</span>
+                  </span>
+                  <h1 className="mt-3 text-2xl md:text-3xl font-extrabold text-[#171d18] tracking-tight leading-tight">
+                    {item.title}
+                  </h1>
+                  <p className="mt-2 text-xs md:text-sm text-slate-500 flex items-center gap-1.5 font-medium">
+                    <MapPinIcon className="h-4 w-4 text-[#006e23] shrink-0" />
+                    {item.subtitle || item.meta?.join(", ") || "Indonesia"}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Klasifikasi HS Code</span>
+                    <strong className="text-xs font-black text-[#171d18] mt-1 block">
+                      {hsCode ? `HS ${hsCode}` : "Tersertifikasi"}
+                    </strong>
+                  </div>
+                  <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kapasitas Produksi</span>
+                    <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate">
+                      {volume}
+                    </strong>
+                  </div>
+                  <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Negara Tujuan Ekspor</span>
+                    <strong className="text-xs font-extrabold text-slate-800 mt-1 block leading-tight truncate" title={country}>
+                      {country}
+                    </strong>
+                  </div>
+                  <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kontak Koperasi / PIC</span>
+                    <strong className="text-xs font-black text-[#006e23] mt-1 block truncate" title={contactPerson}>
+                      {contactPerson}
+                    </strong>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">Sertifikasi & Standar Mutu</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {certs.map((c, idx) => (
+                      <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20 inline-flex items-center gap-1.5">
+                        <AwardIcon className="h-3.5 w-3.5 shrink-0" />
+                        <span>{c.trim()}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Klasifikasi HS Code</span>
-                  <strong className="text-xs font-black text-[#171d18] mt-1 block">
-                    📋 {hsCode ? `HS ${hsCode}` : "Tersertifikasi"}
-                  </strong>
-                </div>
-                <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kapasitas Produksi</span>
-                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block truncate">
-                    📦 {volume}
-                  </strong>
-                </div>
-                <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Negara Tujuan Ekspor</span>
-                  <strong className="text-xs font-extrabold text-slate-800 mt-1 block leading-tight truncate" title={country}>
-                    🌐 {country}
-                  </strong>
-                </div>
-                <div className="rounded-[14px] border border-white/80 bg-white/70 backdrop-blur-xs p-3.5 shadow-xs">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kontak Koperasi / PIC</span>
-                  <strong className="text-xs font-black text-[#006e23] mt-1 block truncate" title={contactPerson}>
-                    👤 {contactPerson}
-                  </strong>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">Sertifikasi & Standar Mutu</h3>
-                <div className="flex flex-wrap gap-2">
-                  {certs.map((c, idx) => (
-                    <span key={idx} className="rounded-[10px] bg-[#006e23]/10 px-3 py-1.5 text-xs font-bold text-[#006e23] border border-[#006e23]/20">
-                      🏅 {c.trim()}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-3 pt-2">
+              <div className="flex flex-wrap gap-3 pt-3 border-t border-slate-200/60">
                 <a
                   href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20${encodeURIComponent(contactPerson)},%20saya%20tertarik%20mengajukan%20inquiry%20ekspor%20untuk%20komoditas%20${encodeURIComponent(item.title)}.`}
                   target="_blank"
@@ -166,9 +176,9 @@ export function ExportDetail({ id }: { id: string }) {
                 {email ? (
                   <a
                     href={`mailto:${email}?subject=Inquiry%20Ekspor%20${encodeURIComponent(item.title)}`}
-                    className="rounded-[14px] border border-slate-300 bg-white/80 hover:bg-white px-4 py-3 text-xs font-bold text-slate-700 transition"
+                    className="rounded-[14px] border border-slate-300 bg-white/80 hover:bg-white px-4 py-3 text-xs font-bold text-slate-700 transition inline-flex items-center gap-1.5"
                   >
-                    ✉ Email Koperasi
+                    <MailIcon className="h-3.5 w-3.5" /> Email Koperasi
                   </a>
                 ) : null}
               </div>

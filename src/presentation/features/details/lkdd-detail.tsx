@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DetailItem } from "@/domain/entities/common";
 import { getDetail } from "@/application/use-cases/get-public-content";
 import { formatCurrency } from "@/shared/utils/format";
-import { LkddIcon, MapPinIcon, ChevronLeftIcon } from "@/presentation/components/icons";
+import { LkddIcon, MapPinIcon, ChevronLeftIcon, DownloadIcon, ServiceSquircle } from "@/presentation/components/icons";
 import { DetailSkeleton } from "@/presentation/components/skeleton";
 
 export function LkddDetail({ id }: { id: string }) {
@@ -78,7 +78,7 @@ export function LkddDetail({ id }: { id: string }) {
             <ChevronLeftIcon className="h-4 w-4" />
             <span>Kembali ke Laporan LKDD</span>
           </Link>
-          <span className="rounded-full bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
+          <span className="rounded-[10px] bg-[#006e23]/10 border border-[#006e23]/20 px-3.5 py-1 text-[11px] font-extrabold text-[#006e23] uppercase tracking-wider">
             Tahun Anggaran {fiscalYear}
           </span>
         </div>
@@ -89,8 +89,9 @@ export function LkddDetail({ id }: { id: string }) {
         <div className="rounded-[14px] border border-white/85 bg-gradient-to-br from-[#0c2e17] via-[#123e21] to-[#0a2012] p-6 md:p-8 text-white shadow-md">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-sm px-3 py-1 text-xs font-bold text-emerald-300 border border-emerald-500/30">
-                <LkddIcon className="h-3.5 w-3.5" /> Laporan Keuangan Dana Desa (LKDD)
+              <span className="inline-flex items-center gap-2 rounded-[10px] bg-[#a21942]/30 backdrop-blur-sm px-3.5 py-1 text-xs font-bold text-pink-200 border border-[#a21942]/50">
+                <ServiceSquircle service="lkdd" size="sm" />
+                <span>Laporan Keuangan Dana Desa (LKDD)</span>
               </span>
               <h1 className="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
                 {report.title}
@@ -106,7 +107,7 @@ export function LkddDetail({ id }: { id: string }) {
               <strong className="text-2xl font-black text-white mt-1 block">
                 {formatCurrency(totalBudget)}
               </strong>
-              <span className="inline-block mt-2 rounded-full bg-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-300">
+              <span className="inline-block mt-2 rounded-[8px] bg-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-300">
                 Realisasi {realizationPct}%
               </span>
             </div>
@@ -180,7 +181,7 @@ export function LkddDetail({ id }: { id: string }) {
               onClick={() => alert("Dokumen PDF laporan keuangan publik siap diunduh.")}
               className="ambient-btn-primary rounded-[14px] px-6 py-3.5 text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-sm transition cursor-pointer"
             >
-              📥 Unduh Dokumen APBDes PDF
+              <DownloadIcon className="h-4 w-4" /> Unduh Dokumen APBDes PDF
             </button>
           </div>
         </div>

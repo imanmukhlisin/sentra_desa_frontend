@@ -49,6 +49,14 @@ function detectStyle(href: string): KindStyle {
   return DEFAULT_STYLE;
 }
 
+function formatCardPrice(val: number): string {
+  if (val >= 1_000_000_000) {
+    const inB = val / 1_000_000_000;
+    return `Rp ${inB.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} M`;
+  }
+  return formatCurrency(val);
+}
+
 export function CatalogCard({ item }: { item: CatalogItem }) {
   const [imageFailed, setImageFailed] = useState(false);
   const { addItem } = useCart();
@@ -68,7 +76,7 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
       href={item.href}
     >
       {/* Image / Icon placeholder area */}
-      <div className="relative aspect-square w-full overflow-hidden">
+      <div className="relative aspect-square w-full overflow-hidden bg-slate-100/60 border-b border-slate-200/70">
         {showImage ? (
           <>
             <Image
@@ -76,6 +84,9 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
               alt={item.title}
               width={640}
               height={640}
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105"
               onError={() => setImageFailed(true)}
             />
@@ -85,7 +96,7 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
         ) : (
           /* No image → gradient bg with the exact same dashboard icon */
           <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${style.gradient}`}>
-            <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm shadow-lg">
+            <div className="flex h-24 w-24 items-center justify-center rounded-[14px] bg-white/20 backdrop-blur-sm shadow-lg">
               <Image
                 src={style.iconPath}
                 alt={item.title}
@@ -106,38 +117,37 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
         )}
       </div>
 
-      {/* Card body */}
-      <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
+      {/* Card body: Mengadopsi color model Mekanisme Inisiatif */}
+      <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-5">
         <div>
           {item.badge && (
-            <div className={`mb-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider ${style.badgeText}`}>
-              {item.badge}
+            <div className="mb-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#64748b]">
+              {item.badge.replace(/_/g, " ")}
             </div>
           )}
-          <h3 className={`text-base sm:text-lg font-bold text-[#171d18] line-clamp-1 transition-colors ${style.hoverTitle} leading-snug`}>
+          <h3 className="text-base sm:text-lg font-bold text-[#334155] line-clamp-1 transition-colors group-hover:text-[#006e23] leading-snug">
             {item.title}
           </h3>
           {item.description ? (
-            <p className="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[#3b4b39]/80">
+            <p className="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[#64748b]">
               {item.description}
             </p>
           ) : null}
         </div>
 
-        <div className="mt-4 sm:mt-5 flex items-center justify-between gap-2 border-t border-dashed border-[#e6dcce] pt-3.5">
+        <div className="mt-3.5 sm:mt-5 flex items-center justify-between gap-1 sm:gap-2 border-t border-slate-200/80 pt-3 sm:pt-3.5">
           {hasPrice ? (
-            <div className="min-w-0 flex-1 pr-1.5">
-              <strong className={`block font-black text-[#006e23] whitespace-nowrap tracking-tight leading-none tabular-nums ${
-                (item.price ?? 0) >= 10000000
-                  ? "text-sm sm:text-base"
-                  : "text-base sm:text-lg"
-              }`}>
-                {formatCurrency(item.price!)}
+            <div className="min-w-0 flex-1 pr-1">
+              <strong
+                className="block text-[12px] min-[380px]:text-[13px] sm:text-[15px] font-extrabold text-[#006e23] tracking-tight leading-none tabular-nums truncate"
+                title={formatCurrency(item.price!)}
+              >
+                {formatCardPrice(item.price!)}
               </strong>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#3b4b39] truncate min-w-0 flex-1">
-              <MapPinIcon className={`h-4 w-4 shrink-0 ${style.badgeText}`} />
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#64748b] truncate min-w-0 flex-1">
+              <MapPinIcon className="h-4 w-4 shrink-0 text-slate-400" />
               <span className="truncate">{locationText || "Sentra Desa"}</span>
             </div>
           )}
@@ -160,14 +170,15 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
                   true
                 );
               }}
-              className="shrink-0 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#006e23]/25 bg-[#006e23]/5 text-[#006e23] transition-all duration-200 hover:bg-[#006e23] hover:text-white hover:border-[#006e23] hover:shadow-xs active:scale-90 cursor-pointer"
-              title="Tambah ke Keranjang"
-              aria-label={`Tambah ${item.title} ke keranjang`}
+              className="shrink-0 flex items-center justify-center gap-1 rounded-[8px] sm:rounded-[10px] border border-[#006e23]/35 bg-white/95 h-7 w-7 sm:h-auto sm:w-auto sm:px-3 sm:py-1.5 text-xs font-bold text-[#006e23] transition-all duration-200 hover:bg-[#006e23] hover:text-white hover:border-[#006e23] hover:shadow-2xs active:scale-95 cursor-pointer shadow-2xs"
+              title="Beli produk"
+              aria-label={`Beli ${item.title}`}
             >
-              <ShoppingCartIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+              <ShoppingCartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden sm:inline">Beli</span>
             </button>
           ) : (
-            <span className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl border ${style.ring} bg-white px-3.5 py-1.5 text-xs sm:text-sm font-bold ${style.badgeText} transition-all duration-200 ${style.btnHover}`}>
+            <span className={`shrink-0 inline-flex items-center gap-1 rounded-[8px] sm:rounded-[10px] border ${style.ring} bg-white px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-xs sm:text-sm font-semibold ${style.badgeText} transition-all duration-200 ${style.btnHover} shadow-2xs`}>
               <span>Detail</span>
               <ArrowRightIcon className="h-3.5 w-3.5" />
             </span>
