@@ -4,20 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef, useMemo, Suspense } from "react";
+import { ChevronRight } from "lucide-react";
 import {
-  ChevronRight,
-  ShoppingBag,
-  Landmark,
-  Mountain,
-  BriefcaseBusiness,
-  Sparkles,
-  Globe,
-  Flag,
-  Wrench,
-  WalletCards,
-  Newspaper,
-  HeartHandshake
-} from "lucide-react";
+  VillageIcon,
+  PotentialIcon,
+  NewsIcon,
+  StoreIcon,
+  GlobeIcon,
+  TourismIcon,
+  BumdesIcon,
+  KdmpIcon,
+  LkddIcon,
+  ArticleIcon,
+  WishlistIcon
+} from "@/presentation/components/icons";
 import { CatalogItem, CatalogKind } from "@/domain/entities/common";
 import { getCatalog } from "@/application/use-cases/get-public-content";
 import { CatalogCard } from "@/presentation/components/catalog-card";
@@ -26,17 +26,17 @@ import { FilterForm } from "@/presentation/components/filter-form";
 import { CatalogGridSkeleton, CatalogPageSkeleton } from "@/presentation/components/skeleton";
 
 const KIND_ICONS: Record<CatalogKind, React.ComponentType<{ className?: string }>> = {
-  products: ShoppingBag,
-  villages: Landmark,
-  tourisms: Mountain,
-  bumdes: BriefcaseBusiness,
-  potentials: Sparkles,
-  exports: Globe,
-  kdmp: Flag,
-  services: Wrench,
-  lkdd: WalletCards,
-  articles: Newspaper,
-  wishlists: HeartHandshake,
+  villages: VillageIcon,
+  potentials: PotentialIcon,
+  services: NewsIcon,
+  products: StoreIcon,
+  exports: GlobeIcon,
+  tourisms: TourismIcon,
+  bumdes: BumdesIcon,
+  kdmp: KdmpIcon,
+  lkdd: LkddIcon,
+  articles: ArticleIcon,
+  wishlists: WishlistIcon,
 };
 
 const KIND_HERO_IMAGES: Partial<Record<CatalogKind, string>> = {
@@ -389,7 +389,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
 
   const meta = KIND_META[kind];
 
-  const CategoryIcon = KIND_ICONS[kind] || ShoppingBag;
+  const CategoryIcon = KIND_ICONS[kind] || VillageIcon;
   const heroImage = KIND_HERO_IMAGES[kind] || "/images/heroes/hero-villages.jpg";
 
   const realStats = useMemo(() => {

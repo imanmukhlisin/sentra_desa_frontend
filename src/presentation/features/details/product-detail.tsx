@@ -16,10 +16,15 @@ export function ProductDetail({ id }: { id: string }) {
   const [product, setProduct] = useState<DetailItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [quantityInput, setQuantityInput] = useState("1");
   const [activeTab, setActiveTab] = useState<"desc" | "spec" | "reviews">("desc");
   const [otherProducts, setOtherProducts] = useState<CatalogItem[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { addItem } = useCart();
+
+  useEffect(() => {
+    setQuantityInput(String(quantity));
+  }, [quantity]);
 
   useEffect(() => {
     setIsLoggedIn(Boolean(authClient.getToken()));
@@ -193,7 +198,37 @@ export function ProductDetail({ id }: { id: string }) {
                     >
                       -
                     </button>
-                    <span className="w-12 text-center text-base font-extrabold text-slate-800">{quantity}</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={quantityInput}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/[^0-9]/g, "");
+                        setQuantityInput(raw);
+                        const num = parseInt(raw, 10);
+                        if (!isNaN(num) && num >= 1) {
+                          setQuantity(Math.min(stock, num));
+                        }
+                      }}
+                      onBlur={() => {
+                        const parsed = parseInt(quantityInput, 10);
+                        if (isNaN(parsed) || parsed < 1) {
+                          setQuantity(1);
+                          setQuantityInput("1");
+                        } else if (parsed > stock) {
+                          setQuantity(stock);
+                          setQuantityInput(String(stock));
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          (e.target as HTMLInputElement).blur();
+                        }
+                      }}
+                      className="w-14 text-center text-base font-extrabold text-slate-800 bg-transparent focus:outline-none focus:bg-slate-50 focus:ring-1 focus:ring-[#006e23]/30 rounded-lg py-1 tabular-nums"
+                      aria-label="Jumlah produk"
+                    />
                     <button
                       type="button"
                       onClick={() => setQuantity((q) => Math.min(stock, q + 1))}

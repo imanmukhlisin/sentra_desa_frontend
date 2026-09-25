@@ -1,4 +1,11 @@
 import {
+  Wheat,
+  Megaphone,
+  PiggyBank,
+  BookOpen,
+  Sprout,
+  Coins,
+  Handshake,
   Landmark,
   Sparkles,
   Newspaper,
@@ -41,15 +48,15 @@ import {
 } from "lucide-react";
 
 export const VillageIcon = Landmark;
-export const PotentialIcon = Sparkles;
-export const NewsIcon = Newspaper;
+export const PotentialIcon = Wheat;
+export const NewsIcon = Megaphone;
 export const StoreIcon = Store;
 export const GlobeIcon = Globe;
 export const TourismIcon = Mountain;
 export const BumdesIcon = BriefcaseBusiness;
-export const KdmpIcon = Flag;
-export const LkddIcon = WalletCards;
-export const ArticleIcon = FileText;
+export const KdmpIcon = Handshake;
+export const LkddIcon = PiggyBank;
+export const ArticleIcon = BookOpen;
 export const WishlistIcon = HeartHandshake;
 export const GridIcon = Grid2X2;
 export const FoodIcon = Utensils;

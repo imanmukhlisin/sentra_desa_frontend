@@ -6,6 +6,8 @@ import Link from "next/link";
 import { CatalogItem, HighlightItem } from "@/domain/entities/common";
 import { HomeProducts } from "@/presentation/features/home-products";
 import {
+  ArticleIcon,
+  BumdesIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -14,33 +16,44 @@ import {
   FashionIcon,
   FishIcon,
   FoodIcon,
+  GlobeIcon,
   GridIcon,
+  KdmpIcon,
   LivestockIcon,
+  LkddIcon,
   MoreIcon,
+  NewsIcon,
+  PotentialIcon,
   SearchIcon,
-  ServiceIcon
+  ServiceIcon,
+  StoreIcon,
+  TourismIcon,
+  VillageIcon,
+  WishlistIcon
 } from "@/presentation/components/icons";
 
 interface VillageFeatureItem {
   id: number;
   title: string;
   color: string;
+  bgGradient: string;
+  shadowColor: string;
   href: string;
-  iconPath: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const villageFeatures: VillageFeatureItem[] = [
-  { id: 1, title: "Profil Desa", color: "#006e23", href: "/profil-desa/", iconPath: "/icons/services/profil-desa.svg" },
-  { id: 2, title: "Potensi Desa", color: "#dda63a", href: "/potensi-desa/", iconPath: "/icons/services/potensi-desa.svg" },
-  { id: 3, title: "Informasi Desa", color: "#0284c7", href: "/layanan-desa/", iconPath: "/icons/services/informasi-desa.svg" },
-  { id: 4, title: "Sentra Produk", color: "#16a34a", href: "/sentra-produk/", iconPath: "/icons/services/sentra-produk.svg" },
-  { id: 5, title: "Desa Ekspor", color: "#7c3aed", href: "/desa-ekspor/", iconPath: "/icons/services/desa-ekspor.svg" },
-  { id: 6, title: "Desa Wisata", color: "#0d9488", href: "/desa-wisata/", iconPath: "/icons/services/desa-wisata.svg" },
-  { id: 7, title: "BUMDES", color: "#e5243b", href: "/bumdes/", iconPath: "/icons/services/bumdes.svg" },
-  { id: 8, title: "KDMP", color: "#ea580c", href: "/kdmp/", iconPath: "/icons/services/kdmp.svg" },
-  { id: 9, title: "LKDD", color: "#a21942", href: "/lkdd/", iconPath: "/icons/services/lkdd.svg" },
-  { id: 10, title: "Artikel", color: "#4c9f38", href: "/artikel/", iconPath: "/icons/services/artikel.svg" },
-  { id: 11, title: "Wishlist Desa", color: "#dd1367", href: "/wishlist/", iconPath: "/icons/services/wishlist.svg" }
+  { id: 1, title: "Profil Desa", color: "#006e23", bgGradient: "from-emerald-700 to-emerald-800", shadowColor: "shadow-emerald-900/25", href: "/profil-desa/", icon: VillageIcon },
+  { id: 2, title: "Potensi Desa", color: "#b45309", bgGradient: "from-amber-600 to-amber-700", shadowColor: "shadow-amber-900/25", href: "/potensi-desa/", icon: PotentialIcon },
+  { id: 3, title: "Informasi Desa", color: "#0284c7", bgGradient: "from-sky-600 to-blue-700", shadowColor: "shadow-sky-900/25", href: "/layanan-desa/", icon: NewsIcon },
+  { id: 4, title: "Sentra Produk", color: "#15803d", bgGradient: "from-green-600 to-emerald-700", shadowColor: "shadow-green-900/25", href: "/sentra-produk/", icon: StoreIcon },
+  { id: 5, title: "Desa Ekspor", color: "#4f46e5", bgGradient: "from-indigo-600 to-indigo-700", shadowColor: "shadow-indigo-900/25", href: "/desa-ekspor/", icon: GlobeIcon },
+  { id: 6, title: "Desa Wisata", color: "#0d9488", bgGradient: "from-teal-600 to-teal-700", shadowColor: "shadow-teal-900/25", href: "/desa-wisata/", icon: TourismIcon },
+  { id: 7, title: "BUMDES", color: "#b91c1c", bgGradient: "from-rose-600 to-red-700", shadowColor: "shadow-rose-900/25", href: "/bumdes/", icon: BumdesIcon },
+  { id: 8, title: "KDMP", color: "#c2410c", bgGradient: "from-orange-600 to-amber-700", shadowColor: "shadow-orange-900/25", href: "/kdmp/", icon: KdmpIcon },
+  { id: 9, title: "LKDD", color: "#0f766e", bgGradient: "from-emerald-800 to-teal-900", shadowColor: "shadow-teal-950/25", href: "/lkdd/", icon: LkddIcon },
+  { id: 10, title: "Artikel", color: "#475569", bgGradient: "from-slate-600 to-slate-700", shadowColor: "shadow-slate-900/25", href: "/artikel/", icon: ArticleIcon },
+  { id: 11, title: "Wishlist Desa", color: "#be185d", bgGradient: "from-pink-600 to-rose-700", shadowColor: "shadow-pink-900/25", href: "/wishlist/", icon: WishlistIcon }
 ];
 
 const categories = [
@@ -311,57 +324,34 @@ export function FlutterHome({
 
       {/* Section 11 Kategori Layanan Desa */}
       <section className="sentra-container pt-8 md:pt-10">
-        <div className="flex flex-col items-center gap-3.5 sm:gap-4 md:gap-5">
-          {/* Row 1: 6 items (spans full width of container) */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 md:gap-5 w-full">
-            {villageFeatures.slice(0, 6).map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="group ambient-card-interactive flex flex-col items-center justify-center rounded-[14px] p-3.5 sm:p-4 md:py-5 md:px-3 text-center w-full active:scale-95"
-              >
-                <div
-                  className="flex h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 items-center justify-center rounded-xl shadow-[0_8px_20px_-3px_rgba(0,0,0,0.12)] transition-transform duration-200 group-hover:scale-105"
-                  style={{ backgroundColor: item.color }}
-                >
-                  <Image
-                    src={item.iconPath}
-                    alt={item.title}
-                    width={36}
-                    height={36}
-                    className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 object-contain drop-shadow-xs"
-                    unoptimized
-                  />
-                </div>
-                <span className="mt-3 font-sans text-xs sm:text-sm md:text-[14px] font-bold text-[#171d18] group-hover:text-[#006e23] transition-colors leading-tight">
-                  {item.title}
-                </span>
-              </Link>
-            ))}
+        <div className="rounded-2xl border border-white/80 bg-white/70 p-5 md:p-6 shadow-[0_10px_30px_-5px_rgba(180,145,120,0.12)] backdrop-blur-md">
+          {/* Section Header */}
+          <div className="mb-4 sm:mb-5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="h-4.5 w-1.5 rounded-full bg-[#006e23]" />
+              <h2 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight">
+                Layanan & Direktori Terpadu
+              </h2>
+            </div>
+            <span className="text-[11px] sm:text-xs font-semibold text-emerald-800/80 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/50">
+              11 Layanan Ekosistem
+            </span>
           </div>
 
-          {/* Row 2: 5 items (centered with matching card widths) */}
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5 w-full">
-            {villageFeatures.slice(6, 11).map((item) => (
+          {/* Unified Responsive Grid */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2.5 sm:gap-3">
+            {villageFeatures.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
-                className="group ambient-card-interactive flex flex-col items-center justify-center rounded-[14px] p-3.5 sm:p-4 md:py-5 md:px-3 text-center w-[calc(50%-0.5rem)] sm:w-[calc((100%-5*1rem)/6)] md:w-[calc((100%-5*1.25rem)/6)] min-w-[100px] active:scale-95"
+                className="group flex flex-col items-center justify-start rounded-xl p-2 sm:p-2.5 transition-all duration-200 hover:bg-white hover:shadow-md hover:shadow-slate-200/50 active:scale-95 text-center"
               >
                 <div
-                  className="flex h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 items-center justify-center rounded-xl shadow-[0_8px_20px_-3px_rgba(0,0,0,0.12)] transition-transform duration-200 group-hover:scale-105"
-                  style={{ backgroundColor: item.color }}
+                  className={`relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.bgGradient} shadow-md ${item.shadowColor} ring-1 ring-white/30 transition-all duration-200 group-hover:scale-108 group-hover:-translate-y-0.5`}
                 >
-                  <Image
-                    src={item.iconPath}
-                    alt={item.title}
-                    width={36}
-                    height={36}
-                    className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 object-contain drop-shadow-xs"
-                    unoptimized
-                  />
+                  <item.icon className="h-6 w-6 sm:h-7 sm:w-7 text-white stroke-[2.2] drop-shadow-xs" />
                 </div>
-                <span className="mt-3 font-sans text-xs sm:text-sm md:text-[14px] font-bold text-[#171d18] group-hover:text-[#006e23] transition-colors leading-tight">
+                <span className="mt-2.5 text-xs sm:text-[13px] font-semibold text-slate-700 group-hover:text-[#006e23] transition-colors leading-snug line-clamp-2">
                   {item.title}
                 </span>
               </Link>

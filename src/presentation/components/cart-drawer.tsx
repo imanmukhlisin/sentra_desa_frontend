@@ -16,6 +16,75 @@ import {
   ShoppingBagIcon
 } from "@/presentation/components/icons";
 
+function CartItemQuantityInput({
+  itemId,
+  quantity,
+  onUpdate
+}: {
+  itemId: string;
+  quantity: number;
+  onUpdate: (id: string, q: number) => void;
+}) {
+  const [val, setVal] = useState(String(quantity));
+
+  useEffect(() => {
+    setVal(String(quantity));
+  }, [quantity]);
+
+  const commit = () => {
+    const parsed = parseInt(val, 10);
+    if (isNaN(parsed) || parsed < 1) {
+      setVal(String(quantity));
+      onUpdate(itemId, quantity);
+    } else {
+      onUpdate(itemId, parsed);
+    }
+  };
+
+  return (
+    <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/70 p-0.5">
+      <button
+        type="button"
+        onClick={() => onUpdate(itemId, Math.max(1, quantity - 1))}
+        className="flex h-6 w-6 items-center justify-center rounded text-slate-600 hover:bg-white hover:text-[#006e23] transition cursor-pointer"
+        aria-label="Kurangi jumlah"
+      >
+        <MinusIcon className="h-3 w-3" />
+      </button>
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={val}
+        onChange={(e) => {
+          const raw = e.target.value.replace(/[^0-9]/g, "");
+          setVal(raw);
+          const num = parseInt(raw, 10);
+          if (!isNaN(num) && num >= 1) {
+            onUpdate(itemId, num);
+          }
+        }}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
+        className="w-10 sm:w-12 bg-transparent text-center text-xs font-extrabold text-[#171d18] tabular-nums focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#006e23]/30 rounded py-0.5"
+        aria-label="Jumlah produk"
+      />
+      <button
+        type="button"
+        onClick={() => onUpdate(itemId, quantity + 1)}
+        className="flex h-6 w-6 items-center justify-center rounded text-slate-600 hover:bg-white hover:text-[#006e23] transition cursor-pointer"
+        aria-label="Tambah jumlah"
+      >
+        <PlusIcon className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
 export function CartDrawer() {
   const {
     isOpen,
@@ -162,28 +231,12 @@ export function CartDrawer() {
                     </div>
 
                     <div className="mt-2 flex items-center justify-between">
-                      {/* Quantity Stepper */}
-                      <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50/70 p-0.5">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="flex h-6 w-6 items-center justify-center rounded text-slate-600 hover:bg-white hover:text-[#006e23] transition cursor-pointer"
-                          aria-label="Kurangi jumlah"
-                        >
-                          <MinusIcon className="h-3 w-3" />
-                        </button>
-                        <span className="w-8 text-center text-xs font-extrabold text-[#171d18] tabular-nums">
-                          {item.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="flex h-6 w-6 items-center justify-center rounded text-slate-600 hover:bg-white hover:text-[#006e23] transition cursor-pointer"
-                          aria-label="Tambah jumlah"
-                        >
-                          <PlusIcon className="h-3 w-3" />
-                        </button>
-                      </div>
+                      {/* Quantity Stepper (Bisa diketik & tombol +/-) */}
+                      <CartItemQuantityInput
+                        itemId={item.id}
+                        quantity={item.quantity}
+                        onUpdate={updateQuantity}
+                      />
 
                       {/* Item Total */}
                       <strong className="text-xs sm:text-sm font-extrabold text-[#006e23] tabular-nums">

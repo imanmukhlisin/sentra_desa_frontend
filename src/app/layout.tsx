@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Roboto } from "next/font/google";
 import { Footer } from "@/presentation/components/footer";
 import { Header } from "@/presentation/components/header";
 import { CartDrawer } from "@/presentation/components/cart-drawer";
+import { ScrollToTop } from "@/presentation/components/scroll-to-top";
 import { CartProvider } from "@/presentation/context/cart-context";
 import { siteConfig } from "@/shared/config/site";
 import "./globals.css";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main>{children}</main>
           <Footer />
           <CartDrawer />
+          <ScrollToTop />
         </CartProvider>
       </body>
     </html>

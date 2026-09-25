@@ -18,21 +18,21 @@ export function Header() {
   return (
     <header className="glass-header">
       <div className="sentra-container flex h-full items-center justify-between gap-3 px-4 md:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-3 md:gap-3.5" aria-label="Sentra Desa">
+        <Link href="/" className="flex shrink-0 items-center gap-3 md:gap-3.5" aria-label="SentraDesa">
           <Image
             src="/images/logo.png"
-            alt="Logo Sentra Desa"
+            alt="Logo SentraDesa"
             width={48}
             height={48}
             className="h-10 w-auto object-contain sm:h-11 md:h-12 drop-shadow-2xs"
             priority
           />
-          <div className="hidden leading-none sm:block">
-            <div className="font-headline text-[16px] md:text-[17px] font-extrabold tracking-wide text-[#006e23]">
-              SENTRA DESA
+          <div className="hidden leading-tight sm:block">
+            <div className="font-headline text-[16px] md:text-[17px] font-black text-[#006e23] tracking-tight">
+              SentraDesa
             </div>
-            <div className="mt-1 text-[10px] md:text-[10.5px] font-bold tracking-widest text-[#006e23]/80">
-              BERDAYA DARI DESA
+            <div className="mt-0.5 text-[10px] md:text-[11px] font-semibold text-[#006e23]/80">
+              Platform Ekosistem Digital Desa
             </div>
           </div>
         </Link>

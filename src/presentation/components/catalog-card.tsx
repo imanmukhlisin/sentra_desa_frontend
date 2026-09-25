@@ -5,12 +5,28 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CatalogItem } from "@/domain/entities/common";
 import { formatCurrency } from "@/shared/utils/format";
-import { ArrowRightIcon, ShoppingBagIcon, ShoppingCartIcon, MapPinIcon } from "@/presentation/components/icons";
+import {
+  ArrowRightIcon,
+  ShoppingBagIcon,
+  ShoppingCartIcon,
+  MapPinIcon,
+  VillageIcon,
+  PotentialIcon,
+  NewsIcon,
+  StoreIcon,
+  GlobeIcon,
+  TourismIcon,
+  BumdesIcon,
+  KdmpIcon,
+  LkddIcon,
+  ArticleIcon,
+  WishlistIcon
+} from "@/presentation/components/icons";
 import { useCart } from "@/presentation/context/cart-context";
 
-// Mirrors dashboard villageFeatures exactly — SVG path + gradient background colour
+// Mirrors dashboard villageFeatures exactly — Semantic Lucide icon + gradient background colour
 type KindStyle = {
-  iconPath: string;
+  icon: React.ComponentType<{ className?: string }>;
   gradient: string;
   ring: string;
   badgeText: string;
@@ -19,22 +35,21 @@ type KindStyle = {
 };
 
 const KIND_STYLES: Record<string, KindStyle> = {
-  "profil-desa":   { iconPath: "/icons/services/profil-desa.svg",   gradient: "from-[#006e23] to-emerald-500",  ring: "border-emerald-200", badgeText: "text-[#006e23]",  hoverTitle: "group-hover:text-[#006e23]",  btnHover: "group-hover:bg-[#006e23] group-hover:text-white" },
-  "potensi-desa":  { iconPath: "/icons/services/potensi-desa.svg",  gradient: "from-[#dda63a] to-orange-400",   ring: "border-amber-200",   badgeText: "text-amber-700",   hoverTitle: "group-hover:text-amber-700",   btnHover: "group-hover:bg-amber-600 group-hover:text-white" },
-  "sentra-produk": { iconPath: "/icons/services/sentra-produk.svg", gradient: "from-[#16a34a] to-teal-500",     ring: "border-green-200",   badgeText: "text-green-700",   hoverTitle: "group-hover:text-green-700",   btnHover: "group-hover:bg-green-700 group-hover:text-white" },
-  "desa-ekspor":   { iconPath: "/icons/services/desa-ekspor.svg",   gradient: "from-[#7c3aed] to-violet-400",   ring: "border-violet-200",  badgeText: "text-violet-700",  hoverTitle: "group-hover:text-violet-700",  btnHover: "group-hover:bg-violet-700 group-hover:text-white" },
-  "desa-wisata":   { iconPath: "/icons/services/desa-wisata.svg",   gradient: "from-[#0d9488] to-cyan-400",     ring: "border-teal-200",    badgeText: "text-teal-700",    hoverTitle: "group-hover:text-teal-700",    btnHover: "group-hover:bg-teal-600 group-hover:text-white" },
-  "bumdes":        { iconPath: "/icons/services/bumdes.svg",        gradient: "from-[#e5243b] to-rose-400",     ring: "border-rose-200",    badgeText: "text-rose-700",    hoverTitle: "group-hover:text-rose-700",    btnHover: "group-hover:bg-rose-600 group-hover:text-white" },
-  "kdmp":          { iconPath: "/icons/services/kdmp.svg",          gradient: "from-[#ea580c] to-orange-400",   ring: "border-orange-200",  badgeText: "text-orange-700",  hoverTitle: "group-hover:text-orange-700",  btnHover: "group-hover:bg-orange-600 group-hover:text-white" },
-  "lkdd":          { iconPath: "/icons/services/lkdd.svg",          gradient: "from-[#a21942] to-pink-600",     ring: "border-pink-200",    badgeText: "text-pink-800",    hoverTitle: "group-hover:text-pink-800",    btnHover: "group-hover:bg-pink-700 group-hover:text-white" },
-  "artikel":       { iconPath: "/icons/services/artikel.svg",       gradient: "from-[#4c9f38] to-lime-500",     ring: "border-lime-200",    badgeText: "text-lime-700",    hoverTitle: "group-hover:text-lime-700",    btnHover: "group-hover:bg-lime-600 group-hover:text-white" },
-  "wishlist":      { iconPath: "/icons/services/wishlist.svg",      gradient: "from-[#dd1367] to-pink-400",     ring: "border-pink-200",    badgeText: "text-pink-700",    hoverTitle: "group-hover:text-pink-700",    btnHover: "group-hover:bg-pink-600 group-hover:text-white" },
-  // layanan-desa maps to informasi-desa icon
-  "layanan-desa":  { iconPath: "/icons/services/informasi-desa.svg", gradient: "from-[#0284c7] to-sky-400",    ring: "border-sky-200",     badgeText: "text-sky-700",     hoverTitle: "group-hover:text-sky-700",     btnHover: "group-hover:bg-sky-600 group-hover:text-white" },
+  "profil-desa":   { icon: VillageIcon,   gradient: "from-[#006e23] to-emerald-500",  ring: "border-emerald-200", badgeText: "text-[#006e23]",  hoverTitle: "group-hover:text-[#006e23]",  btnHover: "group-hover:bg-[#006e23] group-hover:text-white" },
+  "potensi-desa":  { icon: PotentialIcon, gradient: "from-[#dda63a] to-orange-400",   ring: "border-amber-200",   badgeText: "text-amber-700",   hoverTitle: "group-hover:text-amber-700",   btnHover: "group-hover:bg-amber-600 group-hover:text-white" },
+  "sentra-produk": { icon: StoreIcon,     gradient: "from-[#16a34a] to-teal-500",     ring: "border-green-200",   badgeText: "text-green-700",   hoverTitle: "group-hover:text-green-700",   btnHover: "group-hover:bg-green-700 group-hover:text-white" },
+  "desa-ekspor":   { icon: GlobeIcon,     gradient: "from-[#7c3aed] to-violet-400",   ring: "border-violet-200",  badgeText: "text-violet-700",  hoverTitle: "group-hover:text-violet-700",  btnHover: "group-hover:bg-violet-700 group-hover:text-white" },
+  "desa-wisata":   { icon: TourismIcon,   gradient: "from-[#0d9488] to-cyan-400",     ring: "border-teal-200",    badgeText: "text-teal-700",    hoverTitle: "group-hover:text-teal-700",    btnHover: "group-hover:bg-teal-600 group-hover:text-white" },
+  "bumdes":        { icon: BumdesIcon,    gradient: "from-[#e5243b] to-rose-400",     ring: "border-rose-200",    badgeText: "text-rose-700",    hoverTitle: "group-hover:text-rose-700",    btnHover: "group-hover:bg-rose-600 group-hover:text-white" },
+  "kdmp":          { icon: KdmpIcon,      gradient: "from-[#ea580c] to-orange-400",   ring: "border-orange-200",  badgeText: "text-orange-700",  hoverTitle: "group-hover:text-orange-700",  btnHover: "group-hover:bg-orange-600 group-hover:text-white" },
+  "lkdd":          { icon: LkddIcon,      gradient: "from-[#a21942] to-pink-600",     ring: "border-pink-200",    badgeText: "text-pink-800",    hoverTitle: "group-hover:text-pink-800",    btnHover: "group-hover:bg-pink-700 group-hover:text-white" },
+  "artikel":       { icon: ArticleIcon,   gradient: "from-[#4c9f38] to-lime-500",     ring: "border-lime-200",    badgeText: "text-lime-700",    hoverTitle: "group-hover:text-lime-700",    btnHover: "group-hover:bg-lime-600 group-hover:text-white" },
+  "wishlist":      { icon: WishlistIcon,  gradient: "from-[#dd1367] to-pink-400",     ring: "border-pink-200",    badgeText: "text-pink-700",    hoverTitle: "group-hover:text-pink-700",    btnHover: "group-hover:bg-pink-600 group-hover:text-white" },
+  "layanan-desa":  { icon: NewsIcon,      gradient: "from-[#0284c7] to-sky-400",    ring: "border-sky-200",     badgeText: "text-sky-700",     hoverTitle: "group-hover:text-sky-700",     btnHover: "group-hover:bg-sky-600 group-hover:text-white" },
 };
 
 const DEFAULT_STYLE: KindStyle = {
-  iconPath: "/icons/services/profil-desa.svg",
+  icon: VillageIcon,
   gradient: "from-[#006e23] to-emerald-500",
   ring: "border-emerald-200",
   badgeText: "text-[#006e23]",
@@ -83,17 +98,10 @@ export function CatalogCard({ item }: { item: CatalogItem }) {
             <div className={`absolute inset-0 bg-gradient-to-br ${style.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
           </>
         ) : (
-          /* No image → gradient bg with the exact same dashboard icon */
+          /* No image → gradient bg with the exact same unified semantic icon */
           <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${style.gradient}`}>
-            <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm shadow-lg">
-              <Image
-                src={style.iconPath}
-                alt={item.title}
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain drop-shadow-md"
-                unoptimized
-              />
+            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm shadow-lg border border-white/30 text-white">
+              <style.icon className="h-10 w-10 sm:h-12 sm:w-12 stroke-[2.2] drop-shadow-md" />
             </div>
           </div>
         )}

@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: "Sentra Desa",
-  description: "Portal digital produk, potensi, wisata, layanan, dan informasi desa Indonesia.",
+  name: "SentraDesa",
+  description: "Platform Ekosistem Digital Desa - Portal digital produk, potensi, wisata, layanan, dan informasi desa Indonesia.",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://sentradesa.id",
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://sentradesa.id/api/v1"
 };
