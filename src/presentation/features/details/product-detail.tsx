@@ -243,7 +243,7 @@ export function ProductDetail({ id }: { id: string }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="pt-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -259,22 +259,11 @@ export function ProductDetail({ id }: { id: string }) {
                       true
                     );
                   }}
-                  className="flex-1 ambient-btn-primary inline-flex items-center justify-center gap-2 rounded-[14px] py-3.5 px-5 text-xs sm:text-sm font-bold shadow-md transition active:scale-95 cursor-pointer"
+                  className="w-full ambient-btn-primary inline-flex items-center justify-center gap-2.5 rounded-[14px] py-3.5 px-6 text-sm sm:text-base font-bold shadow-md transition active:scale-95 cursor-pointer"
                 >
-                  <ShoppingCartIcon className="h-4 w-4" />
+                  <ShoppingCartIcon className="h-5 w-5" />
                   <span>+ Keranjang</span>
                 </button>
-
-                <a
-                  href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=Halo%20saya%20ingin%20pesan%20${encodeURIComponent(product.title)}%20sebanyak%20${quantity}%20${unit}.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-[14px] border border-slate-200 bg-white hover:bg-slate-50 py-3.5 px-5 text-xs sm:text-sm font-bold text-slate-700 transition shadow-2xs active:scale-95"
-                  title="Pesan via WhatsApp"
-                >
-                  <PhoneIcon className="h-4 w-4 text-[#006e23]" />
-                  <span>WhatsApp</span>
-                </a>
               </div>
             </div>
           </div>

@@ -57,8 +57,8 @@ export function ShoppingCartIcon({
   strokeWidth = 2.2,
   ...props
 }: CartIconProps) {
-  const w = size ?? width ?? undefined;
-  const h = size ?? height ?? undefined;
+  const w = size ?? width ?? 20;
+  const h = size ?? height ?? 20;
   const swNum = typeof strokeWidth === "number" ? strokeWidth : Number(strokeWidth) || 2.2;
 
   return (

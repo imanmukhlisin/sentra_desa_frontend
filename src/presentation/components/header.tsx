@@ -72,7 +72,7 @@ export function Header() {
                 href="/profile/"
                 title={`Akun: ${user.name || user.email || "Pengguna"}`}
               >
-                <UserIcon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                <UserIcon className="h-5 w-5 sm:h-5 sm:w-5" />
                 <span className="max-w-[75px] sm:max-w-[120px] truncate">
                   {user.name && user.name.trim()
                     ? user.name.trim().split(" ")[0]
@@ -80,7 +80,7 @@ export function Header() {
                 </span>
               </Link>
             ) : (
-              <div className="relative inline-flex items-center h-11 min-[390px]:h-11.5 sm:h-12 md:h-[50px] rounded-[12px] sm:rounded-[14px] bg-white/95 p-0.5 sm:p-1 border border-slate-300/80 shadow-xs select-none">
+              <div className="relative inline-flex items-center h-10 min-[390px]:h-11 sm:h-12 md:h-[50px] rounded-[12px] sm:rounded-[14px] bg-white/95 p-0.5 sm:p-1 border border-slate-300/80 shadow-xs select-none">
                 {/* Sliding green background indicator */}
                 <span
                   className={`absolute top-0.5 bottom-0.5 left-0.5 sm:top-1 sm:bottom-1 sm:left-1 w-[56px] min-[390px]:w-[62px] sm:w-[84px] md:w-[92px] rounded-[10px] sm:rounded-[11px] bg-[#006e23] shadow-sm pointer-events-none auth-slide-indicator ${
@@ -91,7 +91,7 @@ export function Header() {
                 <Link
                   href="/login/"
                   onClick={() => setActiveTab("login")}
-                  className={`relative z-10 w-[56px] min-[390px]:w-[62px] sm:w-[84px] md:w-[92px] h-10 min-[390px]:h-10.5 sm:h-10 md:h-[42px] rounded-[10px] sm:rounded-[11px] flex items-center justify-center text-xs min-[390px]:text-[13px] sm:text-sm font-bold transition-colors duration-300 cursor-pointer select-none ${
+                  className={`relative z-10 w-[56px] min-[390px]:w-[62px] sm:w-[84px] md:w-[92px] h-9 min-[390px]:h-10 sm:h-10 md:h-[42px] rounded-[10px] sm:rounded-[11px] flex items-center justify-center text-xs min-[390px]:text-[13px] sm:text-sm font-bold transition-colors duration-300 cursor-pointer select-none ${
                     activeTab === "login" ? "text-white" : "text-slate-700 hover:text-slate-900"
                   }`}
                   title="Masuk ke Akun"
@@ -101,7 +101,7 @@ export function Header() {
                 <Link
                   href="/register/"
                   onClick={() => setActiveTab("register")}
-                  className={`relative z-10 w-[56px] min-[390px]:w-[62px] sm:w-[84px] md:w-[92px] h-10 min-[390px]:h-10.5 sm:h-10 md:h-[42px] rounded-[10px] sm:rounded-[11px] flex items-center justify-center text-xs min-[390px]:text-[13px] sm:text-sm font-bold transition-colors duration-300 cursor-pointer select-none ${
+                  className={`relative z-10 w-[56px] min-[390px]:w-[62px] sm:w-[84px] md:w-[92px] h-9 min-[390px]:h-10 sm:h-10 md:h-[42px] rounded-[10px] sm:rounded-[11px] flex items-center justify-center text-xs min-[390px]:text-[13px] sm:text-sm font-bold transition-colors duration-300 cursor-pointer select-none ${
                     activeTab === "register" ? "text-white" : "text-slate-700 hover:text-slate-900"
                   }`}
                   title="Daftar Akun Baru"
@@ -113,14 +113,14 @@ export function Header() {
 
             <button
               onClick={openCart}
-              className="relative flex h-11 w-11 min-[390px]:h-11.5 min-[390px]:w-11.5 sm:h-12 sm:w-12 md:h-[50px] md:w-[50px] shrink-0 items-center justify-center rounded-[12px] sm:rounded-[14px] border border-slate-300/80 bg-white/95 text-slate-800 transition-all duration-200 hover:scale-105 hover:bg-white hover:text-[#006e23] hover:border-[#006e23]/40 active:scale-95 cursor-pointer select-none shadow-xs"
+              className="relative flex h-10 w-10 min-[390px]:h-11 min-[390px]:w-11 sm:h-12 sm:w-12 md:h-[50px] md:w-[50px] shrink-0 items-center justify-center rounded-[12px] sm:rounded-[14px] border border-slate-300/80 bg-white/95 text-slate-800 transition-all duration-200 hover:scale-105 hover:bg-white hover:text-[#006e23] hover:border-[#006e23]/40 active:scale-95 cursor-pointer select-none shadow-xs"
               type="button"
               aria-label="Keranjang Belanja"
               title={`Keranjang Belanja (${totalCount} produk)`}
             >
-              <ShoppingCartIcon className="h-5.5 w-5.5 sm:h-6 sm:w-6 transition-colors" />
+              <ShoppingCartIcon className="h-[18px] w-[18px] min-[390px]:h-5 min-[390px]:w-5 sm:h-6 sm:w-6 transition-colors" />
               {totalCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#ba1a1a] px-1 text-[10px] font-extrabold text-white shadow-xs ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 flex h-[18px] min-w-[18px] sm:h-5 sm:min-w-[20px] items-center justify-center rounded-full bg-[#ba1a1a] px-1 text-[9px] sm:text-[10px] font-extrabold text-white shadow-xs ring-2 ring-white">
                   {totalCount > 99 ? "99+" : totalCount}
                 </span>
               )}
