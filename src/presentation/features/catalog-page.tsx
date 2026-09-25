@@ -304,14 +304,47 @@ type Props = {
 export function CatalogPage(props: Props) {
   return (
     <Suspense fallback={<CatalogPageSkeleton title={props.title} description={props.description} />}>
-      <CatalogPageContent {...props} />
+      <CatalogRouter {...props} />
     </Suspense>
   );
 }
 
-function CatalogPageContent({ kind, title, description, categories, initialItems }: Props) {
+function CatalogRouter(props: Props) {
   const searchParams = useSearchParams();
   const detailId = searchParams.get("id");
+
+  if (detailId) {
+    switch (props.kind) {
+      case "villages":
+        return <ProfileDesaDetail id={detailId} />;
+      case "products":
+        return <ProductDetail id={detailId} />;
+      case "tourisms":
+        return <TourismDetail id={detailId} />;
+      case "bumdes":
+        return <BumdesDetail id={detailId} />;
+      case "lkdd":
+        return <LkddDetail id={detailId} />;
+      case "potentials":
+        return <PotentialDetail id={detailId} />;
+      case "exports":
+        return <ExportDetail id={detailId} />;
+      case "services":
+        return <ServiceDetail id={detailId} />;
+      case "kdmp":
+        return <KdmpDetail id={detailId} />;
+      case "articles":
+        return <ArtikelDetail id={detailId} />;
+      case "wishlists":
+        return <WishlistDetail id={detailId} />;
+    }
+  }
+
+  return <CatalogPageContent {...props} />;
+}
+
+function CatalogPageContent({ kind, title, description, categories, initialItems }: Props) {
+  const searchParams = useSearchParams();
   const villageId = searchParams.get("village_id");
   const category = searchParams.get("category");
   const search = searchParams.get("search");
@@ -324,8 +357,6 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
   const [loading, setLoading] = useState(!initialItems || initialItems.length === 0);
 
   useEffect(() => {
-    if (detailId) return;
-
     let isMounted = true;
     setLoading(true);
 
@@ -356,34 +387,7 @@ function CatalogPageContent({ kind, title, description, categories, initialItems
     return () => {
       isMounted = false;
     };
-  }, [kind, detailId, villageId, category, search, provinceId, regencyId, districtId, isFeatured]);
-
-  if (detailId) {
-    switch (kind) {
-      case "villages":
-        return <ProfileDesaDetail id={detailId} />;
-      case "products":
-        return <ProductDetail id={detailId} />;
-      case "tourisms":
-        return <TourismDetail id={detailId} />;
-      case "bumdes":
-        return <BumdesDetail id={detailId} />;
-      case "lkdd":
-        return <LkddDetail id={detailId} />;
-      case "potentials":
-        return <PotentialDetail id={detailId} />;
-      case "exports":
-        return <ExportDetail id={detailId} />;
-      case "services":
-        return <ServiceDetail id={detailId} />;
-      case "kdmp":
-        return <KdmpDetail id={detailId} />;
-      case "articles":
-        return <ArtikelDetail id={detailId} />;
-      case "wishlists":
-        return <WishlistDetail id={detailId} />;
-    }
-  }
+  }, [kind, villageId, category, search, provinceId, regencyId, districtId, isFeatured]);
 
   const clearHref = `/${kind === "products" ? "sentra-produk" : kind === "tourisms" ? "desa-wisata" : kind === "potentials" ? "potensi-desa" : kind === "villages" ? "profil-desa" : kind === "services" ? "layanan-desa" : kind}`;
 

@@ -1,4 +1,5 @@
 import { CatalogPage } from "@/presentation/features/catalog-page";
+import { samplePotentials } from "@/infrastructure/repositories/public-repository";
 
 export default function Page() {
   return (
@@ -17,6 +18,7 @@ export default function Page() {
         "tambang",
         "sdm"
       ]}
+      initialItems={samplePotentials}
     />
   );
 }
