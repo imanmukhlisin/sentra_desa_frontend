@@ -220,51 +220,44 @@
   }
 
   .floating-pill-header {
-    @apply fixed top-2.5 sm:top-5 md:top-6 inset-x-0 z-50 mx-auto w-full max-w-[1240px] px-4 md:px-6 flex justify-center pointer-events-none;
+    @apply fixed top-2.5 sm:top-4 md:top-5 inset-x-0 z-50 pointer-events-none flex justify-center w-full;
   }
 
   .floating-pill-nav {
-    @apply pointer-events-auto w-full h-12 sm:h-[72px] md:h-[78px] rounded-[14px] flex items-center justify-between gap-1.5 sm:gap-6 px-3 sm:px-7 md:px-8 select-none transition-all duration-500 ease-out;
+    @apply pointer-events-auto w-full h-[62px] min-[390px]:h-[66px] sm:h-[74px] md:h-[78px] rounded-[16px] sm:rounded-[20px] flex items-center justify-between gap-2 sm:gap-6 px-3.5 min-[390px]:px-[18px] sm:px-6 md:px-7 select-none transition-all duration-300 ease-out;
   }
 
   /* State 1: When at top directly floating over the full-bleed hero image */
   .floating-pill-nav-top {
-    background: linear-gradient(
-      90deg, 
-      rgba(255, 255, 255, 0.9) 0%, 
-      rgba(240, 253, 244, 0.85) 30%, 
-      rgba(254, 252, 242, 0.85) 70%, 
-      rgba(255, 255, 255, 0.9) 100%
-    );
-    border: 1.5px solid rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    background: rgba(255, 255, 255, 0.94);
+    border: 2.5px solid rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
     box-shadow: 
-      0 14px 38px -4px rgba(0, 0, 0, 0.25),
-      0 4px 14px -2px rgba(0, 0, 0, 0.12),
+      0 12px 32px -4px rgba(0, 0, 0, 0.14),
+      0 4px 12px -2px rgba(0, 0, 0, 0.06),
       inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
   }
 
-  /* State 2: When scrolled down over content - Animasi warna berubah menyala */
-  .floating-pill-nav-scrolled {
-    background: linear-gradient(
-      90deg, 
-      rgba(167, 243, 208, 0.98) 0%, 
-      rgba(236, 253, 243, 0.97) 24%, 
-      rgba(255, 255, 255, 0.99) 50%, 
-      rgba(255, 251, 235, 0.97) 76%, 
-      rgba(254, 215, 170, 0.98) 100%
-    );
-    border: 1.5px solid rgba(255, 255, 255, 1);
-    backdrop-filter: blur(28px) saturate(200%);
-    -webkit-backdrop-filter: blur(28px) saturate(200%);
+  /* State 2: When scrolled down over content - Garis gradien lebih tebal tegas & ambient glow lembut di pinggir */
+  .floating-pill-nav-scrolled,
+  .floating-pill-nav[data-scrolled="true"] {
+    background: 
+      linear-gradient(rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.97)) padding-box,
+      linear-gradient(110deg, #008730 0%, #16a34a 28%, #f59e0b 72%, #ea580c 100%) border-box;
+    border: 2.5px solid transparent;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
     box-shadow: 
-      0 18px 48px -4px rgba(0, 110, 35, 0.32),
-      0 8px 26px -2px rgba(234, 88, 12, 0.25),
-      0 0 0 1px rgba(255, 255, 255, 0.95),
-      inset 0 1.5px 2px rgba(255, 255, 255, 1),
-      inset 0 -1.5px 2px rgba(0, 110, 35, 0.08);
-    transform: translateY(-2px);
+      0 10px 28px -4px rgba(0, 110, 35, 0.18),
+      0 4px 14px -2px rgba(234, 88, 12, 0.14),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+  }
+
+  .auth-slide-indicator {
+    transition: transform 320ms cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
   }
 
   .glass-header {
@@ -407,3 +400,4 @@
     transform: translateY(0);
   }
 }
+

@@ -57,15 +57,23 @@ const USER_KEY = "sentra_user";
 export const authClient = {
   getToken(): string | null {
     if (typeof window === "undefined") return null;
-    return localStorage.getItem(TOKEN_KEY);
+    try {
+      return localStorage.getItem(TOKEN_KEY);
+    } catch {
+      return null;
+    }
   },
 
   getUser(): AuthUser | null {
     if (typeof window === "undefined") return null;
-    const raw = localStorage.getItem(USER_KEY);
-    if (!raw) return null;
     try {
-      return JSON.parse(raw) as AuthUser;
+      const raw = localStorage.getItem(USER_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        return parsed as AuthUser;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -73,17 +81,24 @@ export const authClient = {
 
   setSession(token: string, user: AuthUser): void {
     if (typeof window === "undefined") return;
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-    // Set cookie for Next.js middleware / SSR
-    document.cookie = `${TOKEN_KEY}=${encodeURIComponent(token)}; path=/; max-age=604800; SameSite=Lax`;
+    try {
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+      document.cookie = `${TOKEN_KEY}=${encodeURIComponent(token)}; path=/; max-age=604800; SameSite=Lax`;
+    } catch {
+      // storage quota or private browsing restriction
+    }
   },
 
   clearSession(): void {
     if (typeof window === "undefined") return;
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+    try {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+    } catch {
+      // ignore
+    }
   },
 
   async login(payload: LoginPayload): Promise<AuthResponse> {

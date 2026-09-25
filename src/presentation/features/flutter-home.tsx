@@ -346,7 +346,7 @@ export function FlutterHome({
                   }`}
                 >
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-sans text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-                    {slide.title.split("\n").map((line, lIdx, arr) => (
+                    {String(slide.title || "").split("\n").map((line, lIdx, arr) => (
                       <span key={lIdx}>
                         {line}
                         {lIdx < arr.length - 1 && <br />}
